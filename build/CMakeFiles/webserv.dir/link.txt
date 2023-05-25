@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Wall -Werror -Wextra -g -rdynamic CMakeFiles/webserv.dir/src/main.cpp.o -o webserv  src/libwebserv_lib.a 

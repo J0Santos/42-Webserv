@@ -1,0 +1,6 @@
+[DEBUG]: tests/testLogger.cpp[:7]: Testing logger with numbers 9.2 and booleans: 1
+[DEBUG]: tests/testLogger.cpp[:11]: this is a test
+[INFO]: tests/testLogger.cpp[:12]: this is a test
+[WARNING]: tests/testLogger.cpp[:13]: this is a test
+[ERROR]: tests/testLogger.cpp[:14]: this is a test
+[FATAL]: tests/testLogger.cpp[:15]: this is a test
