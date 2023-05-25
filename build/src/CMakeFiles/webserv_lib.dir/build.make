@@ -83,17 +83,33 @@ src/CMakeFiles/webserv_lib.dir/utils/Logger.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/webserv_lib.dir/utils/Logger.cpp.s"
 	cd /home/mlancac/.Cursus/lv5/my-webserv/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mlancac/.Cursus/lv5/my-webserv/src/utils/Logger.cpp -o CMakeFiles/webserv_lib.dir/utils/Logger.cpp.s
 
+src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o: src/CMakeFiles/webserv_lib.dir/flags.make
+src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o: /home/mlancac/.Cursus/lv5/my-webserv/src/utils/string.cpp
+src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o: src/CMakeFiles/webserv_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mlancac/.Cursus/lv5/my-webserv/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o"
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o -MF CMakeFiles/webserv_lib.dir/utils/string.cpp.o.d -o CMakeFiles/webserv_lib.dir/utils/string.cpp.o -c /home/mlancac/.Cursus/lv5/my-webserv/src/utils/string.cpp
+
+src/CMakeFiles/webserv_lib.dir/utils/string.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/webserv_lib.dir/utils/string.cpp.i"
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mlancac/.Cursus/lv5/my-webserv/src/utils/string.cpp > CMakeFiles/webserv_lib.dir/utils/string.cpp.i
+
+src/CMakeFiles/webserv_lib.dir/utils/string.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/webserv_lib.dir/utils/string.cpp.s"
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mlancac/.Cursus/lv5/my-webserv/src/utils/string.cpp -o CMakeFiles/webserv_lib.dir/utils/string.cpp.s
+
 # Object files for target webserv_lib
 webserv_lib_OBJECTS = \
-"CMakeFiles/webserv_lib.dir/utils/Logger.cpp.o"
+"CMakeFiles/webserv_lib.dir/utils/Logger.cpp.o" \
+"CMakeFiles/webserv_lib.dir/utils/string.cpp.o"
 
 # External object files for target webserv_lib
 webserv_lib_EXTERNAL_OBJECTS =
 
 src/libwebserv_lib.a: src/CMakeFiles/webserv_lib.dir/utils/Logger.cpp.o
+src/libwebserv_lib.a: src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o
 src/libwebserv_lib.a: src/CMakeFiles/webserv_lib.dir/build.make
 src/libwebserv_lib.a: src/CMakeFiles/webserv_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/mlancac/.Cursus/lv5/my-webserv/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libwebserv_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/mlancac/.Cursus/lv5/my-webserv/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libwebserv_lib.a"
 	cd /home/mlancac/.Cursus/lv5/my-webserv/build/src && $(CMAKE_COMMAND) -P CMakeFiles/webserv_lib.dir/cmake_clean_target.cmake
 	cd /home/mlancac/.Cursus/lv5/my-webserv/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/webserv_lib.dir/link.txt --verbose=$(VERBOSE)
 

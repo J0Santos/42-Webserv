@@ -1,1 +1,1 @@
-/usr/bin/c++ -rdynamic CMakeFiles/webserv_utests.dir/test.cpp.o CMakeFiles/webserv_utests.dir/testLogger.cpp.o CMakeFiles/webserv_utests.dir/testSmt.cpp.o -o webserv_utests  ../src/libwebserv_lib.a ../lib/libgtest_main.a ../lib/libgtest.a 
+/usr/bin/c++ -rdynamic CMakeFiles/webserv_utests.dir/test.cpp.o CMakeFiles/webserv_utests.dir/testLogger.cpp.o CMakeFiles/webserv_utests.dir/testSmt.cpp.o CMakeFiles/webserv_utests.dir/testString.cpp.o -o webserv_utests  ../src/libwebserv_lib.a ../lib/libgtest_main.a ../lib/libgtest.a 

@@ -209,6 +209,30 @@ utils/Logger.cpp.s:
 	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/webserv_lib.dir/build.make src/CMakeFiles/webserv_lib.dir/utils/Logger.cpp.s
 .PHONY : utils/Logger.cpp.s
 
+utils/string.o: utils/string.cpp.o
+.PHONY : utils/string.o
+
+# target to build an object file
+utils/string.cpp.o:
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/webserv_lib.dir/build.make src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o
+.PHONY : utils/string.cpp.o
+
+utils/string.i: utils/string.cpp.i
+.PHONY : utils/string.i
+
+# target to preprocess a source file
+utils/string.cpp.i:
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/webserv_lib.dir/build.make src/CMakeFiles/webserv_lib.dir/utils/string.cpp.i
+.PHONY : utils/string.cpp.i
+
+utils/string.s: utils/string.cpp.s
+.PHONY : utils/string.s
+
+# target to generate assembly for a file
+utils/string.cpp.s:
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/webserv_lib.dir/build.make src/CMakeFiles/webserv_lib.dir/utils/string.cpp.s
+.PHONY : utils/string.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -226,6 +250,9 @@ help:
 	@echo "... utils/Logger.o"
 	@echo "... utils/Logger.i"
 	@echo "... utils/Logger.s"
+	@echo "... utils/string.o"
+	@echo "... utils/string.i"
+	@echo "... utils/string.s"
 .PHONY : help
 
 

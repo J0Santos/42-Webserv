@@ -679,6 +679,8 @@ _Python_EXECUTABLE:INTERNAL=/usr/bin/python3.10
 //Python Properties
 _Python_INTERPRETER_PROPERTIES:INTERNAL=Python;3;10;10;64;;cpython-310-x86_64-linux-gnu;abi3;/usr/lib/python3.10;/usr/lib/python3.10;/usr/lib/python3.10/site-packages;/usr/lib/python3.10/site-packages
 _Python_INTERPRETER_SIGNATURE:INTERNAL=b91b4035ecb3bb3f5760d35922531bcd
+//Interpreter reason failure
+_Python_Interpreter_REASON_FAILURE:INTERNAL=
 //NumPy reason failure
 _Python_NumPy_REASON_FAILURE:INTERNAL=
 __pkg_config_arguments_GMOCK:INTERNAL=gmock;REQUIRED

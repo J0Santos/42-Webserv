@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/mlancac/.Cursus/lv5/my-webserv/src/utils/Logger.cpp" "src/CMakeFiles/webserv_lib.dir/utils/Logger.cpp.o" "gcc" "src/CMakeFiles/webserv_lib.dir/utils/Logger.cpp.o.d"
+  "/home/mlancac/.Cursus/lv5/my-webserv/src/utils/string.cpp" "src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o" "gcc" "src/CMakeFiles/webserv_lib.dir/utils/string.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

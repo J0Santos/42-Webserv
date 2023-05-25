@@ -257,6 +257,30 @@ testSmt.cpp.s:
 	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/webserv_utests.dir/build.make tests/CMakeFiles/webserv_utests.dir/testSmt.cpp.s
 .PHONY : testSmt.cpp.s
 
+testString.o: testString.cpp.o
+.PHONY : testString.o
+
+# target to build an object file
+testString.cpp.o:
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/webserv_utests.dir/build.make tests/CMakeFiles/webserv_utests.dir/testString.cpp.o
+.PHONY : testString.cpp.o
+
+testString.i: testString.cpp.i
+.PHONY : testString.i
+
+# target to preprocess a source file
+testString.cpp.i:
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/webserv_utests.dir/build.make tests/CMakeFiles/webserv_utests.dir/testString.cpp.i
+.PHONY : testString.cpp.i
+
+testString.s: testString.cpp.s
+.PHONY : testString.s
+
+# target to generate assembly for a file
+testString.cpp.s:
+	cd /home/mlancac/.Cursus/lv5/my-webserv/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/webserv_utests.dir/build.make tests/CMakeFiles/webserv_utests.dir/testString.cpp.s
+.PHONY : testString.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -280,6 +304,9 @@ help:
 	@echo "... testSmt.o"
 	@echo "... testSmt.i"
 	@echo "... testSmt.s"
+	@echo "... testString.o"
+	@echo "... testString.i"
+	@echo "... testString.s"
 .PHONY : help
 
 

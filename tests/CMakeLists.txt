@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
   test.cpp
   testLogger.cpp
   testSmt.cpp
+  testString.cpp
 )
 
 add_test(webserv_gtest ${PROJECT_NAME})

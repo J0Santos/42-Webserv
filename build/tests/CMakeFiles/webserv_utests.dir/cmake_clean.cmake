@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/webserv_utests.dir/testLogger.cpp.o.d"
   "CMakeFiles/webserv_utests.dir/testSmt.cpp.o"
   "CMakeFiles/webserv_utests.dir/testSmt.cpp.o.d"
+  "CMakeFiles/webserv_utests.dir/testString.cpp.o"
+  "CMakeFiles/webserv_utests.dir/testString.cpp.o.d"
   "webserv_utests"
   "webserv_utests.pdb"
 )

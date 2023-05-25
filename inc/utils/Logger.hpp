@@ -6,6 +6,7 @@
 #include <sstream>
 #include <unistd.h>
 
+// TODO: add colors to logs
 class Logger {
 
     public:
