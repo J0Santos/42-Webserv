@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwebserv_lib.a CMakeFiles/webserv_lib.dir/utils/Logger.cpp.o CMakeFiles/webserv_lib.dir/utils/string.cpp.o
-/usr/bin/ranlib libwebserv_lib.a
