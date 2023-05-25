@@ -1,51 +1,101 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "utils/smt.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <unistd.h>
+#include <string>
 
-// TODO: add colors to logs
-class Logger {
+namespace Color {
 
+const std::string Reset = "\033[0m";
+const std::string Red = "\033[31m";
+const std::string Green = "\033[32m";
+const std::string Yellow = "\033[33m";
+const std::string Blue = "\033[34m";
+const std::string Magenta = "\033[35m";
+
+} // namespace Color
+
+namespace LogLevel {
+
+enum level_t { Debug, Info, Warning, Error, Fatal, None };
+
+}
+
+class Log {
     public:
 
-        static std::ostream& getInstance(std::string filename = "");
-        static std::string   getFilename(std::string filename);
+        Log(std::ostream& os, LogLevel::level_t level = LogLevel::Debug,
+            std::string filename = __FILE__, int line = __LINE__);
+        ~Log(void);
 
-        struct InvalidFileException : std::exception {
-                char const* what(void) const throw();
-        };
+        template<typename T>
+        Log& operator<<(T const& value) {
+            if (m_lvl == LogLevel::None) { return (*this); }
+            m_buf << value;
+            return (*this);
+        }
 
     private:
 
-        Logger(std::string filename);
-        ~Logger(void);
+        std::string const debug(void) const;
+        std::string const info(void) const;
+        std::string const warning(void) const;
+        std::string const error(void) const;
+        std::string const fatal(void) const;
 
-        std::ofstream m_file;
+        LogLevel::level_t  m_lvl;
+        std::ostream&      m_out;
+        std::string        m_file;
+        int                m_line;
+        std::ostringstream m_buf;
 };
 
-#define LOGGER(F) Logger::getInstance(F)
+class Logger {
+    public:
 
-#define LOG_D(M)                                                               \
-    Logger::getInstance() << "[DEBUG]: " << Logger::getFilename(__FILE__)      \
-                          << "[:" << __LINE__ << "]: " << M << std::endl
+        static Logger& getInstance(void);
 
-#define LOG_I(M)                                                               \
-    Logger::getInstance() << "[INFO]: " << Logger::getFilename(__FILE__)       \
-                          << "[:" << __LINE__ << "]: " << M << std::endl
+        int  getLevel(void) const;
+        void setLevel(LogLevel::level_t level);
+        void setFile(std::string filename);
 
-#define LOG_W(M)                                                               \
-    Logger::getInstance() << "[WARNING]: " << Logger::getFilename(__FILE__)    \
-                          << "[:" << __LINE__ << "]: " << M << std::endl
+        smt::shared_ptr<Log> log(LogLevel::level_t lvl, std::string filename,
+                                 int line);
 
-#define LOG_E(M)                                                               \
-    Logger::getInstance() << "[ERROR]: " << Logger::getFilename(__FILE__)      \
-                          << "[:" << __LINE__ << "]: " << M << std::endl
+        smt::shared_ptr<Log> flog(LogLevel::level_t lvl, std::string filename,
+                                  int line);
 
-#define LOG_F(M)                                                               \
-    Logger::getInstance() << "[FATAL]: " << Logger::getFilename(__FILE__)      \
-                          << "[:" << __LINE__ << "]: " << M << std::endl
+    private:
+
+        Logger(LogLevel::level_t lvl = LogLevel::Debug);
+        ~Logger(void);
+
+        LogLevel::level_t m_lvl;
+        bool              m_ffile;
+        std::ofstream     m_file;
+};
+
+#define LOG_LVL(L) Logger::getInstance().setLevel(L)
+
+#define LOG_D *(Logger::getInstance().log(LogLevel::Debug, __FILE__, __LINE__))
+#define LOG_I *(Logger::getInstance().log(LogLevel::Info, __FILE__, __LINE__))
+#define LOG_W                                                                  \
+    *(Logger::getInstance().log(LogLevel::Warning, __FILE__, __LINE__))
+#define LOG_E *(Logger::getInstance().log(LogLevel::Error, __FILE__, __LINE__))
+#define LOG_F *(Logger::getInstance().log(LogLevel::Fatal, __FILE__, __LINE__))
+
+#define FLOG_D                                                                 \
+    *(Logger::getInstance().flog(LogLevel::Debug, __FILE__, __LINE__))
+#define FLOG_I *(Logger::getInstance().flog(LogLevel::Info, __FILE__, __LINE__))
+#define FLOG_W                                                                 \
+    *(Logger::getInstance().flog(LogLevel::Warning, __FILE__, __LINE__))
+#define FLOG_E                                                                 \
+    *(Logger::getInstance().flog(LogLevel::Error, __FILE__, __LINE__))
+#define FLOG_F                                                                 \
+    *(Logger::getInstance().flog(LogLevel::Fatal, __FILE__, __LINE__))
 
 #endif /* LOGGER_HPP */
