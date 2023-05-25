@@ -13,6 +13,8 @@ class string : public std::string {
 
         std::vector<string> split(string const& delimiter) const;
         string&             trim(void);
+
+        bool isnumeric(void) const;
 };
 
 } // namespace ft

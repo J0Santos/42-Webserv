@@ -31,3 +31,16 @@ TEST(testString, testTrim) {
     ASSERT_EQ(ft::string(" \t\n\r\f\vHello World \t\n\r\f\v").trim(),
               "Hello World");
 }
+
+TEST(testString, testIsNumeric) {
+    ASSERT_TRUE(ft::string("123").isnumeric());
+    ASSERT_TRUE(ft::string("-123").isnumeric());
+    ASSERT_TRUE(ft::string("0").isnumeric());
+    ASSERT_TRUE(ft::string("-0").isnumeric());
+
+    ASSERT_FALSE(ft::string("123a").isnumeric());
+    ASSERT_FALSE(ft::string("-123a").isnumeric());
+    ASSERT_FALSE(ft::string("0a").isnumeric());
+    ASSERT_FALSE(ft::string("-0a").isnumeric());
+    ASSERT_FALSE(ft::string("123.456a").isnumeric());
+}
