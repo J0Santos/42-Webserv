@@ -28,9 +28,17 @@ void Logger::setLevel(LogLevel::level_t level) { m_lvl = level; }
 int Logger::getLevel(void) const { return (m_lvl); }
 
 void Logger::setFile(std::string filename) {
+    if (m_ffile) { m_file.close(); }
     m_file.open(filename.c_str());
-    if (!m_file.good()) { throw std::exception(); }
+    if (!m_file.good()) {
+        LOG_E << "Failed to open file: " << filename;
+        throw InvalidFileException();
+    }
     m_ffile = true;
+}
+
+char const* Logger::InvalidFileException::what() const throw() {
+    return ("Logger: failed to open file");
 }
 
 smt::shared_ptr<Log> Logger::log(LogLevel::level_t lvl, std::string filename,

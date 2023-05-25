@@ -58,6 +58,10 @@ class Logger {
         smt::shared_ptr<Log> flog(LogLevel::level_t lvl, std::string filename,
                                   int line);
 
+        struct InvalidFileException : public std::exception {
+                char const* what() const throw();
+        };
+
     private:
 
         Logger(LogLevel::level_t lvl = LogLevel::Debug);

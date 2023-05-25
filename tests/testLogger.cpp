@@ -10,6 +10,14 @@ TEST(testLogger, testConstructor) {
     EXPECT_EQ(logger.getLevel(), LogLevel::Debug);
 }
 
+TEST(testLogger, testSetLevel) {
+    Logger& logger = Logger::getInstance();
+
+    ASSERT_THROW(logger.setFile("path/does/not/exist.log"),
+                 Logger::InvalidFileException);
+    ASSERT_NO_THROW(logger.setFile("tests/logs/test.log"));
+}
+
 TEST(testLogger, testLog) {
     Logger& logger = Logger::getInstance();
 
