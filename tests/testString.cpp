@@ -38,9 +38,9 @@ TEST(testString, testIsNumeric) {
     ASSERT_TRUE(ft::string("0").isnumeric());
     ASSERT_TRUE(ft::string("-0").isnumeric());
 
-    ASSERT_FALSE(ft::string("123a").isnumeric());
+    ASSERT_FALSE(ft::string("Hello World").isnumeric());
     ASSERT_FALSE(ft::string("-123a").isnumeric());
     ASSERT_FALSE(ft::string("0a").isnumeric());
-    ASSERT_FALSE(ft::string("-0a").isnumeric());
-    ASSERT_FALSE(ft::string("123.456a").isnumeric());
+    ASSERT_FALSE(ft::string("-a").isnumeric());
+    ASSERT_FALSE(ft::string("123 456").isnumeric());
 }
