@@ -3,6 +3,7 @@ project(webserv_lib)
 add_library(${PROJECT_NAME} STATIC
   utils/Logger.cpp
   utils/string.cpp
+  utils/FileSystem.cpp
 )
 
 add_library(42::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

@@ -35,9 +35,7 @@ string& string::trim(void) {
 }
 
 bool string::isnumeric(void) const {
-    size_type i = 0;
-    if ((*this)[0] == '-') { i++; }
-    for (initstate_r; i < length(); ++i) {
+    for (size_t i = ((*this)[0] == '-') ? 1 : 0; i < length(); ++i) {
         if (!isdigit((*this)[i])) { return (false); }
     }
     return (true);
