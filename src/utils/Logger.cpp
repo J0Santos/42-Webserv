@@ -1,5 +1,16 @@
 #include "utils/Logger.hpp"
 
+namespace Color {
+
+const std::string Reset = "\033[0m";
+const std::string Red = "\033[31m";
+const std::string Green = "\033[32m";
+const std::string Yellow = "\033[33m";
+const std::string Blue = "\033[34m";
+const std::string Magenta = "\033[35m";
+
+} // namespace Color
+
 /* Logger */
 Logger::Logger(LogLevel::level_t lvl) : m_lvl(lvl), m_ffile(false) {}
 
