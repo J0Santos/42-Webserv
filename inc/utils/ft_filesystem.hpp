@@ -64,6 +64,7 @@ class file {
 
         std::string getExtension(void) const;
         directory   getDirectory(void) const;
+        std::string getFilename(void) const;
 
     private:
 

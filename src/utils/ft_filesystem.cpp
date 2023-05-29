@@ -178,6 +178,12 @@ directory file::getDirectory(void) const {
     }
 }
 
+std::string file::getFilename(void) const {
+    size_t pos = m_file.find_last_of('/');
+    if (pos == std::string::npos) { return (m_file); }
+    return (m_file.substr(pos + 1));
+}
+
 std::ostream& operator<<(std::ostream& os, file const& file) {
     os << file.operator std::string();
     return (os);

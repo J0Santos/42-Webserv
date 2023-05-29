@@ -173,3 +173,10 @@ TEST(testFile, testReadAndWriteToFile) {
     EXPECT_EQ(file.read(), "testing write to a file\nTesting 123\n");
     system("rm file");
 }
+
+TEST(testFile, testGetFilename) {
+    ASSERT_EQ(ft::file("/dir/path/file.txt").getFilename(), "file.txt");
+    ASSERT_EQ(ft::file("/dir/path/file.tar.gz").getFilename(), "file.tar.gz");
+    ASSERT_EQ(ft::file("file.tar.gz").getFilename(), "file.tar.gz");
+    ASSERT_EQ(ft::file("file").getFilename(), "file");
+}
