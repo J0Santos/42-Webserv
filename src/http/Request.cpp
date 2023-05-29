@@ -4,9 +4,81 @@
 
 namespace http {
 
-Request::Request(std::string const& reqStr) { (void)reqStr; }
+Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
+    std::vector<std::string> subs;
+
+    size_t endPos = reqStr.find("\r\n\r\n");
+    if (endPos == std::string::npos) { throw(MalformedRequestException()); }
+
+    std::istringstream iss(reqStr);
+    std::string        startLine;
+    getline(iss, startLine); // getting first line
+
+    // handle headers
+    std::string line;
+    while (getline(iss, line) && line != "\r") {
+        subs = ft::string::split(line, ":\r");
+        if (subs.size() != 2) { throw(MalformedRequestException()); }
+        subs[1] = (subs[1][0] == ' ') ? subs[1].substr(1) : subs[1];
+        m_headers[subs[0]] = subs[1];
+    }
+
+    // handle start line
+    if (startLine.empty()) { throw(MalformedRequestException()); }
+    // getting startLine without \r
+    if (startLine.find("\r") != startLine.size() - 1) {
+        throw(MalformedRequestException());
+    }
+    startLine = startLine.substr(0, startLine.size() - 1);
+
+    subs = ft::string::split(startLine, " ");
+    if (subs.size() != 3) { throw(MalformedRequestException()); }
+    m_method = convertMethod(subs[0]);
+    if (m_method == UNKNOWN_METHOD) { throw(MalformedRequestException()); }
+    m_uri = smt::make_shared(new Uri(subs[1]));
+    m_version = convertVersion(subs[2]);
+    if (m_version == UNKNOWN_VERSION) { throw(MalformedRequestException()); }
+
+    // handle body
+    std::string body = reqStr.substr(endPos + 4);
+    // convert Content-Length to int
+    if (m_headers.find("Content-Length") != m_headers.end()) {
+        int               len;
+        std::stringstream ss(m_headers["Content-Length"]);
+        ss >> len;
+        if (body.size() != len) { throw(MalformedRequestException()); }
+        m_body = body;
+    }
+    // if (reqStr.size() > endPos + 4) { m_body = reqStr.substr(endPos + 4); }
+}
 
 Request::~Request(void) {}
+
+Method const& Request::getMethod(void) const { return (m_method); }
+
+Version const& Request::getVersion(void) const { return (m_version); }
+
+std::string const& Request::getHeader(std::string const& key) const {
+    return (m_headers.at(key));
+}
+
+std::string const& Request::getBody(void) const { return (m_body); }
+
+std::string Request::getScheme(void) const { return (m_uri->getScheme()); }
+
+std::string Request::getHost(void) const { return (m_uri->getHost()); }
+
+std::string Request::getPort(void) const { return (m_uri->getPort()); }
+
+ft::file Request::getPath(void) const { return (m_uri->getPath()); }
+
+std::string Request::getQuery(void) const { return (m_uri->getQuery()); }
+
+std::string const& Request::toString(void) const { return (m_reqStr); }
+
+char const* Request::MalformedRequestException::what(void) const throw() {
+    return ("Request: malformed request.");
+}
 
 std::string getRequest(std::string const& reqStr) {
     static std::string buffer;

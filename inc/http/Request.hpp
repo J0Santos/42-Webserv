@@ -1,6 +1,7 @@
 #ifndef HTTP_REQUEST_HPP
 #define HTTP_REQUEST_HPP
 
+#include "http/methods.hpp"
 #include "http/Uri.hpp"
 #include "utils/smt.hpp"
 
@@ -22,11 +23,10 @@ class Request {
 
         Request& operator=(Request const& rhs);
 
-        std::string const&   getMethod(void) const;
-        std::string const&   getVersion(void) const;
-        std::string const&   getHeader(std::string const& key) const;
-        std::string const&   getBody(void) const;
-        smt::shared_ptr<Uri> getUri(void) const;
+        Method const&      getMethod(void) const;
+        Version const&     getVersion(void) const;
+        std::string const& getHeader(std::string const& key) const;
+        std::string const& getBody(void) const;
 
         std::string getScheme(void) const;
         std::string getHost(void) const;
@@ -34,17 +34,21 @@ class Request {
         ft::file    getPath(void) const;
         std::string getQuery(void) const;
 
+        std::string const& toString(void) const;
+
         struct MalformedRequestException : public std::exception {
                 char const* what(void) const throw();
         };
 
     private:
 
-        std::string                        m_method;
-        std::string                        m_version;
+        Method                             m_method;
+        Version                            m_version;
         std::map<std::string, std::string> m_headers;
         std::string                        m_body;
         smt::shared_ptr<Uri>               m_uri;
+
+        std::string m_reqStr;
 };
 
 std::string getRequest(std::string const& reqStr = "");

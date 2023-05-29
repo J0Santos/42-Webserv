@@ -79,3 +79,12 @@ TEST(testUri, testConstructor) {
     EXPECT_EQ(uri->getQuery(), "q=now&tag=networking&tag=web")
         << uri->getQuery();
 }
+
+TEST(testUri, testRequestFailure) {
+    http::Uri uri("/cgi-bin/python/me.py");
+    EXPECT_EQ(uri.getScheme(), "") << uri.getScheme();
+    EXPECT_EQ(uri.getHost(), "") << uri.getHost();
+    EXPECT_EQ(uri.getPort(), "") << uri.getPort();
+    EXPECT_EQ(uri.getPath(), "/cgi-bin/python/me.py") << uri.getPath();
+    EXPECT_EQ(uri.getQuery(), "") << uri.getQuery();
+}
