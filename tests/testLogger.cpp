@@ -59,6 +59,7 @@ TEST(testLogger, testMacros) {
 
     LOG_LVL(LogLevel::Fatal);
     LOG_D("This message should not appear");
+    LOG_LVL(LogLevel::Debug);
 }
 
 TEST(testFormatter, testDebug) {
