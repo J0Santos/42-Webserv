@@ -33,11 +33,15 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
 
     subs = ft::string::split(startLine, " ");
     if (subs.size() != 3) { throw(MalformedRequestException()); }
-    m_method = convertMethod(subs[0]);
-    if (m_method == UNKNOWN_METHOD) { throw(MalformedRequestException()); }
+    if (convertMethod(subs[0]) == UNKNOWN_METHOD) {
+        throw(MalformedRequestException());
+    }
+    m_method = subs[0];
     m_uri = smt::make_shared(new Uri(subs[1]));
-    m_version = convertVersion(subs[2]);
-    if (m_version == UNKNOWN_VERSION) { throw(MalformedRequestException()); }
+    if (convertVersion(subs[2]) == UNKNOWN_VERSION) {
+        throw(MalformedRequestException());
+    }
+    m_version = subs[2];
 
     // handle body
     std::string body = reqStr.substr(endPos + 4);
@@ -68,9 +72,9 @@ Request& Request::operator=(Request const& rhs) {
     return (*this);
 }
 
-Method const& Request::getMethod(void) const { return (m_method); }
+std::string const& Request::getMethod(void) const { return (m_method); }
 
-Version const& Request::getVersion(void) const { return (m_version); }
+std::string const& Request::getVersion(void) const { return (m_version); }
 
 std::string const& Request::getHeader(std::string const& key) const {
     return (m_headers.at(key));
