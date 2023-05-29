@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
   testFileSystem.cpp
   testHost.cpp
   testLogger.cpp
+  testRequest.cpp
   testSmt.cpp
   testString.cpp
   testUri.cpp
