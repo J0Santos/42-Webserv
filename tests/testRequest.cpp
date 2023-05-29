@@ -6,8 +6,8 @@ TEST(testRequest, testConstructor) {
     std::string   req = "GET / HTTP/1.1\r\nHost: x\r\nContent-Length: "
                         "14\r\n\r\nThis is a body";
     http::Request request(req);
-    EXPECT_EQ(request.getMethod(), http::Method::GET);
-    EXPECT_EQ(request.getVersion(), http::Version::HTTP_1_1);
+    EXPECT_EQ(request.getMethod(), "GET");
+    EXPECT_EQ(request.getVersion(), "HTTP/1.1");
     EXPECT_EQ(request.getHeader("Host"), "x");
     EXPECT_EQ(request.getHeader("Content-Length"), "14");
     EXPECT_EQ(request.getBody(), "This is a body");
@@ -59,8 +59,8 @@ TEST(testRequest, testComplexRequestString) {
         "br\r\nAccept-Language: en-US,en;q=0.9\r\nConnection: "
         "keep-alive\r\n\r\n");
 
-    EXPECT_EQ(req.getMethod(), http::Method::GET);
-    EXPECT_EQ(req.getVersion(), http::Version::HTTP_1_1);
+    EXPECT_EQ(req.getMethod(), "GET");
+    EXPECT_EQ(req.getVersion(), "HTTP/1.1");
     EXPECT_EQ(req.getHeader("Host"), "example.com");
     EXPECT_EQ(req.getHeader("User-Agent"),
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
