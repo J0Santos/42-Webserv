@@ -43,7 +43,7 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
     std::string body = reqStr.substr(endPos + 4);
     // convert Content-Length to int
     if (m_headers.find("Content-Length") != m_headers.end()) {
-        int               len;
+        size_t            len;
         std::stringstream ss(m_headers["Content-Length"]);
         ss >> len;
         if (body.size() != len) { throw(MalformedRequestException()); }
