@@ -14,40 +14,14 @@ TEST(testLogger, testSetLevel) {
     Logger& logger = Logger::getInstance();
 
     ASSERT_THROW(logger.setFile("path/does/not/exist.log"),
-                 Logger::InvalidFileException);
-    ASSERT_NO_THROW(logger.setFile("tests/logs/test.log"));
+                 ft::InvalidFileException);
+    ASSERT_NO_THROW(logger.setFile("test.log"));
+    system("rm test.log");
 }
 
 TEST(testLogger, testLog) {
-    Logger& logger = Logger::getInstance();
-
-    *(logger.log(LogLevel::Debug, __FILE__, __LINE__))
-        << "This is a debug message";
-    *(logger.log(LogLevel::Info, __FILE__, __LINE__))
-        << "This is an info message";
-    *(logger.log(LogLevel::Warning, __FILE__, __LINE__))
-        << "This is a warning message";
-    *(logger.log(LogLevel::Error, __FILE__, __LINE__))
-        << "This is an error message";
-    *(logger.log(LogLevel::Fatal, __FILE__, __LINE__))
-        << "This is a fatal message";
-}
-
-TEST(testLogger, testFLog) {
-
-    Logger& logger = Logger::getInstance();
-    logger.setFile("tests/logs/test.log");
-
-    *(logger.flog(LogLevel::Debug, __FILE__, __LINE__))
-        << "This is a debug message";
-    *(logger.flog(LogLevel::Info, __FILE__, __LINE__))
-        << "This is an info message";
-    *(logger.flog(LogLevel::Warning, __FILE__, __LINE__))
-        << "This is a warning message";
-    *(logger.flog(LogLevel::Error, __FILE__, __LINE__))
-        << "This is an error message";
-    *(logger.flog(LogLevel::Fatal, __FILE__, __LINE__))
-        << "This is a fatal message";
+    ASSERT_NO_THROW(
+        Logger::getInstance().log(LogLevel::Debug, __FILE__, __LINE__));
 }
 
 TEST(testLogger, testLogLevels) {
@@ -71,98 +45,53 @@ TEST(testLogger, testLogLevels) {
 }
 
 TEST(testLogger, testMacros) {
-    LOG_D << "This is a debug message";
-    LOG_I << "This is an info message";
-    LOG_W << "This is a warning message";
-    LOG_E << "This is an error message";
-    LOG_F << "This is a fatal message";
+    LOG_D("This is a debug message");
+    LOG_I("This is an info message");
+    LOG_W("This is a warning message");
+    LOG_E("This is an error message");
+    LOG_F("This is a fatal message");
 
-    FLOG_D << "This is a debug message";
-    FLOG_I << "This is an info message";
-    FLOG_W << "This is a warning message";
-    FLOG_E << "This is an error message";
-    FLOG_F << "This is a fatal message";
+    FLOG_D("This is a debug message");
+    FLOG_I("This is an info message");
+    FLOG_W("This is a warning message");
+    FLOG_E("This is an error message");
+    FLOG_F("This is a fatal message");
 
     LOG_LVL(LogLevel::Fatal);
-    LOG_D << "This message should not appear";
+    LOG_D("This message should not appear");
 }
 
-TEST(testLog, testConstructor) {
-    Log* log = new Log(std::cout, LogLevel::Info, "test.cpp", 42);
-    (*log) << "Log message";
-    delete log;
+TEST(testFormatter, testDebug) {
+    std::string str = Logger::Formatter::debug("file", 1);
+    EXPECT_NE(str.find("DEBUG"), std::string::npos);
+    EXPECT_NE(str.find("file"), std::string::npos);
+    EXPECT_NE(str.find("1"), std::string::npos);
 }
 
-TEST(testLog, testLoggerWithSmt) {
-    *(smt::make_shared(new Log(std::cout, LogLevel::Info, "test.cpp", 42)))
-        << "Testing with smts";
-
-    Log log(std::cout, LogLevel::Info, "test.cpp", 42);
-    log << "supposed to happen after";
-    std::cout << "Supposed to happen before the log" << std::endl;
+TEST(testFormatter, testInfo) {
+    std::string str = Logger::Formatter::info("file", 1);
+    EXPECT_NE(str.find("INFO"), std::string::npos);
+    EXPECT_NE(str.find("file"), std::string::npos);
+    EXPECT_NE(str.find("1"), std::string::npos);
 }
 
-TEST(testLog, testDebug) {
-    std::ostringstream oss;
-
-    Log* log = new Log(oss, LogLevel::Debug, "test.cpp", 42);
-    (*log) << "Log message";
-    delete log;
-
-    EXPECT_NE(oss.str().find("DEBUG"), std::string::npos);
-    EXPECT_NE(oss.str().find("test.cpp"), std::string::npos);
-    EXPECT_NE(oss.str().find("Log message"), std::string::npos);
-    EXPECT_NE(oss.str().find("42"), std::string::npos);
+TEST(testFormatter, testWarning) {
+    std::string str = Logger::Formatter::warning("file", 1);
+    EXPECT_NE(str.find("WARNING"), std::string::npos);
+    EXPECT_NE(str.find("file"), std::string::npos);
+    EXPECT_NE(str.find("1"), std::string::npos);
 }
 
-TEST(testLog, testInfo) {
-    std::ostringstream oss;
-
-    Log* log = new Log(oss, LogLevel::Info, "test.cpp", 42);
-    (*log) << "Log message";
-    delete log;
-
-    EXPECT_NE(oss.str().find("INFO"), std::string::npos);
-    EXPECT_NE(oss.str().find("test.cpp"), std::string::npos);
-    EXPECT_NE(oss.str().find("Log message"), std::string::npos);
-    EXPECT_NE(oss.str().find("42"), std::string::npos);
+TEST(testFormatter, testError) {
+    std::string str = Logger::Formatter::error("file", 1);
+    EXPECT_NE(str.find("ERROR"), std::string::npos);
+    EXPECT_NE(str.find("file"), std::string::npos);
+    EXPECT_NE(str.find("1"), std::string::npos);
 }
 
-TEST(testLog, testWarning) {
-    std::ostringstream oss;
-
-    Log* log = new Log(oss, LogLevel::Warning, "test.cpp", 42);
-    (*log) << "Log message";
-    delete log;
-
-    EXPECT_NE(oss.str().find("WARNING"), std::string::npos);
-    EXPECT_NE(oss.str().find("test.cpp"), std::string::npos);
-    EXPECT_NE(oss.str().find("Log message"), std::string::npos);
-    EXPECT_NE(oss.str().find("42"), std::string::npos);
-}
-
-TEST(testLog, testError) {
-    std::ostringstream oss;
-
-    Log* log = new Log(oss, LogLevel::Error, "test.cpp", 42);
-    (*log) << "Log message";
-    delete log;
-
-    EXPECT_NE(oss.str().find("ERROR"), std::string::npos);
-    EXPECT_NE(oss.str().find("test.cpp"), std::string::npos);
-    EXPECT_NE(oss.str().find("Log message"), std::string::npos);
-    EXPECT_NE(oss.str().find("42"), std::string::npos);
-}
-
-TEST(testLog, testFatal) {
-    std::ostringstream oss;
-
-    Log* log = new Log(oss, LogLevel::Fatal, "test.cpp", 42);
-    (*log) << "Log message";
-    delete log;
-
-    EXPECT_NE(oss.str().find("FATAL"), std::string::npos);
-    EXPECT_NE(oss.str().find("test.cpp"), std::string::npos);
-    EXPECT_NE(oss.str().find("Log message"), std::string::npos);
-    EXPECT_NE(oss.str().find("42"), std::string::npos);
+TEST(testFormatter, testFatal) {
+    std::string str = Logger::Formatter::fatal("file", 1);
+    EXPECT_NE(str.find("FATAL"), std::string::npos);
+    EXPECT_NE(str.find("file"), std::string::npos);
+    EXPECT_NE(str.find("1"), std::string::npos);
 }

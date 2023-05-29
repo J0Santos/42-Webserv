@@ -1,6 +1,7 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "utils/ft_exceptions.hpp"
 #include "utils/smt.hpp"
 
 #include <fstream>
@@ -14,52 +15,27 @@ enum level_t { Debug, Info, Warning, Error, Fatal, None };
 
 }
 
-class Log {
-    public:
-
-        Log(std::ostream& os, LogLevel::level_t level = LogLevel::Debug,
-            std::string filename = __FILE__, int line = __LINE__);
-        ~Log(void);
-
-        template<typename T>
-        Log& operator<<(T const& value) {
-            if (m_lvl == LogLevel::None) { return (*this); }
-            m_buf << value;
-            return (*this);
-        }
-
-    private:
-
-        std::string const debug(void) const;
-        std::string const info(void) const;
-        std::string const warning(void) const;
-        std::string const error(void) const;
-        std::string const fatal(void) const;
-
-        LogLevel::level_t  m_lvl;
-        std::ostream&      m_out;
-        std::string        m_file;
-        int                m_line;
-        std::ostringstream m_buf;
-};
-
 class Logger {
     public:
 
         static Logger& getInstance(void);
 
-        int  getLevel(void) const;
+        int            getLevel(void) const;
+        std::ofstream& getFile(void);
+
         void setLevel(LogLevel::level_t level);
         void setFile(std::string filename);
 
-        smt::shared_ptr<Log> log(LogLevel::level_t lvl, std::string filename,
-                                 int line);
+        std::string log(LogLevel::level_t lvl, std::string filename, int line);
 
-        smt::shared_ptr<Log> flog(LogLevel::level_t lvl, std::string filename,
-                                  int line);
+        class Formatter {
+            public:
 
-        struct InvalidFileException : public std::exception {
-                char const* what() const throw();
+                static std::string const debug(std::string file, int line);
+                static std::string const info(std::string file, int line);
+                static std::string const warning(std::string file, int line);
+                static std::string const error(std::string file, int line);
+                static std::string const fatal(std::string file, int line);
         };
 
     private:
@@ -72,23 +48,32 @@ class Logger {
         std::ofstream     m_file;
 };
 
-#define LOG_LVL(L) Logger::getInstance().setLevel(L)
+#define LOG_LVL(L)  Logger::getInstance().setLevel(L)
+#define LOG_FILE(F) Logger::getInstance().setFile(F)
 
-#define LOG_D *(Logger::getInstance().log(LogLevel::Debug, __FILE__, __LINE__))
-#define LOG_I *(Logger::getInstance().log(LogLevel::Info, __FILE__, __LINE__))
-#define LOG_W                                                                  \
-    *(Logger::getInstance().log(LogLevel::Warning, __FILE__, __LINE__))
-#define LOG_E *(Logger::getInstance().log(LogLevel::Error, __FILE__, __LINE__))
-#define LOG_F *(Logger::getInstance().log(LogLevel::Fatal, __FILE__, __LINE__))
+#define LOG(M, L)                                                              \
+    if (Logger::getInstance().getLevel() <= L) {                               \
+        std::cout << Logger::getInstance().log(L, __FILE__, __LINE__) << M     \
+                  << std::endl;                                                \
+    }
 
-#define FLOG_D                                                                 \
-    *(Logger::getInstance().flog(LogLevel::Debug, __FILE__, __LINE__))
-#define FLOG_I *(Logger::getInstance().flog(LogLevel::Info, __FILE__, __LINE__))
-#define FLOG_W                                                                 \
-    *(Logger::getInstance().flog(LogLevel::Warning, __FILE__, __LINE__))
-#define FLOG_E                                                                 \
-    *(Logger::getInstance().flog(LogLevel::Error, __FILE__, __LINE__))
-#define FLOG_F                                                                 \
-    *(Logger::getInstance().flog(LogLevel::Fatal, __FILE__, __LINE__))
+#define FLOG(M, L)                                                             \
+    if (Logger::getInstance().getLevel() <= L) {                               \
+        Logger::getInstance().getFile()                                        \
+            << Logger::getInstance().log(L, __FILE__, __LINE__) << M           \
+            << std::endl;                                                      \
+    }
+
+#define LOG_D(M) LOG(M, LogLevel::Debug)
+#define LOG_I(M) LOG(M, LogLevel::Info)
+#define LOG_W(M) LOG(M, LogLevel::Warning)
+#define LOG_E(M) LOG(M, LogLevel::Error)
+#define LOG_F(M) LOG(M, LogLevel::Fatal)
+
+#define FLOG_D(M) FLOG(M, LogLevel::Debug)
+#define FLOG_I(M) FLOG(M, LogLevel::Info)
+#define FLOG_W(M) FLOG(M, LogLevel::Warning)
+#define FLOG_E(M) FLOG(M, LogLevel::Error)
+#define FLOG_F(M) FLOG(M, LogLevel::Fatal)
 
 #endif /* LOGGER_HPP */
