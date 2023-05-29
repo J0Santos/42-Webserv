@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME}
   testLogger.cpp
   testMethods.cpp
   testRequest.cpp
+  testRoute.cpp
   testSmt.cpp
   testString.cpp
   testUri.cpp
