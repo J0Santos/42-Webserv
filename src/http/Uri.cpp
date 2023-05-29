@@ -37,4 +37,13 @@ Uri::Uri(std::string const& uri) {
 
 Uri::~Uri(void) {}
 
+std::string Uri::getScheme(void) const { return (m_scheme); }
+
+std::string Uri::getHost(void) const { return (m_host); }
+
+std::string Uri::getPort(void) const { return (m_port); }
+
+ft::file Uri::getPath(void) const { return (m_path); }
+
+std::string Uri::getQuery(void) const { return (m_query); }
 } // namespace http

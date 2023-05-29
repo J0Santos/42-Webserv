@@ -15,6 +15,14 @@ class Uri {
         Uri(std::string const& uri);
         ~Uri(void);
 
+        std::string getScheme(void) const;
+        std::string getHost(void) const;
+        std::string getPort(void) const;
+        ft::file    getPath(void) const;
+        std::string getQuery(void) const;
+
+    private:
+
         // std::string m_target;
         std::string m_scheme;
         std::string m_host;
