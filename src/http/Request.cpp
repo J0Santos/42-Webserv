@@ -52,7 +52,21 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
     // if (reqStr.size() > endPos + 4) { m_body = reqStr.substr(endPos + 4); }
 }
 
+Request::Request(Request const& src) { *this = src; }
+
 Request::~Request(void) {}
+
+Request& Request::operator=(Request const& rhs) {
+    if (this != &rhs) {
+        m_method = rhs.m_method;
+        m_version = rhs.m_version;
+        m_headers = rhs.m_headers;
+        m_body = rhs.m_body;
+        m_uri = rhs.m_uri;
+        m_reqStr = rhs.m_reqStr;
+    }
+    return (*this);
+}
 
 Method const& Request::getMethod(void) const { return (m_method); }
 
