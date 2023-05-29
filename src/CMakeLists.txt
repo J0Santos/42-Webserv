@@ -1,6 +1,7 @@
 project(webserv_lib)
 
 add_library(${PROJECT_NAME} STATIC
+  http/Uri.cpp
   utils/ft_exceptions.cpp
   utils/ft_filesystem.cpp
   utils/ft_string.cpp
