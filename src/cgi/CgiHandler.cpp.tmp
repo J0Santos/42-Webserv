@@ -5,10 +5,10 @@ namespace cgi {
 CgiHandler::CgiHandler(http::Request const& request, http::Route const& route)
     : m_request(request), m_envp(NULL), m_argv(NULL), m_path(NULL) {
     Envp     envp(request, route);
-    ft::file script = envp.get("PATH_TRANSLATED");
-    setPath(script.getDirectory());
+    ft::file script = "/usr/bin/python3";
+    setPath(script);
     setEnvp(envp);
-    setArgv(script.getDirectory(), script);
+    setArgv(script, envp.get("SCRIPT_FILENAME"));
 }
 
 CgiHandler::~CgiHandler(void) {
@@ -20,17 +20,17 @@ CgiHandler::~CgiHandler(void) {
 }
 
 std::pair<std::string, int> CgiHandler::run(void) {
-    // validate path
-    ft::directory path = getPath();
-    if (!path.isValid()) {
-        LOG_E("Invalid path: " << path);
-        return (std::make_pair("", 404));
-    }
-    ft::file script = m_argv[1];
-    if (!script.isValid()) {
-        LOG_E("Invalid script: " << script);
-        return (std::make_pair("", 404));
-    }
+    // // validate path
+    // ft::directory path = getPath();
+    // if (!path.isValid()) {
+    //     LOG_E("Invalid path: " << path);
+    //     return (std::make_pair("", 404));
+    // }
+    // ft::file script = m_argv[1];
+    // if (!script.isValid()) {
+    //     LOG_E("Invalid script: " << script);
+    //     return (std::make_pair("", 404));
+    // }
 
     LOG_D("Executing CGI script");
     LOG_D("path: " << getPath());

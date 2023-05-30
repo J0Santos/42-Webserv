@@ -1,3 +1,4 @@
+#include "cgi/Cgi.hpp"
 #include "utils/Logger.hpp"
 
 int main(int argc, char const* argv[]) {
