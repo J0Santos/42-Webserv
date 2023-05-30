@@ -23,11 +23,13 @@ add_executable(${PROJECT_NAME}
   testArray.cpp
   testCgiHandler.cpp
   testEnvp.cpp
+  testErrorCode.cpp
   testFileSystem.cpp
   testHost.cpp
   testLogger.cpp
   testMethods.cpp
   testRequest.cpp
+  testResponse.cpp
   testRoute.cpp
   testSmt.cpp
   testString.cpp

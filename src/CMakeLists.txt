@@ -4,8 +4,10 @@ add_library(${PROJECT_NAME} STATIC
   cgi/Argc.cpp
   cgi/Envp.cpp
   cgi/CgiHandler.cpp
+  http/ErrorCode.cpp
   http/methods.cpp
   http/Request.cpp
+  http/Response.cpp
   http/Uri.cpp
   utils/ft_array.cpp
   utils/ft_exceptions.cpp
