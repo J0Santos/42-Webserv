@@ -2,7 +2,8 @@ project(webserv_lib)
 
 add_library(${PROJECT_NAME} STATIC
   cgi/Argc.cpp
-  cgi/Cgi.cpp
+  cgi/Envp.cpp
+  cgi/CgiHandler.cpp
   http/methods.cpp
   http/Request.cpp
   http/Uri.cpp

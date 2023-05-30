@@ -15,6 +15,6 @@ Argc& Argc::operator=(Argc const& rhs) {
     return (*this);
 }
 
-Argc::operator char**(void) const { return (m_argc); }
+Argc::operator char**(void) const { return (ft::array(m_argc)); }
 
 } // namespace cgi

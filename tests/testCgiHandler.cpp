@@ -1,4 +1,4 @@
-#include "cgi/Cgi.hpp"
+#include "cgi/CgiHandler.hpp"
 #include "utils/Logger.hpp"
 
 #include <gtest/gtest.h>
@@ -58,7 +58,7 @@ TEST(testCgi, testingRequestToIndex) {
         {"/usr/bin/python3", "./websites/cgi/python/index.py"});
 
     char** envp = vectorToCharPointerArray(
-        {"REQUEST_METHOD=GET", "SCRIPT_FILENAME=./websites/cgi/python/index.py",
+        {"REQUEST_METHOD=GET", "SCRIPT_NAME=./websites/cgi/python/index.py",
          "HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1234.56 "
          "Safari/537.36"});
@@ -79,7 +79,7 @@ TEST(testCgi, testingCreatingAFile) {
 
     char** envp = vectorToCharPointerArray(
         {"REQUEST_METHOD=POST", "CONTENT_LENGTH=12", "CONTENT_TYPE=text/plain",
-         "SCRIPT_FILENAME=./websites/cgi/python/createFile.py",
+         "SCRIPT_NAME=./websites/cgi/python/createFile.py",
          "HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1234.56 "
          "Safari/537.36"});
@@ -97,7 +97,7 @@ TEST(testCgi, testingTestFile) {
 
     char** envp = vectorToCharPointerArray(
         {"REQUEST_METHOD=POST", "CONTENT_LENGTH=12", "CONTENT_TYPE=text/plain",
-         "SCRIPT_FILENAME=./websites/cgi/python/test.py",
+         "SCRIPT_NAME=./websites/cgi/python/test.py",
          "HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1234.56 "
          "Safari/537.36",

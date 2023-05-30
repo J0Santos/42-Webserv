@@ -21,7 +21,7 @@ class Argc {
 
     private:
 
-        ft::array m_argc;
+        std::vector<std::string> m_argc;
 };
 
 } // namespace cgi

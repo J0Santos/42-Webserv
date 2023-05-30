@@ -1,4 +1,4 @@
-#include "cgi/Cgi.hpp"
+#include "cgi/CgiHandler.hpp"
 
 #include "utils/Logger.hpp"
 

@@ -50,7 +50,7 @@ TEST(testRoute, testRoutingRequestWithSlashAndSlashInTarget) {
     //           "python/index.py");
 }
 
-TEST(testRoute, testRoutingRequestWithSlashAndSlashInTarget) {
+TEST(testRoute, testRoutingBasic) {
     http::Route route("/", "./websites/cgi/python");
     ASSERT_EQ(route.getTarget(), "/") << route.getTarget();
     ASSERT_EQ(route.getRoot(), "./websites/cgi/python/") << route.getRoot();
