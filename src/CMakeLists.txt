@@ -1,7 +1,8 @@
 project(webserv_lib)
 
 add_library(${PROJECT_NAME} STATIC
-  config/directives/Listen.cpp
+  config/Line.cpp
+  config/Parser.cpp
   http/methods.cpp
   http/Request.cpp
   http/Uri.cpp

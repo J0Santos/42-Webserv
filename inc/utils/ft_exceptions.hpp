@@ -13,10 +13,6 @@ struct FailedToOpenFileException : public std::exception {
         char const* what(void) const throw();
 };
 
-struct InvalidSyntaxException : public std::exception {
-        char const* what(void) const throw();
-};
-
 } // namespace ft
 
 #endif /* FT_EXCEPTIONS_HPP */

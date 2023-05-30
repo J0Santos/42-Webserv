@@ -22,8 +22,10 @@ add_executable(${PROJECT_NAME}
   testDirectives.cpp
   testFileSystem.cpp
   # testHost.cpp
+  testLine.cpp
   testLogger.cpp
   testMethods.cpp
+  testParser.cpp
   testRequest.cpp
   testRoute.cpp
   testSmt.cpp
