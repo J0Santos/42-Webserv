@@ -25,7 +25,7 @@ class Request {
 
         std::string const& getMethod(void) const;
         std::string const& getVersion(void) const;
-        std::string const& getHeader(std::string const& key) const;
+        std::string const  getHeader(std::string const& key) const;
         std::string const& getBody(void) const;
 
         std::string getScheme(void) const;
