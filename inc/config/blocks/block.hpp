@@ -5,7 +5,6 @@
 #include "http/methods.hpp"
 #include "utils/ft_filesystem.hpp"
 
-#include <map>
 #include <string>
 
 namespace config {
@@ -28,7 +27,9 @@ struct block {
         std::map<int, ft::file>       m_error_pages;
         unsigned                      m_max_body_size;
         std::vector<http::MethodType> m_allowed_methods;
-        std::map<std::string, route > m_routes;
+        std::vector<route>            m_routes;
+
+        bool m_closed;
 };
 
 } // namespace config

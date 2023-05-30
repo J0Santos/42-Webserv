@@ -16,6 +16,7 @@ TEST(testBlock, testConstructor) {
     EXPECT_EQ(b1.m_max_body_size, 0);
     EXPECT_EQ(b1.m_allowed_methods.size(), 0);
     EXPECT_EQ(b1.m_routes.size(), 0);
+    EXPECT_FALSE(b1.m_closed);
 
     EXPECT_EQ(b1, b2);
     EXPECT_EQ(b1, b3);
@@ -35,6 +36,7 @@ TEST(testRoute, testConstructor) {
     EXPECT_EQ(r1.m_autoindex, false);
     EXPECT_EQ(r1.m_index, "");
     EXPECT_EQ(r1.m_cgi_extension, "");
+    EXPECT_FALSE(r1.m_closed);
 
     EXPECT_EQ(r1, r2);
     EXPECT_EQ(r1, r3);
