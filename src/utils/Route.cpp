@@ -31,10 +31,7 @@ ft::directory const& Route::getRoot(void) const { return (m_root); }
 
 std::string Route::route(std::string const& path) const {
     std::string const& target = ft::directory(m_target);
-    LOG_D("target: " << target);
-    LOG_D("path: " << path);
-    LOG_D("root: " << m_root);
-    std::string str = path;
+    std::string        str = path;
     str.replace(0, target.size(), m_root);
     return (str);
 }

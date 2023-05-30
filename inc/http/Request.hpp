@@ -23,9 +23,9 @@ class Request {
 
         Request& operator=(Request const& rhs);
 
-        Method const&      getMethod(void) const;
-        Version const&     getVersion(void) const;
-        std::string const& getHeader(std::string const& key) const;
+        std::string const& getMethod(void) const;
+        std::string const& getVersion(void) const;
+        std::string const  getHeader(std::string const& key) const;
         std::string const& getBody(void) const;
 
         std::string getScheme(void) const;
@@ -42,8 +42,8 @@ class Request {
 
     private:
 
-        Method                             m_method;
-        Version                            m_version;
+        std::string                        m_method;
+        std::string                        m_version;
         std::map<std::string, std::string> m_headers;
         std::string                        m_body;
         smt::shared_ptr<Uri>               m_uri;

@@ -2,7 +2,7 @@
 
 namespace http {
 
-Method convertMethod(std::string const& methodStr) {
+MethodType convertMethod(std::string const& methodStr) {
     if (methodStr == "GET") { return (GET); }
     if (methodStr == "HEAD") { return (HEAD); }
     if (methodStr == "POST") { return (POST); }
