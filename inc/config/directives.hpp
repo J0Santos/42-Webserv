@@ -42,6 +42,8 @@ struct DirectiveTypeTraits<Block> {
             (void)args;
         }
 
+        std::string const getName(void) const { return ("Block"); }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (false); }
@@ -64,6 +66,8 @@ struct DirectiveTypeTraits<Route> {
             // TODO
             (void)args;
         }
+
+        std::string const getName(void) const { return ("Route"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -91,6 +95,8 @@ struct DirectiveTypeTraits<End> {
             // TODO
             (void)args;
         }
+
+        std::string const getName(void) const { return ("End"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -124,6 +130,8 @@ struct DirectiveTypeTraits<Listen> {
             else { m_host = args[1]; }
             m_valid = true;
         }
+
+        std::string const getName(void) const { return ("Listen"); }
 
         bool isValid(void) const { return (m_valid); }
 

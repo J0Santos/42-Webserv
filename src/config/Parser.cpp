@@ -9,13 +9,16 @@
 
 namespace config {
 
-Parser::Parser(ft::file filename) : m_line(), m_pos(0) {
+Parser::Parser(ft::file filename) : m_line(), m_pos(0), m_status(InNone) {
     if (!filename.isValid()) { throw ft::InvalidFileException(); }
     m_file.open(std::string(filename).c_str());
     if (!m_file.is_open()) { throw ft::FailedToOpenFileException(); }
 }
 
-Parser::~Parser(void) { m_file.close(); }
+Parser::~Parser(void) {
+    m_file.close();
+    if (m_status != InNone) { error(); }
+}
 
 bool Parser::nextLine(void) {
     if (m_file.eof()) {
@@ -39,11 +42,25 @@ void Parser::error(void) const {
 template<LineType T>
 void Parser::parseLine(std::vector<std::string> const& args) {
     DirectiveTypeTraits<T> directive;
+
     // validate directive placement
+    if (m_status == InNone &&
+        (directive.isRouteDirective() || directive.isBlockDirective())) {
+        error();
+    }
+    if (m_status == InBlock && !directive.isBlockDirective()) { error(); }
+    if (m_status == InRoute && !directive.isRouteDirective()) { error(); }
+
     // if (directive.isBlockDirective()) {}
     directive.parse(args);
     if (!directive.isValid()) { error(); }
     directive.extract(m_blocks);
+
+    if (typeid(T) == typeid(Block)) { m_status = InBlock; }
+    else if (typeid(T) == typeid(Route)) { m_status = InRoute; }
+    else if (typeid(T) == typeid(End)) {
+        m_status = (m_status == InRoute) ? InBlock : InNone;
+    }
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {

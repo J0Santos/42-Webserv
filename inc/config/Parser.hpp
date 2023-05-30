@@ -32,9 +32,18 @@ class Parser {
 
     private:
 
-        std::string   m_line;
+        enum StatusType {
+            InBlock,
+            InRoute,
+            InNone,
+        };
+
+        std::string m_line;
+
         size_t        m_pos;
         std::ifstream m_file;
+
+        StatusType m_status;
 
         std::vector<block> m_blocks;
 };

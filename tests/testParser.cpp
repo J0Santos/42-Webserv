@@ -44,7 +44,14 @@ TEST_F(testParser, testError) {
 
 TEST_F(testParser, testParseLine) {
     config::Parser parser("test.conf");
-    ASSERT_NO_THROW(parser.parseLine<config::Listen>({"listen", "80"}));
+    ASSERT_THROW(parser.parseLine<config::Listen>({"listen", "80"}),
+                 config::Parser::InvalidSyntaxException);
+
+    ASSERT_NO_THROW(parser.parseLine<config::Block>({"server", "{"}));
+    ASSERT_THROW(parser.parseLine<config::Block>({"server", "{"}),
+                 config::Parser::InvalidSyntaxException);
+
     ASSERT_THROW(parser.parseLine<config::Listen>({"listen", "80", "80"}),
                  config::Parser::InvalidSyntaxException);
+    ASSERT_NO_THROW(parser.parseLine<config::Listen>({"listen", "80"}));
 }
