@@ -16,8 +16,9 @@ class string {
         static std::string trim(std::string const& str);
         static std::string removeTrailingComma(std::string const& str);
 
-        static bool isnumeric(std::string const& str);
-        static int  stoi(std::string const& str);
+        static bool          isnumeric(std::string const& str);
+        static int           stoi(std::string const& str);
+        static unsigned long stoul(std::string const& str);
 };
 
 } // namespace ft

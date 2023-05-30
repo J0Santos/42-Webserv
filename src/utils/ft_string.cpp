@@ -55,4 +55,12 @@ int string::stoi(std::string const& str) {
     return ((str[0] == '-') ? -result : result);
 }
 
+unsigned long string::stoul(std::string const& str) {
+    unsigned long result = 0;
+    for (size_t i = 0; i < str.size(); ++i) {
+        result = result * 10 + (str[i] - '0');
+    }
+    return (result);
+}
+
 } // namespace ft
