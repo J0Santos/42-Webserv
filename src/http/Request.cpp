@@ -76,7 +76,8 @@ std::string const& Request::getMethod(void) const { return (m_method); }
 
 std::string const& Request::getVersion(void) const { return (m_version); }
 
-std::string const& Request::getHeader(std::string const& key) const {
+std::string const Request::getHeader(std::string const& key) const {
+    if (m_headers.find(key) == m_headers.end()) { return (""); }
     return (m_headers.at(key));
 }
 

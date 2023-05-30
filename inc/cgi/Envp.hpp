@@ -22,9 +22,6 @@ class Envp {
 
     private:
 
-        std::vector<std::string>
-            splitInfoFromPath(std::string const& path) const;
-
         std::map<std::string, std::string> m_envp;
 };
 

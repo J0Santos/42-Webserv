@@ -1,5 +1,6 @@
 #include "cgi/Envp.hpp"
 
+#include "cgi/Cgi.hpp"
 #include "http/Request.hpp"
 
 namespace cgi {
@@ -24,18 +25,15 @@ Envp::Envp(http::Request const& request, http::Route const& route) {
 
     // TODO: check this tommorrow
     std::vector<std::string> subs = splitInfoFromPath(request.getPath());
-    fillEnvp("PATH_INFO", subs.at(1));
     fillEnvp("SCRIPT_NAME", subs.at(0));
+    fillEnvp("PATH_INFO", subs.at(1));
 }
 
 Envp::~Envp(void) {}
 
-std::string Envp::get(std::string const& key) const { return (m_envp.at(key)); }
-
-std::vector<std::string>
-    Envp::splitInfoFromPath(std::string const& path) const {
-    std::vector<std::string> subs;
-    return (subs);
+std::string Envp::get(std::string const& key) const {
+    if (m_envp.find(key) == m_envp.end()) { return (""); }
+    return (m_envp.at(key));
 }
 
 } // namespace cgi
