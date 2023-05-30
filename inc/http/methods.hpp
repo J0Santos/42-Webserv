@@ -17,16 +17,15 @@ typedef enum {
     PATCH,
     INVALID,
     UNKNOWN_METHOD,
-} Method;
+} MethodType;
 
 typedef enum {
     HTTP_1_1,
     UNKNOWN_VERSION,
 } Version;
 
-Method convertMethod(std::string const& methodStr);
-
-Version convertVersion(std::string const& versionStr);
+MethodType convertMethod(std::string const& methodStr);
+Version    convertVersion(std::string const& versionStr);
 
 } // namespace http
 

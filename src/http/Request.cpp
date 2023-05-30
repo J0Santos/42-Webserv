@@ -68,7 +68,7 @@ Request& Request::operator=(Request const& rhs) {
     return (*this);
 }
 
-Method const& Request::getMethod(void) const { return (m_method); }
+MethodType const& Request::getMethod(void) const { return (m_method); }
 
 Version const& Request::getVersion(void) const { return (m_version); }
 
