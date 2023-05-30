@@ -38,7 +38,7 @@ class directory {
         std::string m_dir;
 };
 
-std::ostream& operator<<(std::ostream& os, directory const& dir);
+std::ostream& operator<<(std::ostream& os, directory const& rhs);
 
 class file {
     public:
@@ -71,7 +71,7 @@ class file {
         std::string m_file;
 };
 
-std::ostream& operator<<(std::ostream& os, file const& file);
+std::ostream& operator<<(std::ostream& os, file const& rhs);
 
 } // namespace ft
 

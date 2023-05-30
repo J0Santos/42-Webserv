@@ -145,9 +145,9 @@ TEST(testFile, testGetExtension) {
 
     EXPECT_EQ(file1.getExtension(), "");
     EXPECT_EQ(file2.getExtension(), "");
-    EXPECT_EQ(file3.getExtension(), "txt");
-    EXPECT_EQ(file4.getExtension(), "gz");
-    EXPECT_EQ(file5.getExtension(), "tmp");
+    EXPECT_EQ(file3.getExtension(), ".txt");
+    EXPECT_EQ(file4.getExtension(), ".gz");
+    EXPECT_EQ(file5.getExtension(), ".tmp");
 }
 
 TEST(testFile, testGetDirectory) {

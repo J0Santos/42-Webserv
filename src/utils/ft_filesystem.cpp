@@ -164,7 +164,7 @@ std::string file::getExtension(void) const {
     std::string              ext;
     std::vector<std::string> subs = ft::string::split(m_file, ".");
 
-    if (subs.size() > 1) { ext = subs[subs.size() - 1]; }
+    if (subs.size() > 1) { ext = "." + subs[subs.size() - 1]; }
     return (ext);
 }
 

@@ -1,13 +1,19 @@
 project(webserv_lib)
 
 add_library(${PROJECT_NAME} STATIC
+  cgi/Argc.cpp
+  cgi/Envp.cpp
+  cgi/CgiHandler.cpp
   config/Line.cpp
   config/blocks/block.cpp
   config/blocks/route.cpp
   config/Parser.cpp
+  http/ErrorCode.cpp
   http/methods.cpp
   http/Request.cpp
+  http/Response.cpp
   http/Uri.cpp
+  utils/ft_array.cpp
   utils/ft_exceptions.cpp
   utils/ft_filesystem.cpp
   utils/ft_string.cpp

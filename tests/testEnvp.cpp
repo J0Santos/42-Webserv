@@ -1,0 +1,37 @@
+#include "cgi/Envp.hpp"
+
+#include <gtest/gtest.h>
+
+TEST(testEnvp, testBasic) {
+    http::Request req("POST "
+                      "/cgi/myscript.py HTTP/1.1\r\n"
+                      "Host: example.com\r\n"
+                      "Accept-Encoding: gzip, deflate, br\r\n"
+                      "Accept-Language: en-US,en;q=0.9\r\n"
+                      "Connection: keep-alive\r\n\r\n");
+    cgi::Envp     envp(req);
+    char**        c_envp = envp;
+    EXPECT_STREQ(c_envp[0], "REQUEST_METHOD=POST");
+    EXPECT_STREQ(c_envp[1], "SCRIPT_NAME=/cgi/myscript.py");
+    EXPECT_TRUE(!c_envp[2]);
+}
+
+TEST(testEnvp, testMoreComplete) {
+    http::Request req("GET "
+                      "/cgi/myscript.py?param1=value1&param2=value2 "
+                      "HTTP/1.1\r\n"
+                      "Host: example.com\r\n"
+                      "Content-Type: text/html\r\n"
+                      "Content-Length: 0\r\n"
+                      "Accept-Encoding: gzip, deflate, br\r\n"
+                      "Accept-Language: en-US,en;q=0.9\r\n"
+                      "Connection: keep-alive\r\n\r\n");
+    cgi::Envp     envp(req);
+    char**        c_envp = envp;
+    EXPECT_STREQ(c_envp[0], "REQUEST_METHOD=GET");
+    EXPECT_STREQ(c_envp[1], "SCRIPT_NAME=/cgi/myscript.py");
+    EXPECT_STREQ(c_envp[2], "QUERY_STRING=param1=value1&param2=value2");
+    EXPECT_STREQ(c_envp[3], "CONTENT_LENGTH=0");
+    EXPECT_STREQ(c_envp[4], "CONTENT_TYPE=text/html");
+    EXPECT_TRUE(!c_envp[5]);
+}
