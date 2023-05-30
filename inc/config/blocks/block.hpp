@@ -28,7 +28,7 @@ struct block {
         std::map<int, ft::file>       m_error_pages;
         unsigned                      m_max_body_size;
         std::vector<http::MethodType> m_allowed_methods;
-        std::map<std::string, route > m_location;
+        std::map<std::string, route > m_routes;
 };
 
 } // namespace config

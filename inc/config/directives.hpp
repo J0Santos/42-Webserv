@@ -1,6 +1,7 @@
 #ifndef CONFIG_DIRECTIVES_HPP
 #define CONFIG_DIRECTIVES_HPP
 
+#include "config/blocks/block.hpp"
 #include "utils/ft_string.hpp"
 
 #include <string>
@@ -47,7 +48,7 @@ struct DirectiveTypeTraits<Block> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(void* dest);
+        void extract(std::vector<block> blocks) { blocks.push_back(block()); }
 
         bool m_valid;
 };
@@ -70,9 +71,13 @@ struct DirectiveTypeTraits<Route> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(void* dest);
+        void extract(std::vector<block> blocks) {
+            blocks.back().m_routes.insert(
+                std::make_pair(m_target, route(m_target)));
+        }
 
-        bool m_valid;
+        bool        m_valid;
+        std::string m_target;
 };
 
 template<>
@@ -93,7 +98,7 @@ struct DirectiveTypeTraits<End> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(void* dest);
+        void extract(std::vector<block> blocks) { (void)blocks; }
 
         bool m_valid;
 };
@@ -126,7 +131,10 @@ struct DirectiveTypeTraits<Listen> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(void* dest);
+        void extract(std::vector<block> blocks) {
+            blocks.back().m_host = m_host;
+            blocks.back().m_port = m_port;
+        }
 
         bool m_valid;
 

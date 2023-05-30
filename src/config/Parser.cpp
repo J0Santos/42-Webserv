@@ -43,7 +43,7 @@ void Parser::parseLine(std::vector<std::string> const& args) {
     // if (directive.isBlockDirective()) {}
     directive.parse(args);
     if (!directive.isValid()) { error(); }
-    // directive.extract();
+    directive.extract(m_blocks);
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {

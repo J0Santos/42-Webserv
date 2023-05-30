@@ -15,7 +15,7 @@ TEST(testBlock, testConstructor) {
     EXPECT_EQ(b1.m_error_pages.size(), 0);
     EXPECT_EQ(b1.m_max_body_size, 0);
     EXPECT_EQ(b1.m_allowed_methods.size(), 0);
-    EXPECT_EQ(b1.m_location.size(), 0);
+    EXPECT_EQ(b1.m_routes.size(), 0);
 
     EXPECT_EQ(b1, b2);
     EXPECT_EQ(b1, b3);

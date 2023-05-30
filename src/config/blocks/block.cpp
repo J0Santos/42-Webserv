@@ -17,7 +17,7 @@ block& block::operator=(block const& rhs) {
         m_error_pages = rhs.m_error_pages;
         m_max_body_size = rhs.m_max_body_size;
         m_allowed_methods = rhs.m_allowed_methods;
-        m_location = rhs.m_location;
+        m_routes = rhs.m_routes;
     }
     return *this;
 }
@@ -28,7 +28,7 @@ bool block::operator==(block const& rhs) const {
             m_error_pages == rhs.m_error_pages &&
             m_max_body_size == rhs.m_max_body_size &&
             m_allowed_methods == rhs.m_allowed_methods &&
-            m_location == rhs.m_location);
+            m_routes == rhs.m_routes);
 }
 
 } // namespace config
