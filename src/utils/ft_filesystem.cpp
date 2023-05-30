@@ -83,7 +83,7 @@ std::ostream& operator<<(std::ostream& os, directory const& dir) {
 }
 
 /* file */
-file::file(void) : m_file(".") {}
+file::file(void) {}
 
 file::file(char const* s) : m_file(s) {}
 

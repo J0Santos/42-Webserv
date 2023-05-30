@@ -19,6 +19,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../inc/)
 
 add_executable(${PROJECT_NAME}
   test.cpp
+  testBlocks.cpp
   testDirectives.cpp
   testFileSystem.cpp
   # testHost.cpp

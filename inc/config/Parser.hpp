@@ -1,6 +1,7 @@
 #ifndef CONFIG_PARSER_HPP
 #define CONFIG_PARSER_HPP
 
+#include "config/blocks/block.hpp"
 #include "config/directives.hpp"
 #include "utils/ft_filesystem.hpp"
 
@@ -34,6 +35,8 @@ class Parser {
         std::string   m_line;
         size_t        m_pos;
         std::ifstream m_file;
+
+        std::vector<block> m_blocks;
 };
 
 void parse(ft::file const& filename);

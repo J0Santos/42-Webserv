@@ -79,7 +79,7 @@ TEST(testFile, testConstructor) {
     ft::file file2("file");
     ft::file file3(ft::file("file"));
 
-    EXPECT_EQ(file1, ".");
+    EXPECT_EQ(file1, "");
     EXPECT_EQ(file2, "file");
     EXPECT_EQ(file3, "file");
 }
@@ -101,7 +101,7 @@ TEST(testFile, testIsDirectory) {
     ft::file file1;
     ft::file file2("file");
 
-    EXPECT_EQ(file1.isDirectory(), true);
+    EXPECT_EQ(file1.isDirectory(), false);
     EXPECT_EQ(file2.isDirectory(), false);
 
     system("mkdir file");
