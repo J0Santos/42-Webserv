@@ -3,14 +3,45 @@
 #include <gtest/gtest.h>
 
 TEST(testListenDirective, testIsValid) {
-    EXPECT_TRUE(directive::Listen({"listen", "443"}).isValid());
-    EXPECT_TRUE(directive::Listen({"listen", "example"}).isValid());
-    EXPECT_TRUE(directive::Listen({"listen", "443:example"}).isValid());
-
-    EXPECT_FALSE(directive::Listen({"other", "443:example"}).isValid());
-    EXPECT_FALSE(directive::Listen({"listen", "example:443:"}).isValid());
-    EXPECT_FALSE(directive::Listen({"listen", ":example"}).isValid());
-    EXPECT_FALSE(directive::Listen({"listen", "example", "443"}).isValid());
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"listen", "443"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"listen", "example"});
+        EXPECT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"listen", "443:example"});
+        EXPECT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"other", "443:example"});
+        EXPECT_FALSE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"listen", "example:443:"});
+        EXPECT_FALSE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"listen", ":example"});
+        EXPECT_FALSE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Listen> directive;
+        directive.parse({"listen", "example", "443"});
+        EXPECT_FALSE(directive.isValid());
+    }
 }
 
-TEST(testListenDirective, testExtract) {}
+TEST(testListenDirective, testIsBlockAndIsRouteDirective) {
+    config::DirectiveTypeTraits<config::Listen> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_FALSE(directive.isRouteDirective());
+}
