@@ -2,7 +2,7 @@
 
 namespace config {
 
-block::block(void) : m_max_body_size(0) {}
+block::block(void) : m_max_body_size(0), m_closed(false) {}
 
 block::block(block const& src) { *this = src; }
 
@@ -18,6 +18,7 @@ block& block::operator=(block const& rhs) {
         m_max_body_size = rhs.m_max_body_size;
         m_allowed_methods = rhs.m_allowed_methods;
         m_routes = rhs.m_routes;
+        m_closed = rhs.m_closed;
     }
     return *this;
 }
@@ -28,7 +29,7 @@ bool block::operator==(block const& rhs) const {
             m_error_pages == rhs.m_error_pages &&
             m_max_body_size == rhs.m_max_body_size &&
             m_allowed_methods == rhs.m_allowed_methods &&
-            m_routes == rhs.m_routes);
+            m_routes == rhs.m_routes && m_closed == rhs.m_closed);
 }
 
 } // namespace config

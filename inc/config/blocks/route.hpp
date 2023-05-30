@@ -30,6 +30,8 @@ struct route {
         bool                          m_autoindex;
         ft::file                      m_index;
         std::string                   m_cgi_extension;
+
+        bool m_closed;
 };
 
 } // namespace config
