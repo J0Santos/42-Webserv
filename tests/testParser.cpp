@@ -48,9 +48,16 @@ class testParseLine : public ::testing::Test {
         testParseLine(void) {
             system("touch test2.conf");
             system("echo \"server {\n"
-                   "  listen 443;\n"
-                   "  location /python/ {\n"
-                   "  }\n"
+                   "  listen      8080;\n"
+                   "  root        ./websites/;\n"
+                   "  server_name domain.com;\n"
+                   "}\n"
+                   "\n"
+                   "server {\n"
+                   "  listen         8081:localhost;\n"
+                   "  root           ./websites/;\n"
+                   "  server_name    domain.net;\n"
+                   "  error_page 404 ./websites/errors/404.html;\n"
                    "}\" > test2.conf");
         }
 

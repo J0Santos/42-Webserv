@@ -13,8 +13,7 @@ Line::Line(std::string const& line) : m_line(ft::string::trim(line)) {
         else { m_type = Unknown; }
     }
     else if (m_line.find(';') != std::string::npos) {
-        // TODO: refactor with other directives
-        m_type = Listen;
+        m_type = getDirectiveType();
     }
     else { m_type = Unknown; }
 }
@@ -32,6 +31,15 @@ Line& Line::operator=(Line const& rhs) {
 std::string Line::getLine(void) const { return (m_line); }
 
 LineType Line::getType(void) const { return (m_type); }
+
+LineType Line::getDirectiveType(void) const {
+    std::vector<std::string> subs = ft::string::split(m_line, " \t");
+    if (subs.size() < 2) { return (Unknown); }
+    if (subs[0] == "listen") { return (Listen); }
+    else if (subs[0] == "server_name") { return (ServerName); }
+    else if (subs[0] == "root") { return (Root); }
+    else { return (Unknown); }
+}
 
 std::vector<std::string> Line::format(void) const {
     std::vector<std::string> subs;

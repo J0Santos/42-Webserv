@@ -100,6 +100,7 @@ struct DirectiveTypeTraits<Route> {
         bool isRouteDirective(void) const { return (false); }
 
         void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
             blocks.back().m_routes.insert(
                 std::make_pair(m_target, route(m_target)));
         }
@@ -180,6 +181,7 @@ struct DirectiveTypeTraits<Listen> {
         bool isRouteDirective(void) const { return (false); }
 
         void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
             blocks.back().m_host = m_host;
             blocks.back().m_port = m_port;
         }
@@ -214,6 +216,7 @@ struct DirectiveTypeTraits<ServerName> {
         bool isRouteDirective(void) const { return (false); }
 
         void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
             blocks.back().m_server_name = m_server_name;
         }
 
@@ -251,6 +254,7 @@ struct DirectiveTypeTraits<Root> {
         bool isRouteDirective(void) const { return (true); }
 
         void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
             blocks.back().m_root = m_root;
         }
 

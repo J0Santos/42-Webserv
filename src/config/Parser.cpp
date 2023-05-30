@@ -44,17 +44,22 @@ void Parser::parseLine(std::vector<std::string> const& args) {
     DirectiveTypeTraits<T> directive;
 
     // validate directive placement
+    LOG_I("directive: " << directive.getName());
     if (m_status == InNone &&
         (directive.isRouteDirective() || directive.isBlockDirective())) {
         error();
     }
     if (m_status == InBlock && !directive.isBlockDirective()) { error(); }
     if (m_status == InRoute && !directive.isRouteDirective()) { error(); }
+    LOG_I("passed placement control");
 
     // parse directive
     directive.parse(args);
+    LOG_I("passed parsing");
     if (!directive.isValid()) { error(); }
+    LOG_I("passed validation");
     directive.extract(m_blocks);
+    LOG_I("passed extraction");
 
     // update status
     if (T == End) {
@@ -63,6 +68,7 @@ void Parser::parseLine(std::vector<std::string> const& args) {
     }
     if (T == Block) { m_status = InBlock; }
     if (T == Route) { m_status = InRoute; }
+    LOG_I("updated status");
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {
@@ -85,6 +91,12 @@ void parse(ft::file const& filename) {
             case (End): parser.parseLine<End>(line.format()); break;
 
             case (Listen): parser.parseLine<Listen>(line.format()); break;
+
+            case (ServerName):
+                parser.parseLine<ServerName>(line.format());
+                break;
+
+            case (Root): parser.parseLine<Root>(line.format()); break;
 
             case (Unknown):
             default: parser.error();

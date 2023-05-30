@@ -25,6 +25,8 @@ class Line {
 
     private:
 
+        LineType getDirectiveType(void) const;
+
         std::string m_line;
         LineType    m_type;
 };

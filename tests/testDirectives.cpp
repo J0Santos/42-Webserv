@@ -123,6 +123,10 @@ TEST(testRootDirective, testIsValidAndParse) {
         directive.parse({"root", "/tmp/testRootDirective"});
         ASSERT_TRUE(directive.isValid());
     }
-
+    {
+        config::DirectiveTypeTraits<config::Root> directive;
+        directive.parse({"root", "./websites/"});
+        ASSERT_TRUE(directive.isValid());
+    }
     system("rm -rf /tmp/testRootDirective");
 }
