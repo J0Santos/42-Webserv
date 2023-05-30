@@ -38,6 +38,7 @@ LineType Line::getDirectiveType(void) const {
     if (subs[0] == "listen") { return (Listen); }
     else if (subs[0] == "server_name") { return (ServerName); }
     else if (subs[0] == "root") { return (Root); }
+    else if (subs[0] == "error_page") { return (ErrorPage); }
     else { return (Unknown); }
 }
 

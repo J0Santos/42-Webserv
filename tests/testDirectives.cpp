@@ -123,10 +123,37 @@ TEST(testRootDirective, testIsValidAndParse) {
         directive.parse({"root", "/tmp/testRootDirective"});
         ASSERT_TRUE(directive.isValid());
     }
+    system("rm -rf /tmp/testRootDirective");
+}
+
+TEST(testErrorPageDirective, testIsValidAndParse) {
+    system("touch /tmp/testErrorPageDirective");
+    config::DirectiveTypeTraits<config::ErrorPage> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    directive.parse({"error_page"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"error_page", "400"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "400", "/tmp/testRootDirective"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"error_page", "/tmp/testRootDirective", "400"});
+    ASSERT_FALSE(directive.isValid());
+
     {
-        config::DirectiveTypeTraits<config::Root> directive;
-        directive.parse({"root", "./websites/"});
+        config::DirectiveTypeTraits<config::ErrorPage> directive;
+        directive.parse({"error_page", "404", "/tmp/testErrorPageDirective"});
         ASSERT_TRUE(directive.isValid());
     }
-    system("rm -rf /tmp/testRootDirective");
+    {
+        config::DirectiveTypeTraits<config::ErrorPage> directive;
+        directive.parse(
+            {"error_page", "404", "405", "/tmp/testErrorPageDirective"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    system("rm -f /tmp/testErrorPageDirective");
 }

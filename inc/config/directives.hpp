@@ -19,8 +19,8 @@ enum LineType {
     Listen,
     ServerName,
     Root,
-    /* ErrorPage,
-    MaxBodySize,
+    ErrorPage,
+    /* MaxBodySize,
     AllowMethods,
     Index,
     AutoIndex,
@@ -101,8 +101,7 @@ struct DirectiveTypeTraits<Route> {
 
         void extract(std::vector<block>& blocks) {
             if (blocks.empty()) { return; }
-            blocks.back().m_routes.insert(
-                std::make_pair(m_target, route(m_target)));
+            blocks.back().m_routes.push_back(config::route(m_target));
         }
 
         bool        m_valid;
@@ -136,7 +135,18 @@ struct DirectiveTypeTraits<End> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) { (void)blocks; }
+        void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
+            if (!blocks.back().m_routes.empty() &&
+                !blocks.back().m_routes.back().m_closed) {
+                LOG_D("Closing route");
+                blocks.back().m_routes.back().m_closed = true;
+            }
+            else if (!blocks.back().m_closed) {
+                LOG_D("Closing block");
+                blocks.back().m_closed = true;
+            }
+        }
 
         bool m_valid;
 };
@@ -254,11 +264,72 @@ struct DirectiveTypeTraits<Root> {
         bool isRouteDirective(void) const { return (true); }
 
         void extract(std::vector<block>& blocks) {
+            // extract becomes harder because its both blocks
             if (blocks.empty()) { return; }
-            blocks.back().m_root = m_root;
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_root = m_root;
+            }
+            else { blocks.back().m_root = m_root; }
         }
 
         ft::directory m_root;
+
+        bool m_valid;
+};
+
+template<>
+struct DirectiveTypeTraits<ErrorPage> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() < 3 || args[0] != "error_page") {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            ft::file file = args.back();
+            if (!file.isValid()) {
+                LOG_W(getName() << ": invalid file.");
+                return;
+            }
+
+            std::vector<std::string> error_codes =
+                std::vector<std::string>(args.begin() + 1, args.end() - 1);
+
+            for (std::vector<std::string>::iterator it = error_codes.begin();
+                 it != error_codes.end(); ++it) {
+                if (!ft::string::isnumeric(*it)) {
+                    LOG_W(getName() << ": invalid error code.");
+                    return;
+                }
+                m_error_pages[ft::string::stoi(*it)] = file;
+            }
+
+            m_valid = true;
+        }
+
+        std::string const getName(void) const { return ("error_page"); }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (true); }
+
+        bool isRouteDirective(void) const { return (true); }
+
+        void extract(std::vector<block>& blocks) {
+            // extract becomes harder because its both blocks
+            if (blocks.empty()) { return; }
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_error_pages = m_error_pages;
+            }
+            else { blocks.back().m_error_pages = m_error_pages; }
+        }
+
+        std::map<int, ft::file> m_error_pages;
 
         bool m_valid;
 };

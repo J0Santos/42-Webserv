@@ -98,6 +98,8 @@ void parse(ft::file const& filename) {
 
             case (Root): parser.parseLine<Root>(line.format()); break;
 
+            case (ErrorPage): parser.parseLine<ErrorPage>(line.format()); break;
+
             case (Unknown):
             default: parser.error();
         }
