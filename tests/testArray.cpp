@@ -10,3 +10,10 @@ TEST(testArray, testArray) {
     EXPECT_TRUE(!c_arr[2]);
     ft::array::erase(c_arr);
 }
+
+TEST(testArray, testEmptyArray) {
+    ft::array arr;
+    char**    c_arr = arr;
+    EXPECT_TRUE(!c_arr[0]);
+    ft::array::erase(c_arr);
+}
