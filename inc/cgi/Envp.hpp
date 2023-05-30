@@ -13,7 +13,13 @@ class Envp {
     public:
 
         Envp(http::Request const& request, http::Route const& route);
+        Envp(Envp const& src);
+
         ~Envp(void);
+
+        Envp& operator=(Envp const& rhs);
+
+        bool operator==(Envp const& rhs) const;
 
         void fillEnvp(std::string name, std::string val);
         std::map<std::string, std::string> getMapEnvp(void) const;
@@ -26,7 +32,5 @@ class Envp {
 };
 
 } // namespace cgi
-
-std::ostream& operator<<(std::ostream& os, cgi::Envp const& ctx);
 
 #endif /* CGI_ENVP_HPP */

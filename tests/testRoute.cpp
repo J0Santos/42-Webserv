@@ -49,3 +49,13 @@ TEST(testRoute, testRoutingRequestWithSlashAndSlashInTarget) {
     // ASSERT_EQ(route.reroute("./websites/cgi/python/index.py"),
     //           "python/index.py");
 }
+
+TEST(testRoute, testRoutingRequestWithSlashAndSlashInTarget) {
+    http::Route route("/", "./websites/cgi/python");
+    ASSERT_EQ(route.getTarget(), "/") << route.getTarget();
+    ASSERT_EQ(route.getRoot(), "./websites/cgi/python/") << route.getRoot();
+
+    ASSERT_EQ(route.route("/"), "./websites/cgi/python/");
+    // ASSERT_EQ(route.reroute("./websites/cgi/python/index.py"),
+    //           "python/index.py");
+}

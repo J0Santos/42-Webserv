@@ -50,10 +50,22 @@ TEST_F(testEnvp, testBasic) {
                                       "Gecko) Chrome/96.0.4664.45 "
                                       "Safari/537.36");
 
-    // /cgi/myscript.py/path/to/script
     EXPECT_EQ(envp.get("PATH_TRANSLATED"), "/var/www/html/myscript.py/path/to/"
                                            "script");
     EXPECT_EQ(envp.get("DOCUMENT_ROOT"), "/var/www/html/");
 
     EXPECT_EQ(envp.get("SERVER_PORT"), "");
+}
+
+TEST_F(testEnvp, testCopyAndAssertion) {
+    http::Request request(m_req);
+    cgi::Envp     envp1(request, http::Route("/cgi", "/var/www/html"));
+    cgi::Envp     envp2(envp1);
+    cgi::Envp     envp3(
+        http::Request("GET / HTTP/1.1\r\nConnection: keep-alive\r\n\r\n"),
+        http::Route("/", "/var/www/html"));
+    envp3 = envp1;
+
+    ASSERT_EQ(envp1, envp2);
+    ASSERT_EQ(envp1, envp3);
 }
