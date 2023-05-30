@@ -140,13 +140,9 @@ struct DirectiveTypeTraits<End> {
             if (blocks.empty()) { return; }
             if (!blocks.back().m_routes.empty() &&
                 !blocks.back().m_routes.back().m_closed) {
-                LOG_D("Closing route");
                 blocks.back().m_routes.back().m_closed = true;
             }
-            else if (!blocks.back().m_closed) {
-                LOG_D("Closing block");
-                blocks.back().m_closed = true;
-            }
+            else if (!blocks.back().m_closed) { blocks.back().m_closed = true; }
         }
 
         bool m_valid;
@@ -223,6 +219,7 @@ struct DirectiveTypeTraits<ServerName> {
                 LOG_W(getName() << ": invalid directive name.");
                 return;
             }
+            m_server_name = args[1];
             m_valid = true;
         }
 
