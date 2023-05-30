@@ -206,3 +206,91 @@ TEST(testAllowMethodDirective, testIsValidAndParse) {
         ASSERT_TRUE(directive.isValid());
     }
 }
+
+TEST(testIndexDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::Index> directive;
+    ASSERT_FALSE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    system("touch /tmp/testIndexDirective");
+    directive.parse({"index"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "/tmp/testIndexDirective"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"index", "/tmp/testIndexDirective", "other"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"index", "invalid/file"});
+    ASSERT_FALSE(directive.isValid());
+    {
+        config::DirectiveTypeTraits<config::Index> directive;
+        directive.parse({"index", "/tmp/testIndexDirective"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    system("rm -f /tmp/testIndexDirective");
+}
+
+TEST(testAutoIndexDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::AutoIndex> directive;
+    ASSERT_FALSE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    directive.parse({"autoindex"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "on"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"autoindex", "on", "other"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"autoindex", "invalid"});
+    ASSERT_FALSE(directive.isValid());
+
+    {
+        config::DirectiveTypeTraits<config::AutoIndex> directive;
+        directive.parse({"autoindex", "on"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::AutoIndex> directive;
+        directive.parse({"autoindex", "off"});
+        ASSERT_TRUE(directive.isValid());
+    }
+}
+
+TEST(testCgiExtensionDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::CgiExtension> directive;
+    ASSERT_FALSE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    directive.parse({"fastcgi"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", ".py"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"fastcgi", ".py", "other"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"fastcgi", ".tmp"});
+    ASSERT_FALSE(directive.isValid());
+
+    {
+        config::DirectiveTypeTraits<config::CgiExtension> directive;
+        directive.parse({"fastcgi", ".py"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::CgiExtension> directive;
+        directive.parse({"fastcgi", ".php"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::CgiExtension> directive;
+        directive.parse({"fastcgi", ".cgi"});
+        ASSERT_TRUE(directive.isValid());
+    }
+}

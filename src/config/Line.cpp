@@ -39,6 +39,11 @@ LineType Line::getDirectiveType(void) const {
     else if (subs[0] == "server_name") { return (ServerName); }
     else if (subs[0] == "root") { return (Root); }
     else if (subs[0] == "error_page") { return (ErrorPage); }
+    else if (subs[0] == "client_max_body_size") { return (MaxBodySize); }
+    else if (subs[0] == "allow_methods") { return (AllowMethods); }
+    else if (subs[0] == "index") { return (Index); }
+    else if (subs[0] == "autoindex") { return (AutoIndex); }
+    else if (subs[0] == "fastcgi") { return (CgiExtension); }
     else { return (Unknown); }
 }
 

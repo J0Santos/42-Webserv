@@ -100,6 +100,22 @@ void parse(ft::file const& filename) {
 
             case (ErrorPage): parser.parseLine<ErrorPage>(line.format()); break;
 
+            case (MaxBodySize):
+                parser.parseLine<MaxBodySize>(line.format());
+                break;
+
+            case (AllowMethods):
+                parser.parseLine<AllowMethods>(line.format());
+                break;
+
+            case (Index): parser.parseLine<Index>(line.format()); break;
+
+            case (AutoIndex): parser.parseLine<AutoIndex>(line.format()); break;
+
+            case (CgiExtension):
+                parser.parseLine<CgiExtension>(line.format());
+                break;
+
             case (Unknown):
             default: parser.error();
         }

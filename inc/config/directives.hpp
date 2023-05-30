@@ -1,6 +1,7 @@
 #ifndef CONFIG_DIRECTIVES_HPP
 #define CONFIG_DIRECTIVES_HPP
 
+#include "cgi/CgiHandler.hpp"
 #include "config/blocks/block.hpp"
 #include "utils/ft_string.hpp"
 #include "utils/Logger.hpp"
@@ -22,9 +23,9 @@ enum LineType {
     ErrorPage,
     MaxBodySize,
     AllowMethods,
-    /* Index,
+    Index,
     AutoIndex,
-    CgiExtension, */
+    CgiExtension,
     Unknown
 };
 
@@ -450,37 +451,141 @@ struct DirectiveTypeTraits<AllowMethods> {
         bool m_valid;
 };
 
-// template<>
-// struct DirectiveTypeTraits<ServerName> {
+template<>
+struct DirectiveTypeTraits<Index> {
 
-// DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void) : m_valid(false) {}
 
-// ~DirectiveTypeTraits(void) {}
+        ~DirectiveTypeTraits(void) {}
 
-// void parse(std::vector<std::string> const& args) {
-//     if (args.size() != 2) {
-//         LOG_W(getName() << ": invalid number of elements.");
-//         return;
-//     }
-//     if (args[0] != getName()) {
-//         LOG_W(getName() << ": invalid directive name.");
-//         return;
-//     }
-//     m_valid = true;
-// }
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() != 2) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
+                return;
+            }
+            m_index = args[1];
+            if (!m_index.isValid()) {
+                LOG_W(getName() << ": invalid index file.");
+                return;
+            }
+            m_valid = true;
+        }
 
-// std::string const getName(void) const { return (); }
+        std::string const getName(void) const { return ("index"); }
 
-// bool isValid(void) const { return (m_valid); }
+        bool isValid(void) const { return (m_valid); }
 
-// bool isBlockDirective(void) const { return (); }
+        bool isBlockDirective(void) const { return (false); }
 
-// bool isRouteDirective(void) const { return (); }
+        bool isRouteDirective(void) const { return (true); }
 
-// void extract(std::vector<block>& blocks) {}
+        void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_index = m_index;
+            }
+        }
 
-// bool m_valid;
-// };
+        ft::file m_index;
+
+        bool m_valid;
+};
+
+template<>
+struct DirectiveTypeTraits<AutoIndex> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() != 2) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
+                return;
+            }
+            if (args[1] == "on") { m_autoindex = true; }
+            else if (args[1] == "off") { m_autoindex = false; }
+            else {
+                LOG_W(getName() << ": invalid autoindex value.");
+                return;
+            }
+            m_valid = true;
+        }
+
+        std::string const getName(void) const { return ("autoindex"); }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (false); }
+
+        bool isRouteDirective(void) const { return (true); }
+
+        void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_autoindex = m_autoindex;
+            }
+        }
+
+        bool m_autoindex;
+
+        bool m_valid;
+};
+
+template<>
+struct DirectiveTypeTraits<CgiExtension> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() != 2) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
+                return;
+            }
+            if (cgi::convertCgiExtension(args[1]) == cgi::Unknown) {
+                LOG_W(getName() << ": invalid cgi extension.");
+                return;
+            }
+            m_cgi_extension = args[1];
+            m_valid = true;
+        }
+
+        std::string const getName(void) const { return ("fastcgi"); }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (false); }
+
+        bool isRouteDirective(void) const { return (true); }
+
+        void extract(std::vector<block>& blocks) {
+            if (blocks.empty()) { return; }
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_cgi_extension = m_cgi_extension;
+            }
+        }
+
+        std::string m_cgi_extension;
+
+        bool m_valid;
+};
 
 } // namespace config
 
