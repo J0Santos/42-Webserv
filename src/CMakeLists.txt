@@ -5,6 +5,7 @@ add_library(${PROJECT_NAME} STATIC
   http/methods.cpp
   http/Request.cpp
   http/Uri.cpp
+  utils/ft_array.cpp
   utils/ft_exceptions.cpp
   utils/ft_filesystem.cpp
   utils/ft_string.cpp
