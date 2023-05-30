@@ -49,8 +49,20 @@ class testParseLine : public ::testing::Test {
             system("touch test2.conf");
             system("echo \"server {\n"
                    "  listen      8080;\n"
-                   "  root        ./websites/;\n"
-                   "  server_name domain.com;\n"
+                   "  location / {\n"
+                   "    root          ./websites/cgi;\n"
+                   "    allow_methods GET POST;\n"
+                   "    fastcgi       .py;\n"
+                   "    index         ./websites/index.html;\n"
+                   "    autoindex     on;\n"
+                   "  }\n"
+                   "  root          ./websites/;\n"
+                   "  server_name   domain.com;\n"
+                   "  allow_methods GET;\n"
+                   "  location /python {\n"
+                   "    root          ./websites/;\n"
+                   "    autoindex     on;\n"
+                   "  }\n"
                    "}\n"
                    "\n"
                    "server {\n"
@@ -92,6 +104,29 @@ TEST_F(testParseLine, testParseLineStatusManagement) {
 }
 
 TEST_F(testParseLine, testParseFunctionWithParseLine) {
-    config::Parser parser("test2.conf");
-    ASSERT_NO_THROW(config::parse("test2.conf"));
+    config::Parser             parser("test2.conf");
+    std::vector<config::block> blocks = config::parse("test2.conf");
+    EXPECT_EQ(blocks[0].m_port, "8080");
+    EXPECT_EQ(blocks[0].m_root, "./websites/");
+    EXPECT_EQ(blocks[0].m_server_name, "domain.com");
+    EXPECT_EQ(blocks[0].m_allowed_methods, std::vector<std::string>({"GET"}));
+    EXPECT_EQ(blocks[0].m_routes[0].m_target, "/");
+    EXPECT_EQ(blocks[0].m_routes[0].m_root, "./websites/cgi");
+    EXPECT_EQ(blocks[0].m_routes[0].m_allowed_methods,
+              std::vector<std::string>({"GET", "POST"}));
+    EXPECT_EQ(blocks[0].m_routes[0].m_cgi_extension, ".py");
+    EXPECT_EQ(blocks[0].m_routes[0].m_index, "./websites/index.html");
+    EXPECT_EQ(blocks[0].m_routes[0].m_autoindex, true);
+    EXPECT_EQ(blocks[0].m_routes[0].m_closed, true);
+    EXPECT_EQ(blocks[0].m_routes[1].m_target, "/python");
+    EXPECT_EQ(blocks[0].m_routes[1].m_root, "./websites/");
+    EXPECT_EQ(blocks[0].m_routes[1].m_autoindex, true);
+    EXPECT_EQ(blocks[0].m_routes[1].m_closed, true);
+    EXPECT_EQ(blocks[0].m_closed, true);
+    EXPECT_EQ(blocks[1].m_port, "8081");
+    EXPECT_EQ(blocks[1].m_host, "localhost");
+    EXPECT_EQ(blocks[1].m_root, "./websites/");
+    EXPECT_EQ(blocks[1].m_server_name, "domain.net");
+    EXPECT_EQ(blocks[1].m_error_pages[404], "./websites/errors/404.html");
+    EXPECT_EQ(blocks[1].m_closed, true);
 }

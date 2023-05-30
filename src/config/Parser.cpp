@@ -34,6 +34,8 @@ std::string Parser::getLine(void) const { return (m_line); }
 
 size_t Parser::getPosition(void) const { return (m_pos); }
 
+std::vector<block> const& Parser::getBlocks(void) const { return (m_blocks); }
+
 void Parser::error(void) const {
     LOG_E("config: syntax error: " << m_line << " (:" << m_pos << ")");
     throw InvalidSyntaxException();
@@ -69,7 +71,7 @@ char const* Parser::InvalidSyntaxException::what(void) const throw() {
     return ("config::parser: invalid syntax.");
 }
 
-void parse(ft::file const& filename) {
+std::vector<block> parse(ft::file const& filename) {
     Parser parser(filename);
 
     while (parser.nextLine()) {
@@ -113,6 +115,7 @@ void parse(ft::file const& filename) {
             default: parser.error();
         }
     }
+    return (parser.getBlocks());
     // TODO: check if it ended with a close bracket
     // check if directives are valid, if theres no missing things
     // create default location block

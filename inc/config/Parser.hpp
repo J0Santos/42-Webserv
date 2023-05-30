@@ -18,8 +18,9 @@ class Parser {
 
         bool nextLine(void);
 
-        std::string getLine(void) const;
-        size_t      getPosition(void) const;
+        std::string               getLine(void) const;
+        size_t                    getPosition(void) const;
+        std::vector<block> const& getBlocks(void) const;
 
         void error(void) const;
 
@@ -48,7 +49,7 @@ class Parser {
         std::vector<block> m_blocks;
 };
 
-void parse(ft::file const& filename);
+std::vector<block> parse(ft::file const& filename);
 
 } // namespace config
 
