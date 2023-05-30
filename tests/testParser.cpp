@@ -42,8 +42,27 @@ TEST_F(testParser, testError) {
     ASSERT_THROW(parser.error(), config::Parser::InvalidSyntaxException);
 }
 
-TEST_F(testParser, testParseLine) {
-    config::Parser parser("test.conf");
+class testParseLine : public ::testing::Test {
+    protected:
+
+        testParseLine(void) {
+            system("touch test2.conf");
+            system("echo \"server {\n"
+                   "  listen 443;\n"
+                   "  location /python/ {\n"
+                   "  }\n"
+                   "}\" > test2.conf");
+        }
+
+        virtual ~testParseLine(void) { system("rm test2.conf"); }
+
+        virtual void SetUp(void) {}
+
+        virtual void TearDown(void) {}
+};
+
+TEST_F(testParseLine, testParseLineStatusManagement) {
+    config::Parser parser("test2.conf");
     ASSERT_THROW(parser.parseLine<config::Listen>({"listen", "80"}),
                  config::Parser::InvalidSyntaxException);
 
@@ -63,4 +82,9 @@ TEST_F(testParser, testParseLine) {
     ASSERT_NO_THROW(parser.parseLine<config::End>({"}"}));
     ASSERT_THROW(parser.parseLine<config::End>({"}"}),
                  config::Parser::InvalidSyntaxException);
+}
+
+TEST_F(testParseLine, testParseFunctionWithParseLine) {
+    config::Parser parser("test2.conf");
+    ASSERT_NO_THROW(config::parse("test2.conf"));
 }
