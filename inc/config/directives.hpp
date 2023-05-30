@@ -18,8 +18,8 @@ enum LineType {
     End,
     Listen,
     ServerName,
-    /* Root,
-    ErrorPage,
+    Root,
+    /* ErrorPage,
     MaxBodySize,
     AllowMethods,
     Index,
@@ -221,6 +221,73 @@ struct DirectiveTypeTraits<ServerName> {
 
         std::string m_server_name;
 };
+
+template<>
+struct DirectiveTypeTraits<Root> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() != 2 || args[0] != "root") {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            m_root = args[1];
+            if (!m_root.isValid()) {
+                LOG_W(getName() << ": invalid root.");
+                return;
+            }
+            m_valid = true;
+        }
+
+        std::string const getName(void) const { return ("Root"); }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (true); }
+
+        bool isRouteDirective(void) const { return (true); }
+
+        void extract(std::vector<block>& blocks) {
+            blocks.back().m_root = m_root;
+        }
+
+        ft::directory m_root;
+
+        bool m_valid;
+};
+
+// template<>
+// struct DirectiveTypeTraits<ServerName> {
+
+// DirectiveTypeTraits(void) : m_valid(false) {}
+
+// ~DirectiveTypeTraits(void) {}
+
+// void parse(std::vector<std::string> const& args) {
+//     if (args.size() != 2 || args[0] != ) {
+//         LOG_W(getName() << ": invalid number of elements.");
+//         return;
+//     }
+//     m_valid = true;
+// }
+
+// std::string const getName(void) const { return (); }
+
+// bool isValid(void) const { return (m_valid); }
+
+// bool isBlockDirective(void) const { return (); }
+
+// bool isRouteDirective(void) const { return (); }
+
+// void extract(std::vector<block>& blocks) {
+// }
+
+// bool m_valid;
+
+// };
 
 } // namespace config
 

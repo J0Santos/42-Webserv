@@ -99,3 +99,30 @@ TEST(testServerNameDirective, testIsValidAndParse) {
         ASSERT_TRUE(directive.isValid());
     }
 }
+
+TEST(testRootDirective, testIsValidAndParse) {
+    system("mkdir -p /tmp/testRootDirective");
+    config::DirectiveTypeTraits<config::Root> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    directive.parse({"root"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"root", "invalid/directory"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "invalid/directory"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"root", "/tmp/testRootDirective", "invalid"});
+    ASSERT_FALSE(directive.isValid());
+
+    {
+        config::DirectiveTypeTraits<config::Root> directive;
+        directive.parse({"root", "/tmp/testRootDirective"});
+        ASSERT_TRUE(directive.isValid());
+    }
+
+    system("rm -rf /tmp/testRootDirective");
+}
