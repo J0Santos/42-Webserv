@@ -30,13 +30,13 @@ class Parser {
                 char const* what(void) const throw();
         };
 
-    private:
-
         enum StatusType {
-            InBlock,
-            InRoute,
-            InNone,
+            InBlock = 0,
+            InRoute = 1,
+            InNone = 2,
         };
+
+    private:
 
         std::string m_line;
 

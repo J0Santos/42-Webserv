@@ -3,6 +3,7 @@
 
 #include "config/blocks/block.hpp"
 #include "utils/ft_string.hpp"
+#include "utils/Logger.hpp"
 
 #include <string>
 #include <typeinfo>
@@ -38,8 +39,10 @@ struct DirectiveTypeTraits<Block> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            // TODO
-            (void)args;
+            if (args.size() != 2) { return; }
+            if (args[0] != "server") { return; }
+            if (args[1] != "{") { return; }
+            m_valid = true;
         }
 
         std::string const getName(void) const { return ("Block"); }
@@ -50,7 +53,7 @@ struct DirectiveTypeTraits<Block> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block> blocks) { blocks.push_back(block()); }
+        void extract(std::vector<block>& blocks) { blocks.push_back(block()); }
 
         bool m_valid;
 };
@@ -63,8 +66,10 @@ struct DirectiveTypeTraits<Route> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            // TODO
-            (void)args;
+            if (args.size() != 3) { return; }
+            if (args[0] != "location") { return; }
+            if (args[2] != "{") { return; }
+            m_valid = true;
         }
 
         std::string const getName(void) const { return ("Route"); }
@@ -75,7 +80,7 @@ struct DirectiveTypeTraits<Route> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block> blocks) {
+        void extract(std::vector<block>& blocks) {
             blocks.back().m_routes.insert(
                 std::make_pair(m_target, route(m_target)));
         }
@@ -92,8 +97,9 @@ struct DirectiveTypeTraits<End> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            // TODO
-            (void)args;
+            if (args.size() != 1) { return; }
+            if (args[0] != "}") { return; }
+            m_valid = true;
         }
 
         std::string const getName(void) const { return ("End"); }
@@ -104,7 +110,7 @@ struct DirectiveTypeTraits<End> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block> blocks) { (void)blocks; }
+        void extract(std::vector<block>& blocks) { (void)blocks; }
 
         bool m_valid;
 };
@@ -139,7 +145,7 @@ struct DirectiveTypeTraits<Listen> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block> blocks) {
+        void extract(std::vector<block>& blocks) {
             blocks.back().m_host = m_host;
             blocks.back().m_port = m_port;
         }

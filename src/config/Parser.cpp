@@ -17,12 +17,12 @@ Parser::Parser(ft::file filename) : m_line(), m_pos(0), m_status(InNone) {
 
 Parser::~Parser(void) {
     m_file.close();
-    if (m_status != InNone) { error(); }
+    if (!nextLine() && m_status != InNone) { error(); }
 }
 
 bool Parser::nextLine(void) {
     if (m_file.eof()) {
-        m_line.clear();
+        // m_line.clear();
         return (false);
     }
     std::getline(m_file, m_line);
@@ -51,15 +51,26 @@ void Parser::parseLine(std::vector<std::string> const& args) {
     if (m_status == InBlock && !directive.isBlockDirective()) { error(); }
     if (m_status == InRoute && !directive.isRouteDirective()) { error(); }
 
-    // if (directive.isBlockDirective()) {}
     directive.parse(args);
     if (!directive.isValid()) { error(); }
     directive.extract(m_blocks);
 
-    if (typeid(T) == typeid(Block)) { m_status = InBlock; }
-    else if (typeid(T) == typeid(Route)) { m_status = InRoute; }
-    else if (typeid(T) == typeid(End)) {
-        m_status = (m_status == InRoute) ? InBlock : InNone;
+    // update status
+    if (T == End) {
+        if (m_status == InRoute) { m_status = InBlock; }
+        if (m_status == InBlock) { m_status = InNone; }
+        // update status according to end block
+        LOG_D("end Block");
+    }
+    if (T == Block) {
+        m_status = InBlock;
+        // update status according to new block
+        LOG_D("start Block");
+    }
+    if (T == Route) {
+        m_status = InRoute;
+        // update status according to new Route
+        LOG_D("start Route");
     }
 }
 

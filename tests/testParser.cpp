@@ -31,7 +31,7 @@ TEST_F(testParser, testNextLine) {
     ASSERT_EQ(parser.getLine(), "hello world");
     ASSERT_EQ(parser.getPosition(), 1);
     ASSERT_FALSE(parser.nextLine());
-    ASSERT_EQ(parser.getLine(), "");
+    ASSERT_EQ(parser.getLine(), "hello world");
     ASSERT_EQ(parser.getPosition(), 1);
 }
 
