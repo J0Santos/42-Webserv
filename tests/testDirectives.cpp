@@ -157,3 +157,52 @@ TEST(testErrorPageDirective, testIsValidAndParse) {
     }
     system("rm -f /tmp/testErrorPageDirective");
 }
+
+TEST(testMaxBodySizeDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::MaxBodySize> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    directive.parse({"client_max_body_size"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"client_max_body_size", "400", "other"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "400"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"client_max_body_size", "invalid"});
+    ASSERT_FALSE(directive.isValid());
+
+    {
+        config::DirectiveTypeTraits<config::MaxBodySize> directive;
+        directive.parse({"client_max_body_size", "8080808080"});
+        ASSERT_TRUE(directive.isValid());
+    }
+}
+
+TEST(testAllowMethodDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::AllowMethods> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_TRUE(directive.isRouteDirective());
+
+    directive.parse({"allow_methods"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "GET"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"allow_methods", "invalid"});
+    ASSERT_FALSE(directive.isValid());
+    {
+        config::DirectiveTypeTraits<config::AllowMethods> directive;
+        directive.parse({"allow_methods", "GET"});
+        ASSERT_TRUE(directive.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::AllowMethods> directive;
+        directive.parse({"allow_methods", "GET", "POST", "DELETE"});
+        ASSERT_TRUE(directive.isValid());
+    }
+}

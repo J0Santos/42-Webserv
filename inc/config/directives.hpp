@@ -20,9 +20,9 @@ enum LineType {
     ServerName,
     Root,
     ErrorPage,
-    /* MaxBodySize,
+    MaxBodySize,
     AllowMethods,
-    Index,
+    /* Index,
     AutoIndex,
     CgiExtension, */
     Unknown
@@ -160,8 +160,12 @@ struct DirectiveTypeTraits<Listen> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 2 || args[0] != "listen") {
+            if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
                 return;
             }
             size_t pos = args[1].find(":");
@@ -182,7 +186,7 @@ struct DirectiveTypeTraits<Listen> {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("Listen"); }
+        std::string const getName(void) const { return ("listen"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -210,14 +214,18 @@ struct DirectiveTypeTraits<ServerName> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 2 || args[0] != "server_name") {
+            if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
                 return;
             }
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("ServerName"); }
+        std::string const getName(void) const { return ("server_name"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -243,8 +251,12 @@ struct DirectiveTypeTraits<Root> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 2 || args[0] != "root") {
+            if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
                 return;
             }
             m_root = args[1];
@@ -255,7 +267,7 @@ struct DirectiveTypeTraits<Root> {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("Root"); }
+        std::string const getName(void) const { return ("root"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -286,8 +298,12 @@ struct DirectiveTypeTraits<ErrorPage> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() < 3 || args[0] != "error_page") {
+            if (args.size() < 3) {
                 LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
                 return;
             }
             ft::file file = args.back();
@@ -334,6 +350,106 @@ struct DirectiveTypeTraits<ErrorPage> {
         bool m_valid;
 };
 
+template<>
+struct DirectiveTypeTraits<MaxBodySize> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() != 2) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
+                return;
+            }
+            if (!ft::string::isnumeric(args[1])) {
+                LOG_W(getName() << ": invalid max body size.");
+                return;
+            }
+            m_max_body_size = ft::string::stoul(args[1]);
+            m_valid = true;
+        }
+
+        std::string const getName(void) const {
+            return ("client_max_body_size");
+        }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (true); }
+
+        bool isRouteDirective(void) const { return (true); }
+
+        void extract(std::vector<block>& blocks) {
+            // extract becomes harder because its both blocks
+            if (blocks.empty()) { return; }
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_max_body_size = m_max_body_size;
+            }
+            else { blocks.back().m_max_body_size = m_max_body_size; }
+        }
+
+        unsigned long m_max_body_size;
+
+        bool m_valid;
+};
+
+template<>
+struct DirectiveTypeTraits<AllowMethods> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() < 2) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive name.");
+                return;
+            }
+            for (std::vector<std::string>::const_iterator it = args.begin() + 1;
+                 it != args.end(); ++it) {
+                if (http::convertMethod(*it) == http::UNKNOWN_METHOD) {
+                    LOG_W(getName() << ": invalid method.");
+                    return;
+                }
+                m_allowed_methods.push_back(*it);
+            }
+            m_valid = true;
+        }
+
+        std::string const getName(void) const { return ("allow_methods"); }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (true); }
+
+        bool isRouteDirective(void) const { return (true); }
+
+        void extract(std::vector<block>& blocks) {
+            // extract becomes harder because its both blocks
+            if (blocks.empty()) { return; }
+            else if (!blocks.back().m_routes.empty() &&
+                     !blocks.back().m_routes.back().m_closed) {
+                blocks.back().m_routes.back().m_allowed_methods =
+                    m_allowed_methods;
+            }
+            else { blocks.back().m_allowed_methods = m_allowed_methods; }
+        }
+
+        std::vector<std::string> m_allowed_methods;
+
+        bool m_valid;
+};
+
 // template<>
 // struct DirectiveTypeTraits<ServerName> {
 
@@ -342,8 +458,12 @@ struct DirectiveTypeTraits<ErrorPage> {
 // ~DirectiveTypeTraits(void) {}
 
 // void parse(std::vector<std::string> const& args) {
-//     if (args.size() != 2 || args[0] != ) {
+//     if (args.size() != 2) {
 //         LOG_W(getName() << ": invalid number of elements.");
+//         return;
+//     }
+//     if (args[0] != getName()) {
+//         LOG_W(getName() << ": invalid directive name.");
 //         return;
 //     }
 //     m_valid = true;
@@ -357,11 +477,9 @@ struct DirectiveTypeTraits<ErrorPage> {
 
 // bool isRouteDirective(void) const { return (); }
 
-// void extract(std::vector<block>& blocks) {
-// }
+// void extract(std::vector<block>& blocks) {}
 
 // bool m_valid;
-
 // };
 
 } // namespace config
