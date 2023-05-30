@@ -54,4 +54,13 @@ TEST_F(testParser, testParseLine) {
     ASSERT_THROW(parser.parseLine<config::Listen>({"listen", "80", "80"}),
                  config::Parser::InvalidSyntaxException);
     ASSERT_NO_THROW(parser.parseLine<config::Listen>({"listen", "80"}));
+
+    ASSERT_NO_THROW(parser.parseLine<config::Route>({"location", "/", "{"}));
+    ASSERT_THROW(parser.parseLine<config::Route>({"location", "/", "{"}),
+                 config::Parser::InvalidSyntaxException);
+
+    ASSERT_NO_THROW(parser.parseLine<config::End>({"}"}));
+    ASSERT_NO_THROW(parser.parseLine<config::End>({"}"}));
+    ASSERT_THROW(parser.parseLine<config::End>({"}"}),
+                 config::Parser::InvalidSyntaxException);
 }

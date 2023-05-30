@@ -51,6 +51,7 @@ void Parser::parseLine(std::vector<std::string> const& args) {
     if (m_status == InBlock && !directive.isBlockDirective()) { error(); }
     if (m_status == InRoute && !directive.isRouteDirective()) { error(); }
 
+    // parse directive
     directive.parse(args);
     if (!directive.isValid()) { error(); }
     directive.extract(m_blocks);
@@ -58,20 +59,10 @@ void Parser::parseLine(std::vector<std::string> const& args) {
     // update status
     if (T == End) {
         if (m_status == InRoute) { m_status = InBlock; }
-        if (m_status == InBlock) { m_status = InNone; }
-        // update status according to end block
-        LOG_D("end Block");
+        else if (m_status == InBlock) { m_status = InNone; }
     }
-    if (T == Block) {
-        m_status = InBlock;
-        // update status according to new block
-        LOG_D("start Block");
-    }
-    if (T == Route) {
-        m_status = InRoute;
-        // update status according to new Route
-        LOG_D("start Route");
-    }
+    if (T == Block) { m_status = InBlock; }
+    if (T == Route) { m_status = InRoute; }
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {

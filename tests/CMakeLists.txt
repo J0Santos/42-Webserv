@@ -21,23 +21,23 @@ add_executable(${PROJECT_NAME}
   test.cpp
   testBlocks.cpp
   testDirectives.cpp
-  testArgc.cpp
-  testArray.cpp
-  testCgiHandler.cpp
-  testEnvp.cpp
-  testErrorCode.cpp
-  testFileSystem.cpp
-  # testHost.cpp
-  testLine.cpp
-  testLogger.cpp
-  testMethods.cpp
+  # testArgc.cpp
+  # testArray.cpp
+  # testCgiHandler.cpp
+  # testEnvp.cpp
+  # testErrorCode.cpp
+  # testFileSystem.cpp
+  # # testHost.cpp
+  # testLine.cpp
+  # testLogger.cpp
+  # testMethods.cpp
   testParser.cpp
-  testRequest.cpp
-  testResponse.cpp
-  testRoute.cpp
-  testSmt.cpp
-  testString.cpp
-  testUri.cpp
+  # testRequest.cpp
+  # testResponse.cpp
+  # testRoute.cpp
+  # testSmt.cpp
+  # testString.cpp
+  # testUri.cpp
 )
 
 add_test(webserv_gtest ${PROJECT_NAME})

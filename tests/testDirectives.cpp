@@ -2,7 +2,57 @@
 
 #include <gtest/gtest.h>
 
-TEST(testListenDirective, testIsValid) {
+TEST(testBlockDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::Block> blockDirective;
+    ASSERT_FALSE(blockDirective.isBlockDirective());
+    ASSERT_FALSE(blockDirective.isRouteDirective());
+
+    blockDirective.parse({"server", "}"});
+    ASSERT_FALSE(blockDirective.isValid());
+
+    blockDirective.parse({"server"});
+    ASSERT_FALSE(blockDirective.isValid());
+
+    blockDirective.parse({"other", "{"});
+    ASSERT_FALSE(blockDirective.isValid());
+
+    blockDirective.parse({"server", "{"});
+    ASSERT_TRUE(blockDirective.isValid());
+}
+
+TEST(testRouteDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::Route> blockDirective;
+    ASSERT_TRUE(blockDirective.isBlockDirective());
+    ASSERT_FALSE(blockDirective.isRouteDirective());
+
+    blockDirective.parse({"location", "/", "}"});
+    ASSERT_FALSE(blockDirective.isValid());
+
+    blockDirective.parse({"location"});
+    ASSERT_FALSE(blockDirective.isValid());
+
+    blockDirective.parse({"location", "{"});
+    ASSERT_FALSE(blockDirective.isValid());
+
+    blockDirective.parse({"other", "/", "{"});
+    ASSERT_FALSE(blockDirective.isValid());
+    {
+        config::DirectiveTypeTraits<config::Route> blockDirective;
+        blockDirective.parse({"location", "/", "{"});
+        ASSERT_TRUE(blockDirective.isValid());
+    }
+    {
+        config::DirectiveTypeTraits<config::Route> blockDirective;
+        blockDirective.parse({"location", "/python/", "{"});
+        ASSERT_TRUE(blockDirective.isValid());
+    }
+}
+
+TEST(testListenDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::Listen> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_FALSE(directive.isRouteDirective());
+
     {
         config::DirectiveTypeTraits<config::Listen> directive;
         directive.parse({"listen", "443"});
@@ -18,30 +68,16 @@ TEST(testListenDirective, testIsValid) {
         directive.parse({"listen", "443:example"});
         EXPECT_TRUE(directive.isValid());
     }
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"other", "443:example"});
-        EXPECT_FALSE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", "example:443:"});
-        EXPECT_FALSE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", ":example"});
-        EXPECT_FALSE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", "example", "443"});
-        EXPECT_FALSE(directive.isValid());
-    }
-}
 
-TEST(testListenDirective, testIsBlockAndIsRouteDirective) {
-    config::DirectiveTypeTraits<config::Listen> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_FALSE(directive.isRouteDirective());
+    directive.parse({"other", "443:example"});
+    EXPECT_FALSE(directive.isValid());
+
+    directive.parse({"listen", "example:443:"});
+    EXPECT_FALSE(directive.isValid());
+
+    directive.parse({"listen", ":example"});
+    EXPECT_FALSE(directive.isValid());
+
+    directive.parse({"listen", "example", "443"});
+    EXPECT_FALSE(directive.isValid());
 }

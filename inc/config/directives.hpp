@@ -39,9 +39,18 @@ struct DirectiveTypeTraits<Block> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 2) { return; }
-            if (args[0] != "server") { return; }
-            if (args[1] != "{") { return; }
+            if (args.size() != 2) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != "server") {
+                LOG_W(getName() << ": invalid directive.");
+                return;
+            }
+            if (args[1] != "{") {
+                LOG_W(getName() << ": invalid end.");
+                return;
+            }
             m_valid = true;
         }
 
@@ -66,9 +75,19 @@ struct DirectiveTypeTraits<Route> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 3) { return; }
-            if (args[0] != "location") { return; }
-            if (args[2] != "{") { return; }
+            if (args.size() != 3) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != "location") {
+                LOG_W(getName() << ": invalid directive.");
+                return;
+            }
+            if (args[2] != "{") {
+                LOG_W(getName() << ": invalid end.");
+                return;
+            }
+            m_target = (args[1][0] != '/') ? ("/" + args[1]) : args[1];
             m_valid = true;
         }
 
@@ -97,8 +116,14 @@ struct DirectiveTypeTraits<End> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 1) { return; }
-            if (args[0] != "}") { return; }
+            if (args.size() != 1) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != "}") {
+                LOG_W(getName() << ": invalid directive.");
+                return;
+            }
             m_valid = true;
         }
 
@@ -124,13 +149,22 @@ struct DirectiveTypeTraits<Listen> {
         ~DirectiveTypeTraits(void) {}
 
         void parse(std::vector<std::string> const& args) {
-            if (args.size() != 2 || args[0] != "listen") { return; }
+            if (args.size() != 2 || args[0] != "listen") {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
             size_t pos = args[1].find(":");
             if (pos != std::string::npos) {
-                if (!pos || pos == args[1].size() - 1) { return; }
+                if (!pos || pos == args[1].size() - 1) {
+                    LOG_W(getName() << ": invalid host:port.");
+                    return;
+                }
                 m_port = args[1].substr(0, pos);
                 m_host = args[1].substr(pos + 1);
-                if (!ft::string::isnumeric(m_port)) { return; }
+                if (!ft::string::isnumeric(m_port)) {
+                    LOG_W(getName() << ": invalid host:port.");
+                    return;
+                }
             }
             else if (ft::string::isnumeric(args[1])) { m_port = args[1]; }
             else { m_host = args[1]; }
