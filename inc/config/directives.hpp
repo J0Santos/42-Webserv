@@ -17,8 +17,8 @@ enum LineType {
     Route,
     End,
     Listen,
-    /* ServerName,
-    Root,
+    ServerName,
+    /* Root,
     ErrorPage,
     MaxBodySize,
     AllowMethods,
@@ -188,6 +188,38 @@ struct DirectiveTypeTraits<Listen> {
 
         std::string m_host;
         std::string m_port;
+};
+
+template<>
+struct DirectiveTypeTraits<ServerName> {
+
+        DirectiveTypeTraits(void) : m_valid(false) {}
+
+        ~DirectiveTypeTraits(void) {}
+
+        void parse(std::vector<std::string> const& args) {
+            if (args.size() != 2 || args[0] != "server_name") {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            m_valid = true;
+        }
+
+        std::string const getName(void) const { return ("ServerName"); }
+
+        bool isValid(void) const { return (m_valid); }
+
+        bool isBlockDirective(void) const { return (true); }
+
+        bool isRouteDirective(void) const { return (false); }
+
+        void extract(std::vector<block>& blocks) {
+            blocks.back().m_server_name = m_server_name;
+        }
+
+        bool m_valid;
+
+        std::string m_server_name;
 };
 
 } // namespace config

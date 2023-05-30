@@ -81,3 +81,21 @@ TEST(testListenDirective, testIsValidAndParse) {
     directive.parse({"listen", "example", "443"});
     EXPECT_FALSE(directive.isValid());
 }
+
+TEST(testServerNameDirective, testIsValidAndParse) {
+    config::DirectiveTypeTraits<config::ServerName> directive;
+    ASSERT_TRUE(directive.isBlockDirective());
+    ASSERT_FALSE(directive.isRouteDirective());
+
+    directive.parse({"server_name"});
+    ASSERT_FALSE(directive.isValid());
+
+    directive.parse({"other", "domain.com"});
+    ASSERT_FALSE(directive.isValid());
+
+    {
+        config::DirectiveTypeTraits<config::ServerName> directive;
+        directive.parse({"server_name", "domain.com"});
+        ASSERT_TRUE(directive.isValid());
+    }
+}

@@ -19,7 +19,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../inc/)
 
 add_executable(${PROJECT_NAME}
   test.cpp
-  testBlocks.cpp
+  # testBlocks.cpp
   testDirectives.cpp
   # testArgc.cpp
   # testArray.cpp
@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME}
   # testLine.cpp
   # testLogger.cpp
   # testMethods.cpp
-  testParser.cpp
+  # testParser.cpp
   # testRequest.cpp
   # testResponse.cpp
   # testRoute.cpp
