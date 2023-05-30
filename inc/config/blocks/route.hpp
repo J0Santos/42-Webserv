@@ -22,14 +22,14 @@ struct route {
 
         bool operator==(route const& rhs) const;
 
-        std::string                   m_target;
-        ft::directory                 m_root;
-        std::map<int, ft::file>       m_error_pages;
-        unsigned                      m_max_body_size;
-        std::vector<http::MethodType> m_allowed_methods;
-        bool                          m_autoindex;
-        ft::file                      m_index;
-        std::string                   m_cgi_extension;
+        std::string              m_target;
+        ft::directory            m_root;
+        std::map<int, ft::file>  m_error_pages;
+        unsigned long            m_max_body_size;
+        std::vector<std::string> m_allowed_methods;
+        bool                     m_autoindex;
+        ft::file                 m_index;
+        std::string              m_cgi_extension;
 
         bool m_closed;
 };

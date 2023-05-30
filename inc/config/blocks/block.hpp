@@ -20,14 +20,14 @@ struct block {
 
         bool operator==(block const& rhs) const;
 
-        std::string                   m_port;
-        std::string                   m_host;
-        std::string                   m_server_name;
-        ft::directory                 m_root;
-        std::map<int, ft::file>       m_error_pages;
-        unsigned                      m_max_body_size;
-        std::vector<http::MethodType> m_allowed_methods;
-        std::vector<route>            m_routes;
+        std::string              m_port;
+        std::string              m_host;
+        std::string              m_server_name;
+        ft::directory            m_root;
+        std::map<int, ft::file>  m_error_pages;
+        unsigned long            m_max_body_size;
+        std::vector<std::string> m_allowed_methods;
+        std::vector<route>       m_routes;
 
         bool m_closed;
 };
