@@ -10,14 +10,18 @@
 namespace config {
 
 Parser::Parser(ft::file filename) : m_line(), m_pos(0) {
+
     if (!filename.isValid()) { throw ft::InvalidFileException(); }
     m_file.open(std::string(filename).c_str());
     if (!m_file.is_open()) { throw ft::FailedToOpenFileException(); }
 }
 
 Parser::~Parser(void) {
+
+    // closing file
     m_file.close();
-    // delete all directives
+
+    // deleting all directives
     for (std::vector<DirectiveTypeTraitsBase*>::iterator it =
              m_directives.begin();
          it != m_directives.end(); ++it) {
@@ -59,60 +63,58 @@ char const* Parser::InvalidSyntaxException::what(void) const throw() {
     return ("config::parser: invalid syntax.");
 }
 
-std::vector< smt::shared_ptr<config::Opts> > parse(ft::file const& filename) {
+void parse(ft::file const& filename) {
     Parser parser(filename);
-
     while (parser.nextLine()) {
         Line line(parser.getLine());
         switch (line.getType()) {
-            case (Empty): break;
+            case (LineEmpty): break;
 
-            case (Block): parser.parseLine<Block>(line.format()); break;
+            case (LineBlock): parser.parseLine<LineBlock>(line.format()); break;
 
-            case (Route): parser.parseLine<Route>(line.format()); break;
+            case (LineRoute): parser.parseLine<LineRoute>(line.format()); break;
 
-            case (End): parser.parseLine<End>(line.format()); break;
+            case (LineEnd): parser.parseLine<LineEnd>(line.format()); break;
 
-            case (Listen): parser.parseLine<Listen>(line.format()); break;
-
-            case (ServerName):
-                parser.parseLine<ServerName>(line.format());
+            case (LineListen):
+                parser.parseLine<LineListen>(line.format());
                 break;
 
-            case (Root): parser.parseLine<Root>(line.format()); break;
-
-            case (ErrorPage): parser.parseLine<ErrorPage>(line.format()); break;
-
-            case (MaxBodySize):
-                parser.parseLine<MaxBodySize>(line.format());
+            case (LineServerName):
+                parser.parseLine<LineServerName>(line.format());
                 break;
 
-            case (AllowMethods):
-                parser.parseLine<AllowMethods>(line.format());
+            case (LineRoot): parser.parseLine<LineRoot>(line.format()); break;
+
+            case (LineErrorPage):
+                parser.parseLine<LineErrorPage>(line.format());
                 break;
 
-            case (Index): parser.parseLine<Index>(line.format()); break;
-
-            case (AutoIndex): parser.parseLine<AutoIndex>(line.format()); break;
-
-            case (CgiExtension):
-                parser.parseLine<CgiExtension>(line.format());
+            case (LineMaxBodySize):
+                parser.parseLine<LineMaxBodySize>(line.format());
                 break;
 
-            case (Unknown):
+            case (LineAllowMethods):
+                parser.parseLine<LineAllowMethods>(line.format());
+                break;
+
+            case (LineIndex): parser.parseLine<LineIndex>(line.format()); break;
+
+            case (LineAutoIndex):
+                parser.parseLine<LineAutoIndex>(line.format());
+                break;
+
+            case (LineCgiExtension):
+                parser.parseLine<LineCgiExtension>(line.format());
+                break;
+
+            case (LineUnknown):
             default: parser.error();
         }
     }
-    std::vector< smt::shared_ptr<Opts> > opts;
-    try {
-        opts = extract(parser.getParsedDirectives());
-    }
-    catch (std::exception& e) {
-        LOG_E("config: " << e.what());
-        throw Parser::InvalidSyntaxException();
-    }
-    if (opts.empty()) { throw Parser::InvalidSyntaxException(); }
-    return (opts);
+    // std::vector< smt::shared_ptr<Opts> > opts;
+    // opts = extract(parser.getParsedDirectives());
+    // return (opts);
 }
 
 } // namespace config

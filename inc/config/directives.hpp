@@ -3,13 +3,13 @@
 
 #include "cgi/CgiHandler.hpp"
 #include "config/Line.hpp"
-#include "config/Options.hpp"
 #include "http/methods.hpp"
 #include "utils/ft_filesystem.hpp"
 #include "utils/ft_string.hpp"
 #include "utils/Logger.hpp"
 #include "utils/smt.hpp"
 
+#include <map>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -58,10 +58,10 @@ template<LineType Directive>
 struct DirectiveTypeTraits;
 
 template<>
-struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineBlock> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(BLOCK_SERVER), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_SERVER), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -91,10 +91,10 @@ struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineRoute> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(BLOCK_LOCATION), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_LOCATION), m_valid(false) {
             if (args.size() != 3) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -126,10 +126,10 @@ struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(BLOCK_END), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_END), m_valid(false) {
             if (args.size() != 1) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -155,10 +155,10 @@ struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineListen> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_LISTEN), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_LISTEN), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -205,10 +205,10 @@ struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineServerName> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_SERVER_NAME), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_SERVER_NAME), m_valid(false) {
 
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
@@ -240,10 +240,10 @@ struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineRoot> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_ROOT), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_ROOT), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -276,10 +276,10 @@ struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineErrorPage> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_ERROR_PAGE), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_ERROR_PAGE), m_valid(false) {
             if (args.size() < 3) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -327,10 +327,10 @@ struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineMaxBodySize> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_MAX_BODY_SIZE), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_MAX_BODY_SIZE), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -365,10 +365,10 @@ struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineAllowMethods> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_ALLOW_METHODS), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_ALLOW_METHODS), m_valid(false) {
             if (args.size() < 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -406,10 +406,10 @@ struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineIndex> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_INDEX), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_INDEX), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -442,10 +442,10 @@ struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineAutoIndex> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_AUTOINDEX), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_AUTOINDEX), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -481,10 +481,10 @@ struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 };
 
 template<>
-struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
+struct DirectiveTypeTraits<LineCgiExtension> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(DIRECTIVE_FASTCGI), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_FASTCGI), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;

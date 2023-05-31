@@ -1,5 +1,7 @@
 #include "config/Line.hpp"
 
+#include "utils/ft_string.hpp"
+
 namespace config {
 
 Line::Line(Line const& src) : m_line(src.m_line), m_type(src.m_type) {}
@@ -24,37 +26,39 @@ LineType Line::getType(void) const { return (m_type); }
 
 LineType convertLineType(std::string const& line) {
     std::vector<std::string> subs = ft::string::split(line, " \t");
-    if (subs.empty() || subs[0] == LINE_COMMENT) { return (Empty); }
-    if (subs[0] == BLOCK_SERVER) { return (Block); }
-    if (subs[0] == BLOCK_LOCATION) { return (Route); }
-    if (subs[0] == BLOCK_END) { return (End); }
-    if (subs[0] == DIRECTIVE_LISTEN) { return (Listen); }
-    if (subs[0] == DIRECTIVE_SERVER_NAME) { return (ServerName); }
-    if (subs[0] == DIRECTIVE_ROOT) { return (Root); }
-    if (subs[0] == DIRECTIVE_ERROR_PAGE) { return (ErrorPage); }
-    if (subs[0] == DIRECTIVE_MAX_BODY_SIZE) { return (MaxBodySize); }
-    if (subs[0] == DIRECTIVE_ALLOW_METHODS) { return (AllowMethods); }
-    if (subs[0] == DIRECTIVE_INDEX) { return (Index); }
-    if (subs[0] == DIRECTIVE_AUTOINDEX) { return (AutoIndex); }
-    if (subs[0] == DIRECTIVE_FASTCGI) { return (CgiExtension); }
-    return (Unknown);
+    if (subs.empty() || subs[0] == LINE_COMMENT) { return (LineEmpty); }
+    if (subs[0] == LINE_SERVER) { return (LineBlock); }
+    if (subs[0] == LINE_LOCATION) { return (LineRoute); }
+    if (subs[0] == LINE_END) { return (LineEnd); }
+    if (subs[0] == LINE_LISTEN) { return (LineListen); }
+    if (subs[0] == LINE_SERVER_NAME) { return (LineServerName); }
+    if (subs[0] == LINE_ROOT) { return (LineRoot); }
+    if (subs[0] == LINE_ERROR_PAGE) { return (LineErrorPage); }
+    if (subs[0] == LINE_MAX_BODY_SIZE) { return (LineMaxBodySize); }
+    if (subs[0] == LINE_ALLOW_METHODS) { return (LineAllowMethods); }
+    if (subs[0] == LINE_INDEX) { return (LineIndex); }
+    if (subs[0] == LINE_AUTOINDEX) { return (LineAutoIndex); }
+    if (subs[0] == LINE_FASTCGI) { return (LineCgiExtension); }
+    return (LineUnknown);
 }
 
 std::vector<std::string> Line::format(void) const {
     std::vector<std::string> subs;
-    if (m_type == Empty || m_type == Unknown) { return (subs); }
+    if (m_type == LineEmpty || m_type == LineUnknown) { return (subs); }
 
     size_t      pos = m_line.find('#');
     std::string str =
         (pos == std::string::npos) ? m_line : m_line.substr(0, pos);
     str = ft::string::trim(str);
 
-    if ((m_type == Block || m_type == Route) &&
+    if ((m_type == LineBlock || m_type == LineRoute) &&
         str.find('{') != str.size() - 1) {
         return (subs);
     }
-    else if (m_type == End && str != "}") { return (subs); }
-    else if (m_type > End && str.find(';') != str.size() - 1) { return (subs); }
+    else if (m_type == LineEnd && str != "}") { return (subs); }
+    else if (m_type > LineEnd && str.find(';') != str.size() - 1) {
+        return (subs);
+    }
 
     str = (str.find(';') != std::string::npos) ? (str.substr(0, str.size() - 1))
                                                : str;

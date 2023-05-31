@@ -2,17 +2,12 @@
 #define CONFIG_PARSER_HPP
 
 #include "config/directives.hpp"
-#include "config/Options.hpp"
 #include "utils/ft_filesystem.hpp"
-#include "utils/smt.hpp"
 
 #include <typeinfo>
 #include <vector>
 
 namespace config {
-
-class DirectiveTypeTraitsBase;
-struct Opts;
 
 class Parser {
     public:
@@ -46,7 +41,7 @@ class Parser {
         std::vector< DirectiveTypeTraitsBase* > m_directives;
 };
 
-std::vector< smt::shared_ptr<config::Opts> > parse(ft::file const& filename);
+void parse(ft::file const& filename);
 
 } // namespace config
 

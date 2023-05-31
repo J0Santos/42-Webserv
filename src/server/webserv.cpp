@@ -2,21 +2,22 @@
 
 namespace webserv {
 
-static void stop(int) {}
+static void stop(int);
 
 void webserv(std::string const& filename) {
     signal(SIGINT, stop);
 
-    LOG_I("Reading config file: " + filename << "...");
+    LOG_I("Reading config file: " << filename << "...");
     try {
-        std::vector< smt::shared_ptr<config::Opts> > opts =
-            config::parse(filename);
-        config::Options::getInstance(opts);
+        config::parse(filename);
     }
     catch (std::exception& e) {
-        LOG_E("Error: " + std::string(e.what()));
+        LOG_F("Failed parsing file " << filename << ": "
+                                     << std::string(e.what()));
         return;
     }
 }
+
+static void stop(int) {}
 
 } // namespace webserv
