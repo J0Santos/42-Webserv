@@ -2,9 +2,10 @@
 #define CONFIG_DIRECTIVES_HPP
 
 #include "cgi/CgiHandler.hpp"
-#include "config/blocks/block.hpp"
 #include "config/Line.hpp"
 #include "config/Options.hpp"
+#include "http/methods.hpp"
+#include "utils/ft_filesystem.hpp"
 #include "utils/ft_string.hpp"
 #include "utils/Logger.hpp"
 #include "utils/smt.hpp"

@@ -16,7 +16,7 @@ bool DirectiveTypeTraitsBase::operator==(
 
 std::string const DirectiveTypeTraitsBase::getName(void) { return (m_name); }
 
-Opts::Opts(void) : m_max_body_size(0) {}
+Opts::Opts(void) : m_max_body_size(0), m_autoindex(false) {}
 
 Opts::~Opts(void) {}
 

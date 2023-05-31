@@ -7,14 +7,13 @@ add_library(${PROJECT_NAME} STATIC
   config/directives.cpp
   config/Line.cpp
   config/Options.cpp
-  config/blocks/block.cpp
-  config/blocks/route.cpp
   config/Parser.cpp
   http/ErrorCode.cpp
   http/methods.cpp
   http/Request.cpp
   http/Response.cpp
   http/Uri.cpp
+  server/webserv.cpp
   utils/ft_array.cpp
   utils/ft_exceptions.cpp
   utils/ft_filesystem.cpp

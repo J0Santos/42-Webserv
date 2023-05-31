@@ -22,9 +22,9 @@ class testOptionsBasic : public ::testing::Test {
                 new config::DirectiveTypeTraits<config::End>({}));
         }
 
-		void TearDown(void) {
-			for (auto& directive : m_directives) { delete directive; }
-		}
+        void TearDown(void) {
+            for (auto& directive : m_directives) { delete directive; }
+        }
 
         std::vector<config::DirectiveTypeTraitsBase*> m_directives;
 };
@@ -137,6 +137,7 @@ TEST_F(testOptionsExtreme, testSecondRoute) {
     opt->m_index = "./websites/index.html";
     opt->m_autoindex = false;
     opt->m_cgi_extension = ".py";
+    ASSERT_EQ(*(m_opts[2]), *opt);
 }
 
 TEST_F(testOptionsExtreme, testThirdRoute) {
@@ -149,10 +150,11 @@ TEST_F(testOptionsExtreme, testThirdRoute) {
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
     opt->m_max_body_size = 1000000;
-    opt->m_allowed_methods = std::vector<std::string>({"GET"});
-    opt->m_index = "./websites/index.html";
+    opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
+    opt->m_index = "";
     opt->m_autoindex = false;
-    opt->m_cgi_extension = ".py";
+    opt->m_cgi_extension = ".php";
+    ASSERT_EQ(*(m_opts[1]), *opt);
 }
 
 TEST_F(testOptionsExtreme, testSecondBlock) {
@@ -169,6 +171,7 @@ TEST_F(testOptionsExtreme, testSecondBlock) {
     opt->m_index = "";
     opt->m_autoindex = false;
     opt->m_cgi_extension = "";
+    ASSERT_EQ(*(m_opts[3]), *opt);
 }
 
 TEST_F(testOptionsExtreme, testThirdBlock) {
@@ -186,4 +189,11 @@ TEST_F(testOptionsExtreme, testThirdBlock) {
     opt->m_index = "";
     opt->m_autoindex = false;
     opt->m_cgi_extension = "";
+    ASSERT_EQ(*(m_opts[4]), *opt);
+}
+
+TEST_F(testOptionsExtreme, testGetOptionsByHostAndPort) {
+    config::Options::getInstance(m_opts);
+
+    config::Options::getOpts("localhost", "8080", "/", "");
 }

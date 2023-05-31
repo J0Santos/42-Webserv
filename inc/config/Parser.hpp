@@ -1,7 +1,6 @@
 #ifndef CONFIG_PARSER_HPP
 #define CONFIG_PARSER_HPP
 
-#include "config/blocks/block.hpp"
 #include "config/directives.hpp"
 #include "config/Options.hpp"
 #include "utils/ft_filesystem.hpp"
@@ -23,9 +22,8 @@ class Parser {
 
         bool nextLine(void);
 
-        std::string               getLine(void) const;
-        size_t                    getPosition(void) const;
-        std::vector<block> const& getBlocks(void) const;
+        std::string getLine(void) const;
+        size_t      getPosition(void) const;
 
         void error(void) const;
 
