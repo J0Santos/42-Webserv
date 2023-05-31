@@ -195,5 +195,15 @@ TEST_F(testOptionsExtreme, testThirdBlock) {
 TEST_F(testOptionsExtreme, testGetOptionsByHostAndPort) {
     config::Options::getInstance(m_opts);
 
-    config::Options::getOpts("localhost", "8080", "/", "");
+    config::Options::getOpts("8080", "localhost", "/", "");
+
+    config::Options::getOpts("8080", "localhost", "/", "great");
+
+    config::Options::getOpts("8081", "localhost", "/", "domain.com");
+
+    config::Options::getOpts("8081", "localhost", "/", "domain.net");
+
+    config::Options::getOpts("8081", "localhost", "/", "domain.pt");
+
+    config::Options::getOpts("8081", "localhost", "/", "");
 }
