@@ -14,6 +14,11 @@ TEST(testEnvp, testBasic) {
     EXPECT_STREQ(c_envp[0], "REQUEST_METHOD=POST");
     EXPECT_STREQ(c_envp[1], "SCRIPT_NAME=/cgi/myscript.py");
     EXPECT_TRUE(!c_envp[2]);
+	// delete[] c_envp;
+	for (int i = 0; c_envp[i]; ++i) {
+		delete[] c_envp[i];
+	}
+	delete[] c_envp;
 }
 
 TEST(testEnvp, testMoreComplete) {
@@ -34,4 +39,8 @@ TEST(testEnvp, testMoreComplete) {
     EXPECT_STREQ(c_envp[3], "CONTENT_LENGTH=0");
     EXPECT_STREQ(c_envp[4], "CONTENT_TYPE=text/html");
     EXPECT_TRUE(!c_envp[5]);
+	for (int i = 0; c_envp[i]; ++i) {
+		delete[] c_envp[i];
+	}
+	delete[] c_envp;
 }

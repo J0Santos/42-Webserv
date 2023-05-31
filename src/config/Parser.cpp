@@ -50,9 +50,9 @@ template<LineType T>
 void Parser::parseLine(std::vector<std::string> const& args) {
 
     DirectiveTypeTraits<T>* directive = new DirectiveTypeTraits<T>(args);
-    if (!directive->isValid()) { error(); }
-
     m_directives.push_back(static_cast<DirectiveTypeTraitsBase*>(directive));
+
+    if (!directive->isValid()) { error(); }
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {

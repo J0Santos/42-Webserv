@@ -22,6 +22,10 @@ class testOptionsBasic : public ::testing::Test {
                 new config::DirectiveTypeTraits<config::End>({}));
         }
 
+		void TearDown(void) {
+			for (auto& directive : m_directives) { delete directive; }
+		}
+
         std::vector<config::DirectiveTypeTraitsBase*> m_directives;
 };
 

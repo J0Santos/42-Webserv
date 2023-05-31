@@ -16,6 +16,10 @@ bool DirectiveTypeTraitsBase::operator==(
 
 std::string const DirectiveTypeTraitsBase::getName(void) { return (m_name); }
 
+Opts::Opts(void) : m_max_body_size(0) {}
+
+Opts::~Opts(void) {}
+
 bool Opts::operator==(Opts const& rhs) const {
     return (m_target == rhs.m_target && m_host == rhs.m_host &&
             m_port == rhs.m_port && m_root == rhs.m_root &&

@@ -16,7 +16,8 @@
 namespace config {
 
 struct Opts {
-        virtual ~Opts(void) {}
+        virtual ~Opts(void);
+        Opts(void);
 
         bool operator==(Opts const& rhs) const;
 
