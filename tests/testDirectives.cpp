@@ -266,31 +266,31 @@ TEST(testCgiExtensionDirective, testIsValidAndParse) {
     ASSERT_FALSE(directive.isBlockDirective());
     ASSERT_TRUE(directive.isRouteDirective());
 
-    directive.parse({"fastcgi"});
+    directive.parse({"fastcgi_pass"});
     ASSERT_FALSE(directive.isValid());
 
     directive.parse({"other", ".py"});
     ASSERT_FALSE(directive.isValid());
 
-    directive.parse({"fastcgi", ".py", "other"});
+    directive.parse({"fastcgi_pass", ".py", "other"});
     ASSERT_FALSE(directive.isValid());
 
-    directive.parse({"fastcgi", ".tmp"});
+    directive.parse({"fastcgi_pass", ".tmp"});
     ASSERT_FALSE(directive.isValid());
 
     {
         config::DirectiveTypeTraits<config::CgiExtension> directive;
-        directive.parse({"fastcgi", ".py"});
+        directive.parse({"fastcgi_pass", ".py"});
         ASSERT_TRUE(directive.isValid());
     }
     {
         config::DirectiveTypeTraits<config::CgiExtension> directive;
-        directive.parse({"fastcgi", ".php"});
+        directive.parse({"fastcgi_pass", ".php"});
         ASSERT_TRUE(directive.isValid());
     }
     {
         config::DirectiveTypeTraits<config::CgiExtension> directive;
-        directive.parse({"fastcgi", ".cgi"});
+        directive.parse({"fastcgi_pass", ".cgi"});
         ASSERT_TRUE(directive.isValid());
     }
 }

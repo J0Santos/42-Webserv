@@ -4,6 +4,7 @@ add_library(${PROJECT_NAME} STATIC
   cgi/Argc.cpp
   cgi/Envp.cpp
   cgi/CgiHandler.cpp
+  config/directives.cpp
   config/Line.cpp
   config/blocks/block.cpp
   config/blocks/route.cpp

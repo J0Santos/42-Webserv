@@ -16,17 +16,18 @@ namespace config {
 class DirectiveTypeTraitsBase {
     public:
 
-        // DirectiveTypeTraitsBase(std::string const& name) : m_name(name) {}
-        virtual ~DirectiveTypeTraitsBase(void) {}
+        DirectiveTypeTraitsBase(std::string const& name);
+        virtual ~DirectiveTypeTraitsBase(void);
+
+        std::string const getName(void);
 
         virtual void parse(std::vector<std::string> const& args) = 0;
-
-        // std::string const getName(void) const { return (m_name); };
-        virtual std::string const getName(void) const = 0;
 
         virtual bool isValid(void) const = 0;
         virtual bool isBlockDirective(void) const = 0;
         virtual bool isRouteDirective(void) const = 0;
+
+        std::string const m_name;
 };
 
 template<LineType Directive>
@@ -35,7 +36,8 @@ struct DirectiveTypeTraits;
 template<>
 struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(BLOCK_SERVER), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -55,7 +57,7 @@ struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("Block"); }
+        // std::string const getName(void) const { return ("Block"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -69,7 +71,8 @@ struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(BLOCK_LOCATION), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -90,7 +93,7 @@ struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("Route"); }
+        // std::string const getName(void) const { return ("Route"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -105,7 +108,8 @@ struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(BLOCK_END), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -121,7 +125,7 @@ struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("End"); }
+        // std::string const getName(void) const { return ("End"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -136,7 +140,8 @@ template<>
 struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void)
-            : m_valid(false), m_host("localhost"), m_port("8080") {}
+            : DirectiveTypeTraitsBase(DIRECTIVE_LISTEN), m_valid(false),
+              m_host("localhost"), m_port("8080") {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -167,7 +172,7 @@ struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("listen"); }
+        // std::string const getName(void) const { return ("listen"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -184,7 +189,8 @@ struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_SERVER_NAME), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -201,7 +207,7 @@ struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("server_name"); }
+        // std::string const getName(void) const { return ("server_name"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -217,7 +223,8 @@ struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_ROOT), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -238,7 +245,7 @@ struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("root"); }
+        // std::string const getName(void) const { return ("root"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -254,7 +261,8 @@ struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_ERROR_PAGE), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -288,7 +296,7 @@ struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("error_page"); }
+        // std::string const getName(void) const { return ("error_page"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -304,7 +312,9 @@ struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_MAX_BODY_SIZE), m_valid(false) {
+        }
 
         ~DirectiveTypeTraits(void) {}
 
@@ -325,9 +335,9 @@ struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const {
-            return ("client_max_body_size");
-        }
+        // std::string const getName(void) const {
+        //     return ("client_max_body_size");
+        // }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -343,7 +353,9 @@ struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_ALLOW_METHODS), m_valid(false) {
+        }
 
         ~DirectiveTypeTraits(void) {}
 
@@ -367,7 +379,7 @@ struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("allow_methods"); }
+        // std::string const getName(void) const { return ("allow_methods"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -383,7 +395,8 @@ struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_INDEX), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -404,7 +417,7 @@ struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("index"); }
+        // std::string const getName(void) const { return ("index"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -420,7 +433,8 @@ struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_AUTOINDEX), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -442,7 +456,7 @@ struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("autoindex"); }
+        // std::string const getName(void) const { return ("autoindex"); }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -458,7 +472,8 @@ struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void) : m_valid(false) {}
+        DirectiveTypeTraits(void)
+            : DirectiveTypeTraitsBase(DIRECTIVE_FASTCGI), m_valid(false) {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -479,7 +494,7 @@ struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        std::string const getName(void) const { return ("fastcgi"); }
+        // std::string const getName(void) const { return ("fastcgi"); }
 
         bool isValid(void) const { return (m_valid); }
 
