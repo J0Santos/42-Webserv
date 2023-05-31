@@ -7,6 +7,7 @@
 #include "http/methods.hpp"
 #include "utils/ft_filesystem.hpp"
 #include "utils/ft_string.hpp"
+#include "utils/Host.hpp"
 #include "utils/Logger.hpp"
 #include "utils/smt.hpp"
 
@@ -199,8 +200,24 @@ struct DirectiveTypeTraits<LineListen> : public DirectiveTypeTraitsBase {
                     return;
                 }
             }
-            else if (ft::string::isnumeric(args[1])) { m_port = args[1]; }
-            else { m_host = args[1]; }
+            else if (ft::string::isnumeric(args[1])) {
+                m_host = "localhost";
+                m_port = args[1];
+            }
+            else {
+                m_port = "8080";
+                m_host = args[1];
+            }
+
+            // resolv host name
+            std::vector<std::string> resolvHost =
+                net::Host(m_host).resolve(m_port);
+            if (resolvHost.empty()) {
+                LOG_W(getName() << ": failed to resolv host.");
+                return;
+            }
+            m_host = resolvHost[0];
+
             m_valid = true;
         }
 
