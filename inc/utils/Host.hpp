@@ -27,8 +27,8 @@ class Host {
 
         bool operator==(Host const& rhs) const;
 
-        std::vector<std::string> resolve(void) const;
-        std::vector<std::string> resolve(int port) const;
+        // std::vector<std::string> resolve(void) const;
+        std::vector<std::string> resolve(std::string const& port) const;
 
     private:
 

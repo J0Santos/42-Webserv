@@ -12,20 +12,22 @@ TEST(testLine, testConstructorAndCopy) {
     EXPECT_EQ(line1.getLine(), "");
     EXPECT_EQ(line2.getLine(), "");
     EXPECT_EQ(line3.getLine(), "");
-    EXPECT_EQ(line1.getType(), config::LineType::Empty);
-    EXPECT_EQ(line2.getType(), config::LineType::Empty);
-    EXPECT_EQ(line3.getType(), config::LineType::Empty);
+    EXPECT_EQ(line1.getType(), config::LineType::LineEmpty);
+    EXPECT_EQ(line2.getType(), config::LineType::LineEmpty);
+    EXPECT_EQ(line3.getType(), config::LineType::LineEmpty);
 }
 
 TEST(testLine, testTypeAssertion) {
-    EXPECT_EQ(config::Line("").getType(), config::LineType::Empty);
-    EXPECT_EQ(config::Line("# comment").getType(), config::LineType::Empty);
-    EXPECT_EQ(config::Line("server {").getType(), config::LineType::Block);
-    EXPECT_EQ(config::Line("location {").getType(), config::LineType::Route);
-    EXPECT_EQ(config::Line("}").getType(), config::LineType::End);
-    EXPECT_EQ(config::Line("listen 8080;").getType(), config::LineType::Listen);
+    EXPECT_EQ(config::Line("").getType(), config::LineType::LineEmpty);
+    EXPECT_EQ(config::Line("# comment").getType(), config::LineType::LineEmpty);
+    EXPECT_EQ(config::Line("server {").getType(), config::LineType::LineBlock);
+    EXPECT_EQ(config::Line("location {").getType(),
+              config::LineType::LineRoute);
+    EXPECT_EQ(config::Line("}").getType(), config::LineType::LineEnd);
+    EXPECT_EQ(config::Line("listen 8080;").getType(),
+              config::LineType::LineListen);
     EXPECT_EQ(config::Line("just some random text").getType(),
-              config::LineType::Unknown);
+              config::LineType::LineUnknown);
 }
 
 TEST(testLine, testFormat) {

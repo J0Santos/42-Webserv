@@ -44,14 +44,16 @@ TEST_F(testParser, testError) {
 
 TEST_F(testParser, testParseLine) {
     config::Parser parser("test.conf");
-    ASSERT_NO_THROW(parser.parseLine<config::Listen>({"listen", "80"}));
-    ASSERT_NO_THROW(parser.parseLine<config::Block>({"server", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::Block>({"server", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::Listen>({"listen", "80"}));
-    ASSERT_NO_THROW(parser.parseLine<config::Route>({"location", "/", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::Route>({"location", "/", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::End>({"}"}));
+    ASSERT_NO_THROW(parser.parseLine<config::LineListen>({"listen", "80"}));
+    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}));
+    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}));
+    ASSERT_NO_THROW(parser.parseLine<config::LineListen>({"listen", "80"}));
+    ASSERT_NO_THROW(
+        parser.parseLine<config::LineRoute>({"location", "/", "{"}));
+    ASSERT_NO_THROW(
+        parser.parseLine<config::LineRoute>({"location", "/", "{"}));
+    ASSERT_NO_THROW(parser.parseLine<config::LineEnd>({"}"}));
 
-    ASSERT_THROW(parser.parseLine<config::Listen>({"listen", "80", "80"}),
+    ASSERT_THROW(parser.parseLine<config::LineListen>({"listen", "80", "80"}),
                  config::Parser::InvalidSyntaxException);
 }
