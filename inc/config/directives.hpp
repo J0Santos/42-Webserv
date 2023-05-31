@@ -3,6 +3,7 @@
 
 #include "cgi/CgiHandler.hpp"
 #include "config/Line.hpp"
+#include "config/ServerOpts.hpp"
 #include "http/methods.hpp"
 #include "utils/ft_filesystem.hpp"
 #include "utils/ft_string.hpp"
@@ -43,9 +44,11 @@ class DirectiveTypeTraitsBase {
 
         bool operator==(DirectiveTypeTraitsBase const& rhs) const;
 
-        std::string const getName(void);
+        virtual void set(std::vector<ServerOpts>&) const = 0;
+        virtual void set(ServerOpts&) const = 0;
+        virtual void set(LocationOpts&) const = 0;
 
-        virtual void set(smt::shared_ptr<Opts>& opt) const = 0;
+        std::string const getName(void);
 
         virtual bool isValid(void) const = 0;
         virtual bool isBlockDirective(void) const = 0;
@@ -79,7 +82,13 @@ struct DirectiveTypeTraits<LineBlock> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const { (void)opt; }
+        void set(std::vector<ServerOpts>& opts) const {
+            opts.push_back(ServerOpts());
+        }
+
+        void set(ServerOpts&) const {}
+
+        void set(LocationOpts&) const {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -113,7 +122,13 @@ struct DirectiveTypeTraits<LineRoute> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const { (void)opt; }
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const {
+            opts.m_locations.push_back(LocationOpts(m_target));
+        }
+
+        void set(LocationOpts&) const {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -143,7 +158,11 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const { (void)opt; }
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts&) const {}
+
+        void set(LocationOpts&) const {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -185,10 +204,14 @@ struct DirectiveTypeTraits<LineListen> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_host = m_host;
-            opt->m_port = m_port;
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const {
+            opts.m_host = m_host;
+            opts.m_port = m_port;
         }
+
+        void set(LocationOpts&) const {}
 
         ~DirectiveTypeTraits(void) {}
 
@@ -224,9 +247,11 @@ struct DirectiveTypeTraits<LineServerName> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_server_name = m_server_name;
-        }
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const { opts.m_server_name = m_server_name; }
+
+        void set(LocationOpts&) const {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -262,7 +287,11 @@ struct DirectiveTypeTraits<LineRoot> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const { opt->m_root = m_root; }
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const { opts.m_root = m_root; }
+
+        void set(LocationOpts& opts) const { opts.m_root = m_root; }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -311,8 +340,12 @@ struct DirectiveTypeTraits<LineErrorPage> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_error_pages = m_error_pages;
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const { opts.m_error_pages = m_error_pages; }
+
+        void set(LocationOpts& opts) const {
+            opts.m_error_pages = m_error_pages;
         }
 
         bool isValid(void) const { return (m_valid); }
@@ -349,8 +382,14 @@ struct DirectiveTypeTraits<LineMaxBodySize> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_max_body_size = m_max_body_size;
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const {
+            opts.m_max_body_size = m_max_body_size;
+        }
+
+        void set(LocationOpts& opts) const {
+            opts.m_max_body_size = m_max_body_size;
         }
 
         bool isValid(void) const { return (m_valid); }
@@ -390,8 +429,14 @@ struct DirectiveTypeTraits<LineAllowMethods> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_allowed_methods = m_allowed_methods;
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts& opts) const {
+            opts.m_allowed_methods = m_allowed_methods;
+        }
+
+        void set(LocationOpts& opts) const {
+            opts.m_allowed_methods = m_allowed_methods;
         }
 
         bool isValid(void) const { return (m_valid); }
@@ -428,7 +473,11 @@ struct DirectiveTypeTraits<LineIndex> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const { opt->m_index = m_index; }
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts&) const {}
+
+        void set(LocationOpts& ops) const { ops.m_index = m_index; }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -465,9 +514,11 @@ struct DirectiveTypeTraits<LineAutoIndex> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_autoindex = m_autoindex;
-        }
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts&) const {}
+
+        void set(LocationOpts& ops) const { ops.m_autoindex = m_autoindex; }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -503,8 +554,12 @@ struct DirectiveTypeTraits<LineCgiExtension> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(smt::shared_ptr<Opts>& opt) const {
-            opt->m_cgi_extension = m_cgi_extension;
+        void set(std::vector<ServerOpts>&) const {}
+
+        void set(ServerOpts&) const {}
+
+        void set(LocationOpts& ops) const {
+            ops.m_cgi_extension = m_cgi_extension;
         }
 
         bool isValid(void) const { return (m_valid); }

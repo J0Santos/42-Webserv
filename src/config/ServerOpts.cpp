@@ -1,4 +1,4 @@
-#include "options/ServerOpts.hpp"
+#include "config/ServerOpts.hpp"
 
 namespace config {
 
@@ -19,6 +19,7 @@ ServerOpts& ServerOpts::operator=(ServerOpts const& rhs) {
         m_allowed_methods = rhs.m_allowed_methods;
         m_locations = rhs.m_locations;
     }
+    return (*this);
 }
 
 bool ServerOpts::operator==(ServerOpts const& rhs) const {

@@ -2,6 +2,7 @@
 
 #include "config/directives.hpp"
 #include "config/Line.hpp"
+#include "config/Options.hpp"
 #include "utils/ft_exceptions.hpp"
 #include "utils/Logger.hpp"
 
@@ -16,18 +17,7 @@ Parser::Parser(ft::file filename) : m_line(), m_pos(0) {
     if (!m_file.is_open()) { throw ft::FailedToOpenFileException(); }
 }
 
-Parser::~Parser(void) {
-
-    // closing file
-    m_file.close();
-
-    // deleting all directives
-    for (std::vector<DirectiveTypeTraitsBase*>::iterator it =
-             m_directives.begin();
-         it != m_directives.end(); ++it) {
-        delete *it;
-    }
-}
+Parser::~Parser(void) { m_file.close(); }
 
 bool Parser::nextLine(void) {
     if (m_file.eof()) { return (false); }
@@ -40,8 +30,7 @@ std::string Parser::getLine(void) const { return (m_line); }
 
 size_t Parser::getPosition(void) const { return (m_pos); }
 
-std::vector< DirectiveTypeTraitsBase* > const&
-    Parser::getParsedDirectives(void) const {
+std::vector<ServerOpts> const& Parser::getOptions(void) const {
     return (m_directives);
 }
 
@@ -51,12 +40,35 @@ void Parser::error(void) const {
 }
 
 template<LineType T>
-void Parser::parseLine(std::vector<std::string> const& args) {
+void Parser::parseLine(std::vector<std::string> const& args, int level) {
 
-    DirectiveTypeTraits<T>* directive = new DirectiveTypeTraits<T>(args);
-    m_directives.push_back(static_cast<DirectiveTypeTraitsBase*>(directive));
+    DirectiveTypeTraits<T> directive(args);
+    if (!directive.isValid()) { error(); }
 
-    if (!directive->isValid()) { error(); }
+    if (level == 0) {
+        if (directive.isBlockDirective() || directive.isRouteDirective()) {
+            LOG_W("config: directive " << directive.getName()
+                                       << " is not a global directive.");
+            error();
+        }
+        directive.set(m_directives);
+    }
+    if (level == 1) {
+        if (!directive.isBlockDirective()) {
+            LOG_W("config: directive " << directive.getName()
+                                       << " is not a server directive.");
+            error();
+        }
+        directive.set(m_directives.back());
+    }
+    else if (level == 2) {
+        if (!directive.isRouteDirective()) {
+            LOG_W("config: directive " << directive.getName()
+                                       << " is not a location directive.");
+            error();
+        }
+        directive.set(m_directives.back().m_locations.back());
+    }
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {
@@ -65,56 +77,73 @@ char const* Parser::InvalidSyntaxException::what(void) const throw() {
 
 void parse(ft::file const& filename) {
     Parser parser(filename);
+    int    level = 0;
     while (parser.nextLine()) {
         Line line(parser.getLine());
+        LOG_I("line: " << line.getLine());
         switch (line.getType()) {
             case (LineEmpty): break;
 
-            case (LineBlock): parser.parseLine<LineBlock>(line.format()); break;
+            case (LineBlock):
+                parser.parseLine<LineBlock>(line.format(), level);
+                level++;
+                break;
 
-            case (LineRoute): parser.parseLine<LineRoute>(line.format()); break;
+            case (LineRoute):
+                parser.parseLine<LineRoute>(line.format(), level);
+                level++;
+                break;
 
-            case (LineEnd): parser.parseLine<LineEnd>(line.format()); break;
+            case (LineEnd):
+                parser.parseLine<LineEnd>(line.format(), level);
+                level--;
+                break;
 
             case (LineListen):
-                parser.parseLine<LineListen>(line.format());
+                parser.parseLine<LineListen>(line.format(), level);
                 break;
 
             case (LineServerName):
-                parser.parseLine<LineServerName>(line.format());
+                parser.parseLine<LineServerName>(line.format(), level);
                 break;
 
-            case (LineRoot): parser.parseLine<LineRoot>(line.format()); break;
+            case (LineRoot):
+                parser.parseLine<LineRoot>(line.format(), level);
+                break;
 
             case (LineErrorPage):
-                parser.parseLine<LineErrorPage>(line.format());
+                parser.parseLine<LineErrorPage>(line.format(), level);
                 break;
 
             case (LineMaxBodySize):
-                parser.parseLine<LineMaxBodySize>(line.format());
+                parser.parseLine<LineMaxBodySize>(line.format(), level);
                 break;
 
             case (LineAllowMethods):
-                parser.parseLine<LineAllowMethods>(line.format());
+                parser.parseLine<LineAllowMethods>(line.format(), level);
                 break;
 
-            case (LineIndex): parser.parseLine<LineIndex>(line.format()); break;
+            case (LineIndex):
+                parser.parseLine<LineIndex>(line.format(), level);
+                break;
 
             case (LineAutoIndex):
-                parser.parseLine<LineAutoIndex>(line.format());
+                parser.parseLine<LineAutoIndex>(line.format(), level);
                 break;
 
             case (LineCgiExtension):
-                parser.parseLine<LineCgiExtension>(line.format());
+                parser.parseLine<LineCgiExtension>(line.format(), level);
                 break;
 
             case (LineUnknown):
             default: parser.error();
         }
     }
-    // std::vector< smt::shared_ptr<Opts> > opts;
-    // opts = extract(parser.getParsedDirectives());
-    // return (opts);
+    if (level != 0) { parser.error(); }
+    // initializing options
+    LOG_I("config: parsing done.");
+    Options::getInstance(parser.getOptions());
+    LOG_I("config: parsing done.");
 }
 
 } // namespace config

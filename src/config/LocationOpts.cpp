@@ -1,4 +1,4 @@
-#include "options/LocationOpts.hpp"
+#include "config/LocationOpts.hpp"
 
 namespace config {
 
@@ -19,7 +19,7 @@ LocationOpts& LocationOpts::operator=(LocationOpts const& src) {
         m_autoindex = src.m_autoindex;
         m_cgi_extension = src.m_cgi_extension;
     }
-    return *this;
+    return (*this);
 }
 
 bool LocationOpts::operator==(LocationOpts const& rhs) const {

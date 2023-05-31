@@ -1,7 +1,7 @@
 #ifndef CONFIG_SERVER_OPTIONS_HPP
 #define CONFIG_SERVER_OPTIONS_HPP
 
-#include "options/LocationOpts.hpp"
+#include "config/LocationOpts.hpp"
 #include "utils/ft_filesystem.hpp"
 #include "utils/Host.hpp"
 
@@ -31,7 +31,7 @@ class ServerOpts {
         unsigned long            m_max_body_size;
         std::vector<std::string> m_allowed_methods;
 
-        std::map< std::string, LocationOpts > m_locations;
+        std::vector<LocationOpts> m_locations;
 };
 
 } // namespace config

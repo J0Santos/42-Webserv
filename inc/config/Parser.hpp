@@ -2,6 +2,7 @@
 #define CONFIG_PARSER_HPP
 
 #include "config/directives.hpp"
+#include "config/ServerOpts.hpp"
 #include "utils/ft_filesystem.hpp"
 
 #include <typeinfo>
@@ -23,14 +24,13 @@ class Parser {
         void error(void) const;
 
         template<LineType T>
-        void parseLine(std::vector<std::string> const& args);
+        void parseLine(std::vector<std::string> const& args, int level);
 
         struct InvalidSyntaxException : public std::exception {
                 char const* what(void) const throw();
         };
 
-        std::vector< DirectiveTypeTraitsBase* > const&
-            getParsedDirectives(void) const;
+        std::vector<ServerOpts> const& getOptions(void) const;
 
     private:
 
@@ -38,7 +38,7 @@ class Parser {
         size_t        m_pos;
         std::ifstream m_file;
 
-        std::vector< DirectiveTypeTraitsBase* > m_directives;
+        std::vector<ServerOpts> m_directives;
 };
 
 void parse(ft::file const& filename);
