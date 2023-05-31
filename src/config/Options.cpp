@@ -2,6 +2,16 @@
 
 namespace config {
 
+Options::Options(std::vector< smt::shared_ptr<Opts> > opts) : m_opts(opts) {}
+
+Options::~Options(void) {}
+
+smt::shared_ptr<Options>
+    Options::getInstance(std::vector< smt::shared_ptr<Opts> > opts) {
+    static smt::shared_ptr<Options> ist(new Options(opts));
+    return (ist);
+}
+
 static std::vector<smt::shared_ptr<Opts> >
     extractOpts(std::map< std::string, smt::shared_ptr<Opts> > const& opts) {
     std::vector<smt::shared_ptr<Opts> > ret;

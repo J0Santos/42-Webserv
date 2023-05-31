@@ -109,7 +109,7 @@ std::vector< smt::shared_ptr<config::Opts> > parse(ft::file const& filename) {
     }
     catch (std::exception& e) {
         LOG_E("config: " << e.what());
-        throw;
+        throw Parser::InvalidSyntaxException();
     }
     if (opts.empty()) { throw Parser::InvalidSyntaxException(); }
     return (opts);

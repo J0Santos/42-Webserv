@@ -8,12 +8,6 @@ int main(int argc, char const* argv[]) {
     LOG_D("Webserv " << 2.0);
     std::string filename("config/webserv.conf");
     if (argc > 1) { filename = argv[1]; }
-    try {
-        config::parse(filename);
-    }
-    catch (std::exception const& e) {
-        LOG_E(e.what());
-    }
-
+    webserv::webserv(filename);
     return (0);
 }

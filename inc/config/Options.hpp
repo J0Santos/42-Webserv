@@ -8,27 +8,29 @@
 namespace config {
 
 class DirectiveTypeTraitsBase;
-
+struct Opts;
 template<LineType Directive>
 struct DirectiveTypeTraits;
 
-struct Opts;
+class Options {
 
-// struct Opts {
-//         virtual ~Opts(void) {}
+    public:
 
-// std::string              m_target;
-// std::string              m_host;
-// std::string              m_port;
-// ft::directory            m_root;
-// std::string              m_server_name;
-// std::map<int, ft::file>  m_error_pages;
-// unsigned long            m_max_body_size;
-// std::vector<std::string> m_allowed_methods;
-// ft::file                 m_index;
-// bool                     m_autoindex;
-// std::string              m_cgi_extension;
-// };
+        static smt::shared_ptr<Options>
+            getInstance(std::vector< smt::shared_ptr<Opts> > opts =
+                            std::vector< smt::shared_ptr<Opts> >());
+
+    private:
+
+        Options(void);
+        Options(std::vector< smt::shared_ptr<Opts> > opts);
+        Options(Options const& rhs);
+        ~Options(void);
+
+        Options& operator=(Options const& rhs);
+
+        std::vector< smt::shared_ptr<Opts> > m_opts;
+};
 
 std::ostream& operator<<(std::ostream& os, Opts const& rhs);
 
