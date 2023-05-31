@@ -3,6 +3,7 @@
 
 #include "cgi/CgiHandler.hpp"
 #include "config/blocks/block.hpp"
+#include "config/Line.hpp"
 #include "utils/ft_string.hpp"
 #include "utils/Logger.hpp"
 
@@ -12,28 +13,27 @@
 
 namespace config {
 
-enum LineType {
-    Empty,
-    Block,
-    Route,
-    End,
-    Listen,
-    ServerName,
-    Root,
-    ErrorPage,
-    MaxBodySize,
-    AllowMethods,
-    Index,
-    AutoIndex,
-    CgiExtension,
-    Unknown
+class DirectiveTypeTraitsBase {
+    public:
+
+        // DirectiveTypeTraitsBase(std::string const& name) : m_name(name) {}
+        virtual ~DirectiveTypeTraitsBase(void) {}
+
+        virtual void parse(std::vector<std::string> const& args) = 0;
+
+        // std::string const getName(void) const { return (m_name); };
+        virtual std::string const getName(void) const = 0;
+
+        virtual bool isValid(void) const = 0;
+        virtual bool isBlockDirective(void) const = 0;
+        virtual bool isRouteDirective(void) const = 0;
 };
 
 template<LineType Directive>
 struct DirectiveTypeTraits;
 
 template<>
-struct DirectiveTypeTraits<Block> {
+struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -63,13 +63,11 @@ struct DirectiveTypeTraits<Block> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block>& blocks) { blocks.push_back(block()); }
-
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<Route> {
+struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -100,17 +98,12 @@ struct DirectiveTypeTraits<Route> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            blocks.back().m_routes.push_back(config::route(m_target));
-        }
-
         bool        m_valid;
         std::string m_target;
 };
 
 template<>
-struct DirectiveTypeTraits<End> {
+struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -136,20 +129,11 @@ struct DirectiveTypeTraits<End> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            if (!blocks.back().m_routes.empty() &&
-                !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_closed = true;
-            }
-            else if (!blocks.back().m_closed) { blocks.back().m_closed = true; }
-        }
-
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<Listen> {
+struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void)
             : m_valid(false), m_host("localhost"), m_port("8080") {}
@@ -191,12 +175,6 @@ struct DirectiveTypeTraits<Listen> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            blocks.back().m_host = m_host;
-            blocks.back().m_port = m_port;
-        }
-
         bool m_valid;
 
         std::string m_host;
@@ -204,7 +182,7 @@ struct DirectiveTypeTraits<Listen> {
 };
 
 template<>
-struct DirectiveTypeTraits<ServerName> {
+struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -231,18 +209,13 @@ struct DirectiveTypeTraits<ServerName> {
 
         bool isRouteDirective(void) const { return (false); }
 
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            blocks.back().m_server_name = m_server_name;
-        }
-
         bool m_valid;
 
         std::string m_server_name;
 };
 
 template<>
-struct DirectiveTypeTraits<Root> {
+struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -273,23 +246,13 @@ struct DirectiveTypeTraits<Root> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            // extract becomes harder because its both blocks
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_root = m_root;
-            }
-            else { blocks.back().m_root = m_root; }
-        }
-
         ft::directory m_root;
 
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<ErrorPage> {
+struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -333,23 +296,13 @@ struct DirectiveTypeTraits<ErrorPage> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            // extract becomes harder because its both blocks
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_error_pages = m_error_pages;
-            }
-            else { blocks.back().m_error_pages = m_error_pages; }
-        }
-
         std::map<int, ft::file> m_error_pages;
 
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<MaxBodySize> {
+struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -382,23 +335,13 @@ struct DirectiveTypeTraits<MaxBodySize> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            // extract becomes harder because its both blocks
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_max_body_size = m_max_body_size;
-            }
-            else { blocks.back().m_max_body_size = m_max_body_size; }
-        }
-
         unsigned long m_max_body_size;
 
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<AllowMethods> {
+struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -432,24 +375,13 @@ struct DirectiveTypeTraits<AllowMethods> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            // extract becomes harder because its both blocks
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_allowed_methods =
-                    m_allowed_methods;
-            }
-            else { blocks.back().m_allowed_methods = m_allowed_methods; }
-        }
-
         std::vector<std::string> m_allowed_methods;
 
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<Index> {
+struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -480,21 +412,13 @@ struct DirectiveTypeTraits<Index> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_index = m_index;
-            }
-        }
-
         ft::file m_index;
 
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<AutoIndex> {
+struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -526,21 +450,13 @@ struct DirectiveTypeTraits<AutoIndex> {
 
         bool isRouteDirective(void) const { return (true); }
 
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_autoindex = m_autoindex;
-            }
-        }
-
         bool m_autoindex;
 
         bool m_valid;
 };
 
 template<>
-struct DirectiveTypeTraits<CgiExtension> {
+struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(void) : m_valid(false) {}
 
@@ -570,14 +486,6 @@ struct DirectiveTypeTraits<CgiExtension> {
         bool isBlockDirective(void) const { return (false); }
 
         bool isRouteDirective(void) const { return (true); }
-
-        void extract(std::vector<block>& blocks) {
-            if (blocks.empty()) { return; }
-            else if (!blocks.back().m_routes.empty() &&
-                     !blocks.back().m_routes.back().m_closed) {
-                blocks.back().m_routes.back().m_cgi_extension = m_cgi_extension;
-            }
-        }
 
         std::string m_cgi_extension;
 

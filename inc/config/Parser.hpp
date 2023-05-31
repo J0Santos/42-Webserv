@@ -3,6 +3,7 @@
 
 #include "config/blocks/block.hpp"
 #include "config/directives.hpp"
+#include "config/Options.hpp"
 #include "utils/ft_filesystem.hpp"
 
 #include <typeinfo>
@@ -31,11 +32,7 @@ class Parser {
                 char const* what(void) const throw();
         };
 
-        enum StatusType {
-            InBlock = 0,
-            InRoute = 1,
-            InNone = 2,
-        };
+        std::vector< DirectiveTypeTraitsBase* > m_directives;
 
     private:
 
@@ -43,13 +40,9 @@ class Parser {
 
         size_t        m_pos;
         std::ifstream m_file;
-
-        StatusType m_status;
-
-        std::vector<block> m_blocks;
 };
 
-std::vector<block> parse(ft::file const& filename);
+void parse(ft::file const& filename);
 
 } // namespace config
 

@@ -9,22 +9,16 @@
 
 namespace config {
 
-Parser::Parser(ft::file filename) : m_line(), m_pos(0), m_status(InNone) {
+Parser::Parser(ft::file filename) : m_line(), m_pos(0) {
     if (!filename.isValid()) { throw ft::InvalidFileException(); }
     m_file.open(std::string(filename).c_str());
     if (!m_file.is_open()) { throw ft::FailedToOpenFileException(); }
 }
 
-Parser::~Parser(void) {
-    m_file.close();
-    if (!nextLine() && m_status != InNone) { error(); }
-}
+Parser::~Parser(void) { m_file.close(); }
 
 bool Parser::nextLine(void) {
-    if (m_file.eof()) {
-        // m_line.clear();
-        return (false);
-    }
+    if (m_file.eof()) { return (false); }
     std::getline(m_file, m_line);
     m_pos++;
     return (true);
@@ -34,8 +28,6 @@ std::string Parser::getLine(void) const { return (m_line); }
 
 size_t Parser::getPosition(void) const { return (m_pos); }
 
-std::vector<block> const& Parser::getBlocks(void) const { return (m_blocks); }
-
 void Parser::error(void) const {
     LOG_E("config: syntax error: " << m_line << " (:" << m_pos << ")");
     throw InvalidSyntaxException();
@@ -43,35 +35,19 @@ void Parser::error(void) const {
 
 template<LineType T>
 void Parser::parseLine(std::vector<std::string> const& args) {
-    DirectiveTypeTraits<T> directive;
+    DirectiveTypeTraits<T>* directive = new DirectiveTypeTraits<T>();
 
-    // validate directive placement
-    if (m_status == InNone &&
-        (directive.isRouteDirective() || directive.isBlockDirective())) {
-        error();
-    }
-    if (m_status == InBlock && !directive.isBlockDirective()) { error(); }
-    if (m_status == InRoute && !directive.isRouteDirective()) { error(); }
+    directive->parse(args);
+    if (!directive->isValid()) { error(); }
 
-    // parse directive
-    directive.parse(args);
-    if (!directive.isValid()) { error(); }
-    directive.extract(m_blocks);
-
-    // update status
-    if (T == End) {
-        if (m_status == InRoute) { m_status = InBlock; }
-        else if (m_status == InBlock) { m_status = InNone; }
-    }
-    if (T == Block) { m_status = InBlock; }
-    if (T == Route) { m_status = InRoute; }
+    m_directives.push_back(static_cast<DirectiveTypeTraitsBase*>(directive));
 }
 
 char const* Parser::InvalidSyntaxException::what(void) const throw() {
     return ("config::parser: invalid syntax.");
 }
 
-std::vector<block> parse(ft::file const& filename) {
+void parse(ft::file const& filename) {
     Parser parser(filename);
 
     while (parser.nextLine()) {
@@ -115,10 +91,12 @@ std::vector<block> parse(ft::file const& filename) {
             default: parser.error();
         }
     }
-    return (parser.getBlocks());
-    // TODO: check if it ended with a close bracket
-    // check if directives are valid, if theres no missing things
-    // create default location block
+    try {
+        // Options::getInstance(parser.getDirectives());
+    }
+    catch (std::exception&) {
+        throw Parser::InvalidSyntaxException();
+    }
 }
 
 } // namespace config

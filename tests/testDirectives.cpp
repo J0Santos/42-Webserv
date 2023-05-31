@@ -2,56 +2,6 @@
 
 #include <gtest/gtest.h>
 
-TEST(testDirectives, testExtractMethods) {
-    std::vector<config::block> blocks;
-    blocks.push_back(config::block());
-
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", "443:test"});
-        directive.extract(blocks);
-        ASSERT_EQ(blocks.back().m_host, "test");
-        ASSERT_EQ(blocks.back().m_port, "443");
-    }
-    {
-        config::DirectiveTypeTraits<config::ServerName> directive;
-        directive.parse({"server_name", "domain.com"});
-        directive.extract(blocks);
-        ASSERT_EQ(blocks.back().m_server_name, "domain.com");
-    }
-    {
-        config::DirectiveTypeTraits<config::Route> directive;
-        directive.parse({"location", "/", "{"});
-        directive.extract(blocks);
-        ASSERT_EQ(blocks.back().m_routes.size(), 1);
-    }
-    {
-        system("touch /tmp/testRootExtractMethod");
-        config::DirectiveTypeTraits<config::Root> directive;
-        directive.parse({"root", "/tmp/testRootExtractMethod"});
-        directive.extract(blocks);
-        ASSERT_EQ(blocks.back().m_routes.back().m_root,
-                  "/tmp/testRootExtractMethod");
-        system("rm -f /tmp/testRootExtractMethod");
-    }
-    {
-        config::DirectiveTypeTraits<config::End> directive;
-        directive.parse({"}"});
-        directive.extract(blocks);
-        ASSERT_EQ(blocks.back().m_routes.size(), 1);
-        ASSERT_TRUE(blocks.back().m_routes.back().m_closed);
-    }
-    {
-        blocks.back().m_routes.back().m_closed = true;
-        system("touch /tmp/testRootExtractMethod2");
-        config::DirectiveTypeTraits<config::Root> directive;
-        directive.parse({"root", "/tmp/testRootExtractMethod2"});
-        directive.extract(blocks);
-        ASSERT_EQ(blocks.back().m_root, "/tmp/testRootExtractMethod2");
-        system("rm -f /tmp/testRootExtractMethod2");
-    }
-}
-
 TEST(testBlockDirective, testIsValidAndParse) {
     config::DirectiveTypeTraits<config::Block> blockDirective;
     ASSERT_FALSE(blockDirective.isBlockDirective());

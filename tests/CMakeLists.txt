@@ -19,25 +19,26 @@ include_directories(${CMAKE_SOURCE_DIR}/../inc/)
 
 add_executable(${PROJECT_NAME}
   test.cpp
-  # testBlocks.cpp
+  testBlocks.cpp
   testDirectives.cpp
-  # testArgc.cpp
-  # testArray.cpp
-  # testCgiHandler.cpp
-  # testEnvp.cpp
-  # testErrorCode.cpp
-  # testFileSystem.cpp
-  # # testHost.cpp
-  # testLine.cpp
-  # testLogger.cpp
-  # testMethods.cpp
+  testArgc.cpp
+  testArray.cpp
+  testCgiHandler.cpp
+  testEnvp.cpp
+  testErrorCode.cpp
+  testFileSystem.cpp
+  testHost.cpp
+  testLine.cpp
+  testLogger.cpp
+  testMethods.cpp
+  testOptions.cpp
   testParser.cpp
-  # testRequest.cpp
-  # testResponse.cpp
-  # testRoute.cpp
-  # testSmt.cpp
-  # testString.cpp
-  # testUri.cpp
+  testRequest.cpp
+  testResponse.cpp
+  testRoute.cpp
+  testSmt.cpp
+  testString.cpp
+  testUri.cpp
 )
 
 add_test(webserv_gtest ${PROJECT_NAME})
