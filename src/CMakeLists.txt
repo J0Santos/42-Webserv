@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
   cgi/CgiHandler.cpp
   config/directives.cpp
   config/Line.cpp
+  config/Options.cpp
   config/blocks/block.cpp
   config/blocks/route.cpp
   config/Parser.cpp

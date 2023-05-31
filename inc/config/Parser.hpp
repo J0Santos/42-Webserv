@@ -32,14 +32,16 @@ class Parser {
                 char const* what(void) const throw();
         };
 
-        std::vector< DirectiveTypeTraitsBase* > m_directives;
+        std::vector< DirectiveTypeTraitsBase* > const&
+            getParsedDirectives(void) const;
 
     private:
 
-        std::string m_line;
-
+        std::string   m_line;
         size_t        m_pos;
         std::ifstream m_file;
+
+        std::vector< DirectiveTypeTraitsBase* > m_directives;
 };
 
 void parse(ft::file const& filename);

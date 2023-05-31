@@ -2,295 +2,275 @@
 
 #include <gtest/gtest.h>
 
-TEST(testBlockDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::Block> blockDirective;
-    ASSERT_FALSE(blockDirective.isBlockDirective());
-    ASSERT_FALSE(blockDirective.isRouteDirective());
-
-    blockDirective.parse({"server", "}"});
-    ASSERT_FALSE(blockDirective.isValid());
-
-    blockDirective.parse({"server"});
-    ASSERT_FALSE(blockDirective.isValid());
-
-    blockDirective.parse({"other", "{"});
-    ASSERT_FALSE(blockDirective.isValid());
-
-    blockDirective.parse({"server", "{"});
-    ASSERT_TRUE(blockDirective.isValid());
+TEST(testBlockDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::Block> blockDirective({});
+    EXPECT_FALSE(blockDirective.isBlockDirective());
+    EXPECT_FALSE(blockDirective.isRouteDirective());
 }
 
-TEST(testRouteDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::Route> blockDirective;
-    ASSERT_TRUE(blockDirective.isBlockDirective());
-    ASSERT_FALSE(blockDirective.isRouteDirective());
-
-    blockDirective.parse({"location", "/", "}"});
-    ASSERT_FALSE(blockDirective.isValid());
-
-    blockDirective.parse({"location"});
-    ASSERT_FALSE(blockDirective.isValid());
-
-    blockDirective.parse({"location", "{"});
-    ASSERT_FALSE(blockDirective.isValid());
-
-    blockDirective.parse({"other", "/", "{"});
-    ASSERT_FALSE(blockDirective.isValid());
-    {
-        config::DirectiveTypeTraits<config::Route> blockDirective;
-        blockDirective.parse({"location", "/", "{"});
-        ASSERT_TRUE(blockDirective.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::Route> blockDirective;
-        blockDirective.parse({"location", "/python/", "{"});
-        ASSERT_TRUE(blockDirective.isValid());
-    }
+TEST(testBlockDirective, testIsValid) {
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Block>({"server", "}"}).isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Block>({"server"}).isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Block>({"other", "{"}).isValid());
+    EXPECT_TRUE(
+        config::DirectiveTypeTraits<config::Block>({"server", "{"}).isValid());
 }
 
-TEST(testListenDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::Listen> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_FALSE(directive.isRouteDirective());
-
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", "443"});
-        ASSERT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", "example"});
-        EXPECT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::Listen> directive;
-        directive.parse({"listen", "443:example"});
-        EXPECT_TRUE(directive.isValid());
-    }
-
-    directive.parse({"other", "443:example"});
-    EXPECT_FALSE(directive.isValid());
-
-    directive.parse({"listen", "example:443:"});
-    EXPECT_FALSE(directive.isValid());
-
-    directive.parse({"listen", ":example"});
-    EXPECT_FALSE(directive.isValid());
-
-    directive.parse({"listen", "example", "443"});
-    EXPECT_FALSE(directive.isValid());
+TEST(testRouteDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::Route> blockDirective({});
+    EXPECT_TRUE(blockDirective.isBlockDirective());
+    EXPECT_FALSE(blockDirective.isRouteDirective());
 }
 
-TEST(testServerNameDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::ServerName> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_FALSE(directive.isRouteDirective());
-
-    directive.parse({"server_name"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"other", "domain.com"});
-    ASSERT_FALSE(directive.isValid());
-
-    {
-        config::DirectiveTypeTraits<config::ServerName> directive;
-        directive.parse({"server_name", "domain.com"});
-        ASSERT_TRUE(directive.isValid());
-    }
+TEST(testRouteDirective, testIsValid) {
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Route>({"location", "/", "}"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Route>({"location"}).isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Route>({"location", "{"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Route>({"other", "/", "{"})
+                     .isValid());
+    EXPECT_TRUE(
+        config::DirectiveTypeTraits<config::Route>({"location", "/", "{"})
+            .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::Route>(
+                    {"location", "/python/", "{"})
+                    .isValid());
 }
 
-TEST(testRootDirective, testIsValidAndParse) {
+TEST(testListenDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::Listen> directive({});
+    EXPECT_TRUE(directive.isBlockDirective());
+    EXPECT_FALSE(directive.isRouteDirective());
+}
+
+TEST(testListenDirective, testIsValid) {
+
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::Listen>({"listen", "443"})
+                    .isValid());
+    EXPECT_TRUE(
+        config::DirectiveTypeTraits<config::Listen>({"listen", "example"})
+            .isValid());
+    EXPECT_TRUE(
+        config::DirectiveTypeTraits<config::Listen>({"listen", "443:example"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Listen>({"other", "443:example"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Listen>({"listen", "example:443:"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Listen>({"listen", ":example"})
+            .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Listen>(
+                     {"listen", "example", "443"})
+                     .isValid());
+}
+
+TEST(testServerNameDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::ServerName> directive({});
+    EXPECT_TRUE(directive.isBlockDirective());
+    EXPECT_FALSE(directive.isRouteDirective());
+}
+
+TEST(testServerNameDirective, testIsValid) {
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::ServerName>({"server_name"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::ServerName>({"other", "domain.com"})
+            .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::ServerName>(
+                    {"server_name", "domain.com"})
+                    .isValid());
+}
+
+TEST(testRootDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::Root> directive({});
+    EXPECT_TRUE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
+}
+
+TEST(testRootDirective, testIsValid) {
     system("mkdir -p /tmp/testRootDirective");
-    config::DirectiveTypeTraits<config::Root> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
-
-    directive.parse({"root"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"root", "invalid/directory"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"other", "invalid/directory"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"root", "/tmp/testRootDirective", "invalid"});
-    ASSERT_FALSE(directive.isValid());
-
-    {
-        config::DirectiveTypeTraits<config::Root> directive;
-        directive.parse({"root", "/tmp/testRootDirective"});
-        ASSERT_TRUE(directive.isValid());
-    }
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Root>({"root"}).isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Root>({"root", "invalid/directory"})
+            .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Root>(
+                     {"other", "invalid/directory"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Root>(
+                     {"root", "/tmp/testRootDirective", "invalid"})
+                     .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::Root>(
+                    {"root", "/tmp/testRootDirective"})
+                    .isValid());
     system("rm -rf /tmp/testRootDirective");
 }
 
-TEST(testErrorPageDirective, testIsValidAndParse) {
+TEST(testErrorPageDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::ErrorPage> directive({});
+    EXPECT_TRUE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
+}
+
+TEST(testErrorPageDirective, testIsValid) {
     system("touch /tmp/testErrorPageDirective");
-    config::DirectiveTypeTraits<config::ErrorPage> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
 
-    directive.parse({"error_page"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"error_page", "400"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"other", "400", "/tmp/testRootDirective"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"error_page", "/tmp/testRootDirective", "400"});
-    ASSERT_FALSE(directive.isValid());
-
-    {
-        config::DirectiveTypeTraits<config::ErrorPage> directive;
-        directive.parse({"error_page", "404", "/tmp/testErrorPageDirective"});
-        ASSERT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::ErrorPage> directive;
-        directive.parse(
-            {"error_page", "404", "405", "/tmp/testErrorPageDirective"});
-        ASSERT_TRUE(directive.isValid());
-    }
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::ErrorPage>({"error_page"})
+                     .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::ErrorPage>({"error_page", "400"})
+            .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::ErrorPage>(
+                     {"other", "400", "/tmp/testRootDirective"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::ErrorPage>(
+                     {"error_page", "/tmp/testRootDirective", "400"})
+                     .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::ErrorPage>(
+                    {"error_page", "404", "/tmp/testErrorPageDirective"})
+                    .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::ErrorPage>(
+                    {"error_page", "404", "405", "/tmp/testErrorPageDirective"})
+                    .isValid());
     system("rm -f /tmp/testErrorPageDirective");
 }
 
-TEST(testMaxBodySizeDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::MaxBodySize> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
-
-    directive.parse({"client_max_body_size"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"client_max_body_size", "400", "other"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"other", "400"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"client_max_body_size", "invalid"});
-    ASSERT_FALSE(directive.isValid());
-
-    {
-        config::DirectiveTypeTraits<config::MaxBodySize> directive;
-        directive.parse({"client_max_body_size", "8080808080"});
-        ASSERT_TRUE(directive.isValid());
-    }
+TEST(testMaxBodySizeDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::MaxBodySize> directive({});
+    EXPECT_TRUE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
 }
 
-TEST(testAllowMethodDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::AllowMethods> directive;
-    ASSERT_TRUE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
-
-    directive.parse({"allow_methods"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"other", "GET"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"allow_methods", "invalid"});
-    ASSERT_FALSE(directive.isValid());
-    {
-        config::DirectiveTypeTraits<config::AllowMethods> directive;
-        directive.parse({"allow_methods", "GET"});
-        ASSERT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::AllowMethods> directive;
-        directive.parse({"allow_methods", "GET", "POST", "DELETE"});
-        ASSERT_TRUE(directive.isValid());
-    }
+TEST(testMaxBodySizeDirective, testIsValid) {
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::MaxBodySize>(
+                     {"client_max_body_size"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::MaxBodySize>(
+                     {"client_max_body_size", "400", "other"})
+                     .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::MaxBodySize>({"other", "400"})
+            .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::MaxBodySize>(
+                     {"client_max_body_size", "invalid"})
+                     .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::MaxBodySize>(
+                    {"client_max_body_size", "8080808080"})
+                    .isValid());
 }
 
-TEST(testIndexDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::Index> directive;
-    ASSERT_FALSE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
+TEST(testAllowMethodDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::AllowMethods> directive({});
+    EXPECT_TRUE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
+}
 
+TEST(testAllowMethodDirective, testIsValid) {
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::AllowMethods>({"allow_methods"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::AllowMethods>({"other", "GET"})
+            .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::AllowMethods>(
+                     {"allow_methods", "invalid"})
+                     .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::AllowMethods>(
+                    {"allow_methods", "GET"})
+                    .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::AllowMethods>(
+                    {"allow_methods", "GET", "POST", "DELETE"})
+                    .isValid());
+}
+
+TEST(testIndexDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::Index> directive({});
+    EXPECT_FALSE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
+}
+
+TEST(testIndexDirective, testIsValid) {
     system("touch /tmp/testIndexDirective");
-    directive.parse({"index"});
-    ASSERT_FALSE(directive.isValid());
 
-    directive.parse({"other", "/tmp/testIndexDirective"});
-    ASSERT_FALSE(directive.isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Index>({"index"}).isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Index>(
+                     {"other", "/tmp/testIndexDirective"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::Index>(
+                     {"index", "/tmp/testIndexDirective", "other"})
+                     .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::Index>({"index", "invalid/file"})
+            .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::Index>(
+                    {"index", "/tmp/testIndexDirective"})
+                    .isValid());
 
-    directive.parse({"index", "/tmp/testIndexDirective", "other"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"index", "invalid/file"});
-    ASSERT_FALSE(directive.isValid());
-    {
-        config::DirectiveTypeTraits<config::Index> directive;
-        directive.parse({"index", "/tmp/testIndexDirective"});
-        ASSERT_TRUE(directive.isValid());
-    }
     system("rm -f /tmp/testIndexDirective");
 }
 
-TEST(testAutoIndexDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::AutoIndex> directive;
-    ASSERT_FALSE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
-
-    directive.parse({"autoindex"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"other", "on"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"autoindex", "on", "other"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"autoindex", "invalid"});
-    ASSERT_FALSE(directive.isValid());
-
-    {
-        config::DirectiveTypeTraits<config::AutoIndex> directive;
-        directive.parse({"autoindex", "on"});
-        ASSERT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::AutoIndex> directive;
-        directive.parse({"autoindex", "off"});
-        ASSERT_TRUE(directive.isValid());
-    }
+TEST(testAutoIndexDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::AutoIndex> directive({});
+    EXPECT_FALSE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
 }
 
-TEST(testCgiExtensionDirective, testIsValidAndParse) {
-    config::DirectiveTypeTraits<config::CgiExtension> directive;
-    ASSERT_FALSE(directive.isBlockDirective());
-    ASSERT_TRUE(directive.isRouteDirective());
+TEST(testAutoIndexDirective, testIsValid) {
 
-    directive.parse({"fastcgi_pass"});
-    ASSERT_FALSE(directive.isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::AutoIndex>({"autoindex"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::AutoIndex>({"other", "on"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::AutoIndex>(
+                     {"autoindex", "on", "other"})
+                     .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::AutoIndex>({"autoindex", "invalid"})
+            .isValid());
+    EXPECT_TRUE(
+        config::DirectiveTypeTraits<config::AutoIndex>({"autoindex", "on"})
+            .isValid());
+    EXPECT_TRUE(
+        config::DirectiveTypeTraits<config::AutoIndex>({"autoindex", "off"})
+            .isValid());
+}
 
-    directive.parse({"other", ".py"});
-    ASSERT_FALSE(directive.isValid());
+TEST(testCgiExtensionDirective, testIsDirectiveOrRoute) {
+    config::DirectiveTypeTraits<config::CgiExtension> directive({});
+    EXPECT_FALSE(directive.isBlockDirective());
+    EXPECT_TRUE(directive.isRouteDirective());
+}
 
-    directive.parse({"fastcgi_pass", ".py", "other"});
-    ASSERT_FALSE(directive.isValid());
-
-    directive.parse({"fastcgi_pass", ".tmp"});
-    ASSERT_FALSE(directive.isValid());
-
-    {
-        config::DirectiveTypeTraits<config::CgiExtension> directive;
-        directive.parse({"fastcgi_pass", ".py"});
-        ASSERT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::CgiExtension> directive;
-        directive.parse({"fastcgi_pass", ".php"});
-        ASSERT_TRUE(directive.isValid());
-    }
-    {
-        config::DirectiveTypeTraits<config::CgiExtension> directive;
-        directive.parse({"fastcgi_pass", ".cgi"});
-        ASSERT_TRUE(directive.isValid());
-    }
+TEST(testCgiExtensionDirective, testIsValid) {
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::CgiExtension>({"fastcgi_pass"})
+            .isValid());
+    EXPECT_FALSE(
+        config::DirectiveTypeTraits<config::CgiExtension>({"other", ".py"})
+            .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::CgiExtension>(
+                     {"fastcgi_pass", ".py", "other"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::CgiExtension>(
+                     {"fastcgi_pass", ".tmp"})
+                     .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::CgiExtension>(
+                    {"fastcgi_pass", ".py"})
+                    .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::CgiExtension>(
+                    {"fastcgi_pass", ".php"})
+                    .isValid());
+    EXPECT_TRUE(config::DirectiveTypeTraits<config::CgiExtension>(
+                    {"fastcgi_pass", ".cgi"})
+                    .isValid());
 }

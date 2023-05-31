@@ -5,27 +5,16 @@
 
 namespace config {
 
-class Options {
-    public:
-
-        static Options& getInstance(
-            std::vector<DirectiveTypeTraitsBase*> const& directives =
-                std::vector<DirectiveTypeTraitsBase*>());
-
-        static std::vector<DirectiveTypeTraitsBase*> const& getDirectives(void);
-
-    private:
-
-        Options(void);
-        Options(std::vector<DirectiveTypeTraitsBase*> const& directives);
-        Options(Options const& src);
-
-        ~Options(void);
-
-        Options& operator=(Options const& rhs);
-
-        std::vector<DirectiveTypeTraitsBase*> m_directives;
+struct Opts {
+        virtual ~Opts(void) {}
 };
+
+std::vector< smt::shared_ptr<Opts> >
+    extract(std::vector<DirectiveTypeTraitsBase*> const& directives);
+
+std::vector<DirectiveTypeTraitsBase*>
+    getNextBlock(std::vector<DirectiveTypeTraitsBase*> const& dirs =
+                     std::vector<DirectiveTypeTraitsBase*>());
 
 } // namespace config
 

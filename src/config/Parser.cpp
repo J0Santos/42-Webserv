@@ -28,6 +28,11 @@ std::string Parser::getLine(void) const { return (m_line); }
 
 size_t Parser::getPosition(void) const { return (m_pos); }
 
+std::vector< DirectiveTypeTraitsBase* > const&
+    Parser::getParsedDirectives(void) const {
+    return (m_directives);
+}
+
 void Parser::error(void) const {
     LOG_E("config: syntax error: " << m_line << " (:" << m_pos << ")");
     throw InvalidSyntaxException();
@@ -35,9 +40,8 @@ void Parser::error(void) const {
 
 template<LineType T>
 void Parser::parseLine(std::vector<std::string> const& args) {
-    DirectiveTypeTraits<T>* directive = new DirectiveTypeTraits<T>();
 
-    directive->parse(args);
+    DirectiveTypeTraits<T>* directive = new DirectiveTypeTraits<T>(args);
     if (!directive->isValid()) { error(); }
 
     m_directives.push_back(static_cast<DirectiveTypeTraitsBase*>(directive));
@@ -91,12 +95,15 @@ void parse(ft::file const& filename) {
             default: parser.error();
         }
     }
+    std::vector< smt::shared_ptr<Opts> > opts;
     try {
-        // Options::getInstance(parser.getDirectives());
+        opts = extract(parser.getParsedDirectives());
     }
     catch (std::exception&) {
         throw Parser::InvalidSyntaxException();
     }
+
+    // init Options with opts
 }
 
 } // namespace config

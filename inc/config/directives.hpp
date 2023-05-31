@@ -21,8 +21,6 @@ class DirectiveTypeTraitsBase {
 
         std::string const getName(void);
 
-        virtual void parse(std::vector<std::string> const& args) = 0;
-
         virtual bool isValid(void) const = 0;
         virtual bool isBlockDirective(void) const = 0;
         virtual bool isRouteDirective(void) const = 0;
@@ -36,12 +34,8 @@ struct DirectiveTypeTraits;
 template<>
 struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(BLOCK_SERVER), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(BLOCK_SERVER), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -57,7 +51,7 @@ struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("Block"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -71,12 +65,8 @@ struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(BLOCK_LOCATION), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(BLOCK_LOCATION), m_valid(false) {
             if (args.size() != 3) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -93,7 +83,7 @@ struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("Route"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -108,12 +98,8 @@ struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(BLOCK_END), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(BLOCK_END), m_valid(false) {
             if (args.size() != 1) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -125,7 +111,7 @@ struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("End"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -139,13 +125,8 @@ struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_LISTEN), m_valid(false),
-              m_host("localhost"), m_port("8080") {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_LISTEN), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -172,7 +153,7 @@ struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("listen"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -189,12 +170,9 @@ struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_SERVER_NAME), m_valid(false) {}
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_SERVER_NAME), m_valid(false) {
 
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -207,7 +185,7 @@ struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("server_name"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -223,12 +201,8 @@ struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_ROOT), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_ROOT), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -245,7 +219,7 @@ struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("root"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -261,12 +235,8 @@ struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_ERROR_PAGE), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_ERROR_PAGE), m_valid(false) {
             if (args.size() < 3) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -296,7 +266,7 @@ struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("error_page"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -312,13 +282,8 @@ struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
+        DirectiveTypeTraits(std::vector<std::string> const& args)
             : DirectiveTypeTraitsBase(DIRECTIVE_MAX_BODY_SIZE), m_valid(false) {
-        }
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -335,9 +300,7 @@ struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const {
-        //     return ("client_max_body_size");
-        // }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -353,13 +316,8 @@ struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
+        DirectiveTypeTraits(std::vector<std::string> const& args)
             : DirectiveTypeTraitsBase(DIRECTIVE_ALLOW_METHODS), m_valid(false) {
-        }
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
             if (args.size() < 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -379,7 +337,7 @@ struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("allow_methods"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -395,12 +353,8 @@ struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_INDEX), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_INDEX), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -417,7 +371,7 @@ struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("index"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -433,12 +387,8 @@ struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_AUTOINDEX), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_AUTOINDEX), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -456,7 +406,7 @@ struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("autoindex"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
@@ -472,12 +422,8 @@ struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 template<>
 struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
 
-        DirectiveTypeTraits(void)
-            : DirectiveTypeTraitsBase(DIRECTIVE_FASTCGI), m_valid(false) {}
-
-        ~DirectiveTypeTraits(void) {}
-
-        void parse(std::vector<std::string> const& args) {
+        DirectiveTypeTraits(std::vector<std::string> const& args)
+            : DirectiveTypeTraitsBase(DIRECTIVE_FASTCGI), m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -494,7 +440,7 @@ struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        // std::string const getName(void) const { return ("fastcgi"); }
+        ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
 
