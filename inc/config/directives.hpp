@@ -19,6 +19,8 @@ class DirectiveTypeTraitsBase {
         DirectiveTypeTraitsBase(std::string const& name);
         virtual ~DirectiveTypeTraitsBase(void);
 
+        bool operator==(DirectiveTypeTraitsBase const& rhs) const;
+
         std::string const getName(void);
 
         virtual bool isValid(void) const = 0;

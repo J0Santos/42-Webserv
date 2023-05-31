@@ -96,14 +96,8 @@ void parse(ft::file const& filename) {
         }
     }
     std::vector< smt::shared_ptr<Opts> > opts;
-    try {
-        opts = extract(parser.getParsedDirectives());
-    }
-    catch (std::exception&) {
-        throw Parser::InvalidSyntaxException();
-    }
-
-    // init Options with opts
+    opts = extract(parser.getParsedDirectives());
+    // if (opts.empty()) { throw Parser::InvalidSyntaxException(); }
 }
 
 } // namespace config
