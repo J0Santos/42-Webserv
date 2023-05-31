@@ -80,7 +80,6 @@ void parse(ft::file const& filename) {
     int    level = 0;
     while (parser.nextLine()) {
         Line line(parser.getLine());
-        LOG_I("line: " << line.getLine());
         switch (line.getType()) {
             case (LineEmpty): break;
 

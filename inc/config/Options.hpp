@@ -9,6 +9,8 @@
 
 namespace config {
 
+class Opts;
+
 class Options {
     public:
 
@@ -16,6 +18,11 @@ class Options {
 
         static smt::shared_ptr<Options> getInstance(
             std::vector<ServerOpts> const& options = std::vector<ServerOpts>());
+
+        static smt::shared_ptr<Opts> getOptions(std::string const& port,
+                                                std::string const& host,
+                                                std::string const& path,
+                                                std::string const& header = "");
 
     private:
 
@@ -25,22 +32,34 @@ class Options {
 
         Options& operator=(Options const& rhs);
 
+        static int getCountOfDirs(std::vector<std::string> const& cmd,
+                                  std::vector<std::string> const& target);
+
         std::vector<ServerOpts> m_options;
 };
 
-// struct Opts {
-//         std::string              m_target;
-//         std::string              m_host;
-//         std::string              m_port;
-//         ft::directory            m_root;
-//         std::string              m_server_name;
-//         std::map<int, ft::file>  m_error_pages;
-//         unsigned long            m_max_body_size;
-//         std::vector<std::string> m_allowed_methods;
-//         ft::file                 m_index;
-//         bool                     m_autoindex;
-//         std::string              m_cgi_extension;
-// };
+class Opts {
+
+    public:
+
+        ~Opts(void);
+        Opts(void);
+        Opts(ServerOpts const& serverOpts, LocationOpts const& locationOpts);
+
+        bool operator==(Opts const& rhs) const;
+
+        std::string              m_target;
+        std::string              m_host;
+        std::string              m_port;
+        ft::directory            m_root;
+        std::string              m_server_name;
+        std::map<int, ft::file>  m_error_pages;
+        unsigned long            m_max_body_size;
+        std::vector<std::string> m_allowed_methods;
+        ft::file                 m_index;
+        bool                     m_autoindex;
+        std::string              m_cgi_extension;
+};
 
 } // namespace config
 

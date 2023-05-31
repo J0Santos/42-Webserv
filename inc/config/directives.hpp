@@ -18,25 +18,6 @@
 
 namespace config {
 
-struct Opts {
-        virtual ~Opts(void);
-        Opts(void);
-
-        bool operator==(Opts const& rhs) const;
-
-        std::string              m_target;
-        std::string              m_host;
-        std::string              m_port;
-        ft::directory            m_root;
-        std::string              m_server_name;
-        std::map<int, ft::file>  m_error_pages;
-        unsigned long            m_max_body_size;
-        std::vector<std::string> m_allowed_methods;
-        ft::file                 m_index;
-        bool                     m_autoindex;
-        std::string              m_cgi_extension;
-};
-
 class DirectiveTypeTraitsBase {
     public:
 
@@ -380,7 +361,8 @@ template<>
 struct DirectiveTypeTraits<LineMaxBodySize> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(LINE_MAX_BODY_SIZE), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_MAX_BODY_SIZE), m_max_body_size(0),
+              m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
@@ -511,7 +493,8 @@ template<>
 struct DirectiveTypeTraits<LineAutoIndex> : public DirectiveTypeTraitsBase {
 
         DirectiveTypeTraits(std::vector<std::string> const& args)
-            : DirectiveTypeTraitsBase(LINE_AUTOINDEX), m_valid(false) {
+            : DirectiveTypeTraitsBase(LINE_AUTOINDEX), m_autoindex(false),
+              m_valid(false) {
             if (args.size() != 2) {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
