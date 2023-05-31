@@ -51,7 +51,7 @@ char const* Parser::InvalidSyntaxException::what(void) const throw() {
     return ("config::parser: invalid syntax.");
 }
 
-void parse(ft::file const& filename) {
+std::vector< smt::shared_ptr<config::Opts> > parse(ft::file const& filename) {
     Parser parser(filename);
 
     while (parser.nextLine()) {
@@ -97,7 +97,8 @@ void parse(ft::file const& filename) {
     }
     std::vector< smt::shared_ptr<Opts> > opts;
     opts = extract(parser.getParsedDirectives());
-    // if (opts.empty()) { throw Parser::InvalidSyntaxException(); }
+    if (opts.empty()) { throw Parser::InvalidSyntaxException(); }
+    return (opts);
 }
 
 } // namespace config

@@ -4,14 +4,34 @@
 #include "cgi/CgiHandler.hpp"
 #include "config/blocks/block.hpp"
 #include "config/Line.hpp"
+#include "config/Options.hpp"
 #include "utils/ft_string.hpp"
 #include "utils/Logger.hpp"
+#include "utils/smt.hpp"
 
 #include <string>
 #include <typeinfo>
 #include <vector>
 
 namespace config {
+
+struct Opts {
+        virtual ~Opts(void) {}
+
+        bool operator==(Opts const& rhs) const;
+
+        std::string              m_target;
+        std::string              m_host;
+        std::string              m_port;
+        ft::directory            m_root;
+        std::string              m_server_name;
+        std::map<int, ft::file>  m_error_pages;
+        unsigned long            m_max_body_size;
+        std::vector<std::string> m_allowed_methods;
+        ft::file                 m_index;
+        bool                     m_autoindex;
+        std::string              m_cgi_extension;
+};
 
 class DirectiveTypeTraitsBase {
     public:
@@ -22,6 +42,8 @@ class DirectiveTypeTraitsBase {
         bool operator==(DirectiveTypeTraitsBase const& rhs) const;
 
         std::string const getName(void);
+
+        virtual void set(smt::shared_ptr<Opts>& opt) const = 0;
 
         virtual bool isValid(void) const = 0;
         virtual bool isBlockDirective(void) const = 0;
@@ -55,6 +77,8 @@ struct DirectiveTypeTraits<Block> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
+        void set(smt::shared_ptr<Opts>& opt) const { (void)opt; }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (false); }
@@ -87,6 +111,8 @@ struct DirectiveTypeTraits<Route> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
+        void set(smt::shared_ptr<Opts>& opt) const { (void)opt; }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (true); }
@@ -114,6 +140,8 @@ struct DirectiveTypeTraits<End> : public DirectiveTypeTraitsBase {
         }
 
         ~DirectiveTypeTraits(void) {}
+
+        void set(smt::shared_ptr<Opts>& opt) const { (void)opt; }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -155,6 +183,11 @@ struct DirectiveTypeTraits<Listen> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_host = m_host;
+            opt->m_port = m_port;
+        }
+
         ~DirectiveTypeTraits(void) {}
 
         bool isValid(void) const { return (m_valid); }
@@ -189,6 +222,10 @@ struct DirectiveTypeTraits<ServerName> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_server_name = m_server_name;
+        }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (true); }
@@ -222,6 +259,8 @@ struct DirectiveTypeTraits<Root> : public DirectiveTypeTraitsBase {
         }
 
         ~DirectiveTypeTraits(void) {}
+
+        void set(smt::shared_ptr<Opts>& opt) const { opt->m_root = m_root; }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -270,6 +309,10 @@ struct DirectiveTypeTraits<ErrorPage> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_error_pages = m_error_pages;
+        }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (true); }
@@ -303,6 +346,10 @@ struct DirectiveTypeTraits<MaxBodySize> : public DirectiveTypeTraitsBase {
         }
 
         ~DirectiveTypeTraits(void) {}
+
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_max_body_size = m_max_body_size;
+        }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -341,6 +388,10 @@ struct DirectiveTypeTraits<AllowMethods> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_allowed_methods = m_allowed_methods;
+        }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (true); }
@@ -374,6 +425,8 @@ struct DirectiveTypeTraits<Index> : public DirectiveTypeTraitsBase {
         }
 
         ~DirectiveTypeTraits(void) {}
+
+        void set(smt::shared_ptr<Opts>& opt) const { opt->m_index = m_index; }
 
         bool isValid(void) const { return (m_valid); }
 
@@ -410,6 +463,10 @@ struct DirectiveTypeTraits<AutoIndex> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_autoindex = m_autoindex;
+        }
+
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (false); }
@@ -443,6 +500,10 @@ struct DirectiveTypeTraits<CgiExtension> : public DirectiveTypeTraitsBase {
         }
 
         ~DirectiveTypeTraits(void) {}
+
+        void set(smt::shared_ptr<Opts>& opt) const {
+            opt->m_cgi_extension = m_cgi_extension;
+        }
 
         bool isValid(void) const { return (m_valid); }
 
