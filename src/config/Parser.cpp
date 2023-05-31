@@ -15,7 +15,15 @@ Parser::Parser(ft::file filename) : m_line(), m_pos(0) {
     if (!m_file.is_open()) { throw ft::FailedToOpenFileException(); }
 }
 
-Parser::~Parser(void) { m_file.close(); }
+Parser::~Parser(void) {
+    m_file.close();
+    // delete all directives
+    for (std::vector<DirectiveTypeTraitsBase*>::iterator it =
+             m_directives.begin();
+         it != m_directives.end(); ++it) {
+        delete *it;
+    }
+}
 
 bool Parser::nextLine(void) {
     if (m_file.eof()) { return (false); }
@@ -96,7 +104,13 @@ std::vector< smt::shared_ptr<config::Opts> > parse(ft::file const& filename) {
         }
     }
     std::vector< smt::shared_ptr<Opts> > opts;
-    opts = extract(parser.getParsedDirectives());
+    try {
+        opts = extract(parser.getParsedDirectives());
+    }
+    catch (std::exception& e) {
+        LOG_E("config: " << e.what());
+        throw;
+    }
     if (opts.empty()) { throw Parser::InvalidSyntaxException(); }
     return (opts);
 }
