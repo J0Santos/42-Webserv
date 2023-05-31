@@ -57,22 +57,22 @@ TEST(testListenDirective, testIsValid) {
         config::DirectiveTypeTraits<config::LineListen>({"listen", "443"})
             .isValid());
     EXPECT_TRUE(
-        config::DirectiveTypeTraits<config::LineListen>({"listen", "example"})
+        config::DirectiveTypeTraits<config::LineListen>({"listen", "localhost"})
             .isValid());
     EXPECT_TRUE(config::DirectiveTypeTraits<config::LineListen>(
-                    {"listen", "443:example"})
+                    {"listen", "443:localhost"})
                     .isValid());
     EXPECT_FALSE(config::DirectiveTypeTraits<config::LineListen>(
-                     {"other", "443:example"})
+                     {"other", "443:localhost"})
                      .isValid());
     EXPECT_FALSE(config::DirectiveTypeTraits<config::LineListen>(
-                     {"listen", "example:443:"})
+                     {"listen", "localhost:443:"})
                      .isValid());
-    EXPECT_FALSE(
-        config::DirectiveTypeTraits<config::LineListen>({"listen", ":example"})
-            .isValid());
     EXPECT_FALSE(config::DirectiveTypeTraits<config::LineListen>(
-                     {"listen", "example", "443"})
+                     {"listen", ":localhost"})
+                     .isValid());
+    EXPECT_FALSE(config::DirectiveTypeTraits<config::LineListen>(
+                     {"listen", "localhost", "443"})
                      .isValid());
 }
 

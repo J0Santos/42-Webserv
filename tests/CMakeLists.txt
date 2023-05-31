@@ -19,10 +19,10 @@ include_directories(${CMAKE_SOURCE_DIR}/../inc/)
 
 add_executable(${PROJECT_NAME}
   test.cpp
-  testDirectives.cpp
   testArgc.cpp
   testArray.cpp
   testCgiHandler.cpp
+  testDirectives.cpp
   testEnvp.cpp
   testErrorCode.cpp
   testFileSystem.cpp

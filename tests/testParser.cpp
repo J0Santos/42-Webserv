@@ -12,9 +12,9 @@ class testParser : public ::testing::Test {
 
         virtual ~testParser(void) { system("rm test.conf"); }
 
-        virtual void SetUp(void) {}
+        // virtual void SetUp(void) {}
 
-        virtual void TearDown(void) {}
+        // virtual void TearDown(void) {}
 };
 
 TEST_F(testParser, testFileOpen) {
@@ -44,16 +44,18 @@ TEST_F(testParser, testError) {
 
 TEST_F(testParser, testParseLine) {
     config::Parser parser("test.conf");
-    ASSERT_NO_THROW(parser.parseLine<config::LineListen>({"listen", "80"}));
-    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::LineListen>({"listen", "80"}));
+    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}, 0));
+    ASSERT_NO_THROW(parser.parseLine<config::LineListen>({"listen", "80"}, 1));
+    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}, 0));
+    ASSERT_NO_THROW(parser.parseLine<config::LineBlock>({"server", "{"}, 0));
+    ASSERT_NO_THROW(parser.parseLine<config::LineListen>({"listen", "80"}, 1));
     ASSERT_NO_THROW(
-        parser.parseLine<config::LineRoute>({"location", "/", "{"}));
+        parser.parseLine<config::LineRoute>({"location", "/", "{"}, 1));
     ASSERT_NO_THROW(
-        parser.parseLine<config::LineRoute>({"location", "/", "{"}));
-    ASSERT_NO_THROW(parser.parseLine<config::LineEnd>({"}"}));
+        parser.parseLine<config::LineRoute>({"location", "/", "{"}, 1));
+    ASSERT_NO_THROW(parser.parseLine<config::LineEnd>({"}"}, 2));
 
-    ASSERT_THROW(parser.parseLine<config::LineListen>({"listen", "80", "80"}),
-                 config::Parser::InvalidSyntaxException);
+    ASSERT_THROW(
+        parser.parseLine<config::LineListen>({"listen", "80", "80"}, 1),
+        config::Parser::InvalidSyntaxException);
 }

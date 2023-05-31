@@ -5,6 +5,7 @@
 #include "config/ServerOpts.hpp"
 #include "utils/smt.hpp"
 
+#include <set>
 #include <vector>
 
 namespace config {
@@ -23,6 +24,8 @@ class Options {
                                                 std::string const& host,
                                                 std::string const& path,
                                                 std::string const& header = "");
+
+        static std::set< std::pair<int, std::string> > getSocketOptions(void);
 
     private:
 

@@ -62,6 +62,23 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
     return (smt::make_shared(new Opts(*serverIt, *locationIt)));
 }
 
+std::set< std::pair<int, std::string> > Options::getSocketOptions(void) {
+    std::vector<ServerOpts> options = getInstance()->m_options;
+
+    static std::set< std::pair<int, std::string> > sockOpts;
+    for (std::vector<ServerOpts>::const_iterator it = options.begin();
+         it != options.end(); ++it) {
+
+        std::stringstream ss((*it).m_port);
+        int               port;
+        ss >> port;
+
+        std::pair<int, std::string> opt(port, (*it).m_host);
+        if (sockOpts.find(opt) == sockOpts.end()) { sockOpts.insert(opt); }
+    }
+    return (sockOpts);
+}
+
 int Options::getCountOfDirs(std::vector<std::string> const& cmd,
                             std::vector<std::string> const& target) {
     int count = 0;
