@@ -39,17 +39,15 @@ void ServerSocket::socket(void) {
 
 smt::shared_ptr<SocketConnection> ServerSocket::getConnection(int connectFd) {
 
-    std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
+    std::map<int, smt::shared_ptr<SocketConnection> >::const_iterator it;
     it = m_connections.find(connectFd);
-    if (it == m_connections.end()) {
-        LOG_E(toString() + " has no connection with fd " << connectFd);
-        throw NoSuchConnectionException();
-    }
-    return ((*it).second);
+    if (it == m_connections.end()) { throw NoSuchConnectionException(); }
+    return (it->second);
 }
 
 std::map< int, smt::shared_ptr<SocketConnection> >
     ServerSocket::getConnections(void) {
+    if (m_connections.empty()) { LOG_E(toString() + " has no connections"); }
     return (m_connections);
 }
 

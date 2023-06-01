@@ -11,6 +11,7 @@ add_library(${PROJECT_NAME} STATIC
   config/Parser.cpp
   config/ServerOpts.cpp
   http/ErrorCode.cpp
+  http/Handler.cpp
   http/methods.cpp
   http/Request.cpp
   http/Response.cpp

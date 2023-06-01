@@ -53,25 +53,18 @@ void Server::runServer(void) {
                 epollAdd(fd);
             }
             else {
-
                 std::map<int, smt::shared_ptr<net::ServerSocket> >::iterator it;
                 for (it = m_sockets.begin(); it != m_sockets.end(); it++) {
-
                     smt::shared_ptr<net::ServerSocket> sock = (*it).second;
-                    std::map<int, smt::shared_ptr<net::SocketConnection> >
-                        connections;
-                    std::map<int,
-                             smt::shared_ptr<net::SocketConnection> >::iterator
-                        connnectionIterator;
-                    connections = sock->getConnections();
-                    connnectionIterator = connections.find(events[i].data.fd);
-                    if (connnectionIterator != connections.end()) {
+                    try {
+                        sock->getConnection(events[i].data.fd);
                         LOG_D("webserv::HTTPServer REQ()");
-                        // http_handle(sock, connnectionIterator->second,
-                        //             events[i].data.fd);
+                        http::handle(sock, events[i].data.fd);
                         epollRemove(events[i].data.fd);
                         sock->close(events[i].data.fd);
                         break;
+                    }
+                    catch (std::exception&) {
                     }
                 }
             }

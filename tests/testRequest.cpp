@@ -158,3 +158,11 @@ TEST(testGetRequest, getRequestWithError) {
     ASSERT_EQ(http::getRequest(req3), req3);
     ASSERT_EQ(http::getRequest(), "");
 }
+
+TEST(testGetRequest, testFailure) {
+    std::string reqStr = "GET / HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n"
+                         "User-Agent: curl/8.0.1\r\n"
+                         "Accept: */*\r\n\r\n";
+    ASSERT_NO_THROW(http::Request req(reqStr));
+}

@@ -203,4 +203,14 @@ std::ostream& operator<<(std::ostream& os, Opts const& rhs) {
     return (os);
 }
 
+smt::shared_ptr<config::Opts>
+    getOptions(smt::shared_ptr<net::ServerSocket> sock,
+               smt::shared_ptr<http::Request>     request) {
+
+    std::stringstream ss;
+    ss << sock->getPort();
+    return (Options::getOptions(ss.str(), sock->getHost(), request->getPath(),
+                                request->getHeader("Host")));
+}
+
 } // namespace config

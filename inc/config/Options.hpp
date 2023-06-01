@@ -3,10 +3,17 @@
 
 #include "config/DirectiveTypeTraits.hpp"
 #include "config/ServerOpts.hpp"
+#include "http/Request.hpp"
+#include "sockets/ServerSocket.hpp"
 #include "utils/smt.hpp"
 
 #include <set>
+#include <sstream>
 #include <vector>
+
+namespace net {
+class ServerSocket;
+}
 
 namespace config {
 #define DEFAULT_BODY_SIZE 8192
@@ -70,6 +77,10 @@ class Opts {
 };
 
 std::ostream& operator<<(std::ostream& os, Opts const& rhs);
+
+smt::shared_ptr<config::Opts>
+    getOptions(smt::shared_ptr<net::ServerSocket> sock,
+               smt::shared_ptr<http::Request>     request);
 
 } // namespace config
 

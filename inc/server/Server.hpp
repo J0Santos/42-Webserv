@@ -2,6 +2,7 @@
 #define WEBSERV_SERVER_HPP
 
 #include "config/Options.hpp"
+#include "http/Handler.hpp"
 #include "sockets/ServerSocket.hpp"
 #include "utils/smt.hpp"
 

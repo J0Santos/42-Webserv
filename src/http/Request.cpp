@@ -8,7 +8,10 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
     std::vector<std::string> subs;
 
     size_t endPos = reqStr.find("\r\n\r\n");
-    if (endPos == std::string::npos) { throw(MalformedRequestException()); }
+    if (endPos == std::string::npos) {
+        LOG_W("Malformed request: failed to find end of headers");
+        throw(MalformedRequestException());
+    }
 
     std::istringstream iss(reqStr);
     std::string        startLine;
@@ -17,28 +20,46 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
     // handle headers
     std::string line;
     while (getline(iss, line) && line != "\r") {
-        subs = ft::string::split(line, ":\r");
-        if (subs.size() != 2) { throw(MalformedRequestException()); }
-        subs[1] = (subs[1][0] == ' ') ? subs[1].substr(1) : subs[1];
-        m_headers[subs[0]] = subs[1];
+        if (line.find("\r") != line.size() - 1) {
+            LOG_W("Malformed request: invalid header end");
+            throw(MalformedRequestException());
+        }
+        line = line.substr(0, line.size() - 1);
+        size_t pos = line.find(": ");
+        if (pos == std::string::npos || !pos || pos == line.size() - 2) {
+            LOG_W("Malformed request: failed to parse headers");
+            throw(MalformedRequestException());
+        }
+        std::string key = line.substr(0, pos);
+        std::string value = line.substr(pos + 2);
+        m_headers[key] = value;
     }
 
     // handle start line
-    if (startLine.empty()) { throw(MalformedRequestException()); }
+    if (startLine.empty()) {
+        LOG_W("Malformed request: failed to find start line");
+        throw(MalformedRequestException());
+    }
     // getting startLine without \r
     if (startLine.find("\r") != startLine.size() - 1) {
+        LOG_W("Malformed request: invalid start line end");
         throw(MalformedRequestException());
     }
     startLine = startLine.substr(0, startLine.size() - 1);
 
     subs = ft::string::split(startLine, " ");
-    if (subs.size() != 3) { throw(MalformedRequestException()); }
+    if (subs.size() != 3) {
+        LOG_W("Malformed request: invalid start line number of arguments");
+        throw(MalformedRequestException());
+    }
     if (convertMethod(subs[0]) == UNKNOWN_METHOD) {
+        LOG_W("Malformed request: unknown method");
         throw(MalformedRequestException());
     }
     m_method = subs[0];
     m_uri = smt::make_shared(new Uri(subs[1]));
     if (convertVersion(subs[2]) == UNKNOWN_VERSION) {
+        LOG_W("Malformed request: unknown version");
         throw(MalformedRequestException());
     }
     m_version = subs[2];
@@ -50,7 +71,10 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
         size_t            len;
         std::stringstream ss(m_headers["Content-Length"]);
         ss >> len;
-        if (body.size() != len) { throw(MalformedRequestException()); }
+        if (body.size() != len) {
+            LOG_W("Malformed request: invalid body size");
+            throw(MalformedRequestException());
+        }
         m_body = body;
     }
     // if (reqStr.size() > endPos + 4) { m_body = reqStr.substr(endPos + 4); }
