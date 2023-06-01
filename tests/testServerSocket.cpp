@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 TEST(test_ServerSocket, constructor) {
-    ASSERT_NO_THROW(new net::ServerSocket(8080, "127.0.0.1"));
+    ASSERT_NO_THROW(net::ServerSocket(8080, "127.0.0.1"));
 }
 
 TEST(test_ServerSocket, getSockFd) {
