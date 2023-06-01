@@ -102,21 +102,33 @@ Opts::Opts(void) : m_max_body_size(0), m_autoindex(false) {}
 
 Opts::Opts(ServerOpts const& srv, LocationOpts const& loc)
     : m_max_body_size(0), m_autoindex(false) {
-    // Extracting the options from the server block and location block
-    m_target = (loc.m_target.empty() ? "/" : loc.m_target);
+
+    // Extracting the options from the server block
+    m_target = "/";
     m_host = srv.m_host;
     m_port = srv.m_port;
-    m_root = (std::string(loc.m_root).empty() ? srv.m_root : loc.m_root);
-    m_server_name = srv.m_server_name;
+    m_root = srv.m_root;
+    m_server_name = (srv.m_server_name.empty() ? "" : srv.m_server_name);
+    m_error_pages = (srv.m_error_pages.empty() ? std::map<int, ft::file>()
+                                               : srv.m_error_pages);
+    m_max_body_size = srv.m_max_body_size;
+    m_allowed_methods =
+        (srv.m_allowed_methods.empty() ? std::vector<std::string>()
+                                       : srv.m_allowed_methods);
+
+    // Extracting the options from the location block
+    m_target = (loc.m_target.empty() ? m_target : loc.m_target);
+    m_root = (std::string(loc.m_root).empty() ? m_root : loc.m_root);
     m_error_pages =
-        (loc.m_error_pages.empty() ? srv.m_error_pages : loc.m_error_pages);
+        (loc.m_error_pages.empty() ? m_error_pages : loc.m_error_pages);
     m_max_body_size =
-        (!loc.m_max_body_size ? srv.m_max_body_size : loc.m_max_body_size);
-    m_allowed_methods = (loc.m_allowed_methods.empty() ? srv.m_allowed_methods
+        (!loc.m_max_body_size ? m_max_body_size : loc.m_max_body_size);
+    m_allowed_methods = (loc.m_allowed_methods.empty() ? m_allowed_methods
                                                        : loc.m_allowed_methods);
-    m_index = loc.m_index;
+
+    m_index = (std::string(loc.m_index).empty() ? "" : loc.m_index);
     m_autoindex = loc.m_autoindex;
-    m_cgi_extension = loc.m_cgi_extension;
+    m_cgi_extension = (loc.m_cgi_extension.empty() ? "" : loc.m_cgi_extension);
 
     // Setting up the default values
     if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
@@ -132,10 +144,13 @@ Opts::Opts(ServerOpts const& srv) {
     m_host = srv.m_host;
     m_port = srv.m_port;
     m_root = srv.m_root;
-    m_server_name = srv.m_server_name;
-    m_error_pages = srv.m_error_pages;
+    m_server_name = (srv.m_server_name.empty() ? "" : srv.m_server_name);
+    m_error_pages = (srv.m_error_pages.empty() ? std::map<int, ft::file>()
+                                               : srv.m_error_pages);
     m_max_body_size = srv.m_max_body_size;
-    m_allowed_methods = srv.m_allowed_methods;
+    m_allowed_methods =
+        (srv.m_allowed_methods.empty() ? std::vector<std::string>()
+                                       : srv.m_allowed_methods);
 
     // Setting up the default values
     if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
