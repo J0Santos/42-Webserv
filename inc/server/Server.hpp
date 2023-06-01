@@ -1,6 +1,8 @@
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#ifndef WEBSERV_SERVER_HPP
+#define WEBSERV_SERVER_HPP
 
+#include "config/Options.hpp"
+#include "sockets/ServerSocket.hpp"
 #include "utils/smt.hpp"
 
 #include <cstring>
@@ -8,13 +10,16 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 
-namespace webserv {
+namespace net {
 
-#ifndef BACKLOG
-# define BACKLOG 42
-#endif
+class ServerSocket;
+
+#define BACKLOG 42
 
 #define READING_BUFFER 8192
+
+#define EP_MAX_EVENTS 42
+#define EP_TIMEOUT    5000
 
 class Server {
 
@@ -50,19 +55,22 @@ class Server {
 
     private:
 
-        void startServer(void);
-        void runServer(void);
-        void stopServer(void);
+        // void startServer(void);
+        // void runServer(void);
+        // void stopServer(void);
 
         Server(void);
 
+        void startSocket(int port, std::string const& host);
         void epollAdd(int fd, int events = EPOLLIN | EPOLLET);
         void epollRemove(int fd);
 
         t_state m_state;
         int     m_epollFd;
+
+        std::map< int, smt::shared_ptr<ServerSocket> > m_sockets;
 };
 
-} // namespace webserv
+} // namespace net
 
-#endif /* SERVER_HPP */
+#endif /* WEBSERV_SERVER_HPP */

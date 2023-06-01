@@ -15,6 +15,8 @@
 
 namespace net {
 
+class SocketConnection;
+
 class ServerSocket {
 
     public:

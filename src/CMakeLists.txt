@@ -15,7 +15,10 @@ add_library(${PROJECT_NAME} STATIC
   http/Request.cpp
   http/Response.cpp
   http/Uri.cpp
+  server/Server.cpp
   server/webserv.cpp
+  sockets/ServerSocket.cpp
+  sockets/SocketConnection.cpp
   utils/ft_array.cpp
   utils/ft_exceptions.cpp
   utils/ft_filesystem.cpp
@@ -23,10 +26,6 @@ add_library(${PROJECT_NAME} STATIC
   utils/Host.cpp
   utils/Logger.cpp
   utils/Route.cpp
-  server/Server.cpp
-  server/webserv.cpp
-  sockets/ServerSocket.cpp
-  sockets/SocketConnection.cpp
 )
 
 add_library(42::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

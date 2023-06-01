@@ -19,7 +19,7 @@ void webserv(std::string const& filename) {
 
     LOG_I("Starting server...");
     try {
-        Server::start();
+        net::Server::start();
     }
     catch (std::exception& e) {
         LOG_F("Failure while server was starting: " << std::string(e.what()));
@@ -28,7 +28,7 @@ void webserv(std::string const& filename) {
 
     LOG_I("Server is running. Press Ctrl+C to stop.");
     try {
-        Server::run();
+        net::Server::run();
     }
     catch (std::exception& e) {
         LOG_F("Failure while server was running: " << std::string(e.what()));
@@ -39,7 +39,7 @@ void webserv(std::string const& filename) {
 static void stop(int) {
     LOG_I("Stopping server...");
     try {
-        Server::stop();
+        net::Server::stop();
     }
     catch (std::exception& e) {
         LOG_F("Failure while server was stopping: " << std::string(e.what()));

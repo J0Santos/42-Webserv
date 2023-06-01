@@ -208,7 +208,7 @@ TEST_ROOT	:= build/tests/
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS	:= ./:cgi/:config/:config/blocks/:http/:server/:utils/:server/:sockets/
+DIRS	:= ./:cgi/:config/:http/:utils/:server/:sockets/
 
 SRC_DIRS_LIST	:= $(addprefix ${SRC_ROOT},${DIRS})
 SRC_DIRS_LIST	:= $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
