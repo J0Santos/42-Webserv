@@ -23,6 +23,8 @@ add_library(${PROJECT_NAME} STATIC
   utils/Host.cpp
   utils/Logger.cpp
   utils/Route.cpp
+  server/Server.cpp
+  sockets/ServerSocket.cpp
 )
 
 add_library(42::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

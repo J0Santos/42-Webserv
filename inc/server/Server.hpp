@@ -10,6 +10,10 @@
 
 namespace webserv {
 
+#ifndef BACKLOG
+# define BACKLOG 42
+#endif
+
 class Server {
 
     private:
