@@ -27,8 +27,56 @@ void Server::startServer(void) {
 }
 
 void Server::runServer(void) {
+
+    // updating state
     m_state = Running;
-    while (m_state == Running) { ; }
+
+    struct epoll_event events[EP_MAX_EVENTS];
+    memset(events, 0, sizeof(events));
+
+    while (m_state == Running) {
+
+        int nfds = epoll_wait(m_epollFd, events, EP_MAX_EVENTS, EP_TIMEOUT);
+
+        LOG_D("webserv::HTTPServer run()");
+
+        if (m_state != Running) { break; }
+
+        if (nfds < 0) { throw(EpollWaitException()); }
+
+        for (int i = 0; i < nfds; i++) {
+
+            if (m_sockets.find(events[i].data.fd) != m_sockets.end()) {
+
+                LOG_D("webserv::HTTPServer ACK()");
+                int fd = m_sockets[events[i].data.fd]->accept();
+                epollAdd(fd);
+            }
+            else {
+
+                std::map<int, smt::shared_ptr<net::ServerSocket> >::iterator it;
+                for (it = m_sockets.begin(); it != m_sockets.end(); it++) {
+
+                    smt::shared_ptr<net::ServerSocket> sock = (*it).second;
+                    std::map<int, smt::shared_ptr<net::SocketConnection> >
+                        connections;
+                    std::map<int,
+                             smt::shared_ptr<net::SocketConnection> >::iterator
+                        connnectionIterator;
+                    connections = sock->getConnections();
+                    connnectionIterator = connections.find(events[i].data.fd);
+                    if (connnectionIterator != connections.end()) {
+                        LOG_D("webserv::HTTPServer REQ()");
+                        // http_handle(sock, connnectionIterator->second,
+                        //             events[i].data.fd);
+                        epollRemove(events[i].data.fd);
+                        sock->close(events[i].data.fd);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void Server::stopServer(void) { m_state = Stopped; }
@@ -59,7 +107,7 @@ void Server::startSocket(int port, std::string const& host) {
     epollAdd(sock->getSockFd(), EPOLLIN);
 
     // adding socket to sockets list
-    m_sockets[sock->getSockFd()] = sock;
+    m_sockets.insert(std::make_pair(sock->getSockFd(), sock));
 }
 
 void Server::epollAdd(int fd, int events) {
