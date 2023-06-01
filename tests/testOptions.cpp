@@ -71,6 +71,9 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockWithDefaultRoute) {
     opt->m_cgi_extension = "";
 
     ASSERT_EQ(*config::Options::getOptions("8080", "127.0.0.1", "/"), *opt);
+    ASSERT_EQ(*config::Options::getOptions("8080", "127.0.0.1", "/websites/cgi",
+                                           "domain.com"),
+              *opt);
 }
 
 TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
@@ -158,4 +161,40 @@ TEST_F(testOptionsExtreme, testGetSocketOptions) {
     socketOpts.insert(std::make_pair(8080, "127.0.0.1"));
     socketOpts.insert(std::make_pair(8081, "127.0.0.1"));
     ASSERT_EQ(config::Options::getSocketOptions(), socketOpts);
+}
+
+TEST(testSocketOptions, testSocketOptionsExtreme) {
+    system("touch /tmp/testsOptions2.tmp");
+    system("echo \"server {\n"
+           "  listen 443;\n"
+           "  root ./websites/;\n"
+           "}\n"
+           "\n"
+           "server {\n"
+           "  listen 8080;\n"
+           "  root ./websites/;\n"
+           "}\n"
+           "\n"
+           "server {\n"
+           "  listen 80;\n"
+           "  root ./websites/;\n"
+           "}\n"
+           "\n"
+           "server {\n"
+           "  listen 9999;\n"
+           "  root ./websites/;\n"
+           "}\" >> /tmp/testsOptions2.tmp\n");
+
+    config::parse("/tmp/testsOptions2.tmp");
+
+    std::set< std::pair<int, std::string> > socketOpts({
+        {80,   "127.0.0.1"},
+        {443,  "127.0.0.1"},
+        {8080, "127.0.0.1"},
+        {8081, "127.0.0.1"},
+        {9999, "127.0.0.1"}
+    });
+    ASSERT_EQ(config::Options::getSocketOptions(), socketOpts);
+
+    system("rm /tmp/testsOptions2.tmp");
 }

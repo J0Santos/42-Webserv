@@ -14,6 +14,7 @@ Options::~Options(void) {}
 smt::shared_ptr<Options>
     Options::getInstance(std::vector<ServerOpts> const& options) {
     static smt::shared_ptr<Options> ist(new Options(options));
+    if (options.size() > 0) { ist = smt::make_shared(new Options(options)); }
     return (ist);
 }
 
