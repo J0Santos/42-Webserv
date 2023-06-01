@@ -34,7 +34,10 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
             else if ((*it).m_server_name == header) { serverIt = it; }
         }
     }
-    if (serverIt == options.end()) { throw std::exception(); }
+    if (serverIt == options.end()) {
+        LOG_F("Failed to find options for " << port << ":" << host);
+        throw NoSuchOptionsException();
+    }
 
     // Find Location Block With Target that best Matches request path
     std::vector<std::string> pathVector = ft::string::split(path, "/");
@@ -56,7 +59,11 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
         }
     }
 
-    if (locationIt == (*serverIt).m_locations.end()) { throw std::exception(); }
+    if (locationIt == (*serverIt).m_locations.end()) {
+        LOG_F("Failed to find options in " << port << ":" << host
+                                           << " for path: " << path);
+        return (smt::make_shared(new Opts(*serverIt)));
+    }
 
     // Convert to Opts
     return (smt::make_shared(new Opts(*serverIt, *locationIt)));
@@ -89,10 +96,16 @@ int Options::getCountOfDirs(std::vector<std::string> const& cmd,
     return (count);
 }
 
+char const* Options::NoSuchOptionsException::what(void) const throw() {
+    return ("config::Options: no such options");
+}
+
 /* Opts */
+Opts::Opts(void) : m_max_body_size(0), m_autoindex(false) {}
+
 Opts::Opts(ServerOpts const& srv, LocationOpts const& loc) {
     // Extracting the options from the server block and location block
-    m_target = loc.m_target;
+    m_target = (loc.m_target.empty() ? "/" : loc.m_target);
     m_host = srv.m_host;
     m_port = srv.m_port;
     m_root = (std::string(loc.m_root).empty() ? srv.m_root : loc.m_root);
@@ -106,6 +119,25 @@ Opts::Opts(ServerOpts const& srv, LocationOpts const& loc) {
     m_index = loc.m_index;
     m_autoindex = loc.m_autoindex;
     m_cgi_extension = loc.m_cgi_extension;
+
+    // Setting up the default values
+    if (!m_max_body_size) { m_max_body_size = 1000000; }
+    if (m_allowed_methods.empty()) {
+        std::string arr[3] = {"GET", "POST", "DELETE"};
+        m_allowed_methods = std::vector<std::string>(arr, arr + 3);
+    }
+}
+
+Opts::Opts(ServerOpts const& srv) {
+    // Extracting the options from the server block
+    m_target = "/";
+    m_host = srv.m_host;
+    m_port = srv.m_port;
+    m_root = srv.m_root;
+    m_server_name = srv.m_server_name;
+    m_error_pages = srv.m_error_pages;
+    m_max_body_size = srv.m_max_body_size;
+    m_allowed_methods = srv.m_allowed_methods;
 
     // Setting up the default values
     if (!m_max_body_size) { m_max_body_size = 1000000; }

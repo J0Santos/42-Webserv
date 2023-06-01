@@ -27,6 +27,10 @@ class Options {
 
         static std::set< std::pair<int, std::string> > getSocketOptions(void);
 
+        struct NoSuchOptionsException : public std::exception {
+                char const* what() const throw();
+        };
+
     private:
 
         Options(void);
@@ -48,6 +52,7 @@ class Opts {
         ~Opts(void);
         Opts(void);
         Opts(ServerOpts const& serverOpts, LocationOpts const& locationOpts);
+        Opts(ServerOpts const& serverOpts);
 
         bool operator==(Opts const& rhs) const;
 
