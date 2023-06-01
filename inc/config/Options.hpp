@@ -1,7 +1,7 @@
 #ifndef CONFIG_OPTIONS_HPP
 #define CONFIG_OPTIONS_HPP
 
-#include "config/directives.hpp"
+#include "config/DirectiveTypeTraits.hpp"
 #include "config/ServerOpts.hpp"
 #include "utils/smt.hpp"
 

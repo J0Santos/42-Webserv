@@ -1,6 +1,6 @@
 #include "config/Parser.hpp"
 
-#include "config/directives.hpp"
+#include "config/DirectiveTypeTraits.hpp"
 #include "config/Line.hpp"
 #include "config/Options.hpp"
 #include "utils/ft_exceptions.hpp"
@@ -140,9 +140,7 @@ void parse(ft::file const& filename) {
     }
     if (level != 0) { parser.error(); }
     // initializing options
-    LOG_I("config: parsing done.");
     Options::getInstance(parser.getOptions());
-    LOG_I("config: parsing done.");
 }
 
 } // namespace config

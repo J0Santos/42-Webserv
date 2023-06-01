@@ -1,4 +1,4 @@
-#include "config/directives.hpp"
+#include "config/DirectiveTypeTraits.hpp"
 
 #include <gtest/gtest.h>
 

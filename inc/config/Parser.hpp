@@ -1,7 +1,7 @@
 #ifndef CONFIG_PARSER_HPP
 #define CONFIG_PARSER_HPP
 
-#include "config/directives.hpp"
+#include "config/DirectiveTypeTraits.hpp"
 #include "config/ServerOpts.hpp"
 #include "utils/ft_filesystem.hpp"
 

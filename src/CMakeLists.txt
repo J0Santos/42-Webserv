@@ -4,7 +4,7 @@ add_library(${PROJECT_NAME} STATIC
   cgi/Argc.cpp
   cgi/CgiHandler.cpp
   cgi/Envp.cpp
-  config/directives.cpp
+  config/DirectiveTypeTraits.cpp
   config/Line.cpp
   config/LocationOpts.cpp
   config/Options.cpp
