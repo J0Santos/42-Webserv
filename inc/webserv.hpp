@@ -2,6 +2,7 @@
 #define WEBSERV_HPP
 
 #include "config/Parser.hpp"
+#include "server/Server.hpp"
 
 #include <string>
 
