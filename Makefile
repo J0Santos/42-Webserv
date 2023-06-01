@@ -119,7 +119,7 @@ ifeq (${LANG},C++)
 endif
 
 # Compiler flags
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -g
 CFLAGS += -std=c++98
 
 # Pedantic flags

@@ -4,7 +4,7 @@ namespace net {
 
 SocketConnection::SocketConnection(int sockFd, sockaddr_in* addr,
                                    socklen_t addrLen)
-    : m_addr(new Address(addr, addrLen)), m_sockFd(sockFd) {
+    : m_addr(smt::make_shared(new Address(addr, addrLen))), m_sockFd(sockFd) {
     LOG_D("Created " << toString());
 }
 

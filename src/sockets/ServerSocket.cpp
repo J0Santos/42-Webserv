@@ -88,7 +88,8 @@ int ServerSocket::accept(void) {
     smt::shared_ptr< SocketConnection > sockConnect(new SocketConnection(
         connectFd, reinterpret_cast<sockaddr_in*>(connectAddr), len));
 
-    m_connections[connectFd] = sockConnect;
+    // m_connections[connectFd] = sockConnect;
+	m_connections.insert(std::make_pair(connectFd, sockConnect));
     return (connectFd);
 }
 
