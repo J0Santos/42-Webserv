@@ -11,8 +11,10 @@
 #include <unistd.h>
 
 namespace net {
-
 class ServerSocket;
+}
+
+namespace webserv {
 
 #define BACKLOG 42
 
@@ -55,9 +57,9 @@ class Server {
 
     private:
 
-        // void startServer(void);
-        // void runServer(void);
-        // void stopServer(void);
+        void startServer(void);
+        void runServer(void);
+        void stopServer(void);
 
         Server(void);
 
@@ -68,9 +70,9 @@ class Server {
         t_state m_state;
         int     m_epollFd;
 
-        std::map< int, smt::shared_ptr<ServerSocket> > m_sockets;
+        std::map< int, smt::shared_ptr<net::ServerSocket> > m_sockets;
 };
 
-} // namespace net
+} // namespace webserv
 
 #endif /* WEBSERV_SERVER_HPP */

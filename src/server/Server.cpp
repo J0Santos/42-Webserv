@@ -1,15 +1,42 @@
 #include "server/Server.hpp"
 
-namespace net {
+namespace webserv {
 
 Server::Server(void) : m_state(Ready) {}
 
 Server::~Server(void) { close(m_epollFd); }
 
+void Server::startServer(void) {
+
+    // creating an epoll instance
+    if ((m_epollFd = epoll_create(EP_MAX_EVENTS)) < 0) {
+        throw(EpollCreateException());
+    }
+
+    // initializing sockets
+    std::set< std::pair<int, std::string> > socketOpts =
+        config::Options::getSocketOptions();
+
+    std::set< std::pair<int, std::string> >::iterator it;
+    for (it = socketOpts.begin(); it != socketOpts.end(); it++) {
+        startSocket((*it).first, (*it).second);
+    }
+
+    // updating state
+    m_state = Started;
+}
+
+void Server::runServer(void) {
+    m_state = Running;
+    while (m_state == Running) { ; }
+}
+
+void Server::stopServer(void) { m_state = Stopped; }
+
 void Server::startSocket(int port, std::string const& host) {
     // initializing socket from address
-    smt::shared_ptr<ServerSocket> sock;
-    sock = smt::make_shared(new ServerSocket(port, host));
+    smt::shared_ptr<net::ServerSocket> sock;
+    sock = smt::make_shared(new net::ServerSocket(port, host));
 
     sock->socket();
 
@@ -41,8 +68,9 @@ void Server::epollAdd(int fd, int events) {
     event.events = events;
     event.data.fd = fd;
 
-    if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, fd, &event) < 0)
+    if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, fd, &event) < 0) {
         throw(EpollAddException());
+    }
 }
 
 void Server::epollRemove(int fd) {
@@ -57,38 +85,11 @@ smt::shared_ptr<Server> Server::getInstance(void) {
     return (ist);
 }
 
-void Server::start(void) {
-    smt::shared_ptr<Server> srv = getInstance();
+void Server::start(void) { getInstance()->startServer(); }
 
-    // creating an epoll instance
-    if ((srv->m_epollFd = epoll_create(EP_MAX_EVENTS)) < 0) {
-        throw(EpollCreateException());
-    }
+void Server::run(void) { getInstance()->runServer(); }
 
-    // initializing sockets
-    std::set< std::pair<int, std::string> > socketOpts =
-        config::Options::getSocketOptions();
-
-    std::set< std::pair<int, std::string> >::iterator it;
-    for (it = socketOpts.begin(); it != socketOpts.end(); it++) {
-        srv->startSocket((*it).first, (*it).second);
-    }
-
-    // updating state
-    srv->m_state = Started;
-}
-
-void Server::run(void) {
-    smt::shared_ptr<Server> srv = getInstance();
-
-    srv->m_state = Running;
-    while (srv->m_state == Running) { ; }
-}
-
-void Server::stop(void) {
-    smt::shared_ptr<Server> srv = getInstance();
-    srv->m_state = Stopped;
-}
+void Server::stop(void) { getInstance()->stopServer(); }
 
 char const* Server::EpollCreateException::what(void) const throw() {
     return ("webserv::Server epoll_create system call failure");
@@ -106,4 +107,4 @@ char const* Server::EpollWaitException::what(void) const throw() {
     return ("webserv::Server epoll_wait system call failure");
 }
 
-} // namespace net
+} // namespace webserv
