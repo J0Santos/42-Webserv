@@ -100,7 +100,8 @@ char const* Options::NoSuchOptionsException::what(void) const throw() {
 /* Opts */
 Opts::Opts(void) : m_max_body_size(0), m_autoindex(false) {}
 
-Opts::Opts(ServerOpts const& srv, LocationOpts const& loc) {
+Opts::Opts(ServerOpts const& srv, LocationOpts const& loc)
+    : m_max_body_size(0), m_autoindex(false) {
     // Extracting the options from the server block and location block
     m_target = (loc.m_target.empty() ? "/" : loc.m_target);
     m_host = srv.m_host;

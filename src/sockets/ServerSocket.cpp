@@ -42,8 +42,7 @@ smt::shared_ptr<SocketConnection> ServerSocket::getConnection(int connectFd) {
     std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
     it = m_connections.find(connectFd);
     if (it == m_connections.end()) {
-        LOG_E(toString() + " has no connection with fd " +
-              std::to_string(connectFd));
+        LOG_E(toString() + " has no connection with fd " << connectFd);
         throw NoSuchConnectionException();
     }
     return ((*it).second);

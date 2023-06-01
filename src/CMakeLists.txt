@@ -24,6 +24,7 @@ add_library(${PROJECT_NAME} STATIC
   utils/Logger.cpp
   utils/Route.cpp
   server/Server.cpp
+  server/webserv.cpp
   sockets/ServerSocket.cpp
   sockets/SocketConnection.cpp
 )
