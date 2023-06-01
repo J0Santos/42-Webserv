@@ -16,8 +16,36 @@ void webserv(std::string const& filename) {
                                      << std::string(e.what()));
         return;
     }
+
+    LOG_I("Starting server...");
+    // try {
+    //     server::start();
+    // }
+    // catch (std::exception& e) {
+    //     LOG_F("Failure while server was starting: " <<
+    //     std::string(e.what())); return;
+    // }
+
+    LOG_I("Server is running. Press Ctrl+C to stop.");
+    // try {
+    //     server::run();
+    // }
+    // catch (std::exception& e) {
+    //     LOG_F("Failure while server was running: " << std::string(e.what()));
+    //     return;
+    // }
 }
 
-static void stop(int) {}
+static void stop(int) {
+    LOG_I("Stopping server...");
+    // try {
+    //     server::stop();
+    // }
+    // catch (std::exception& e) {
+    //     LOG_F("Failure while server was stopping: " <<
+    //     std::string(e.what())); return;
+    // }
+    LOG_I("Server stopped.");
+}
 
 } // namespace webserv
