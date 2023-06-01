@@ -152,6 +152,10 @@ Opts::Opts(ServerOpts const& srv) {
         (srv.m_allowed_methods.empty() ? std::vector<std::string>()
                                        : srv.m_allowed_methods);
 
+    m_index = "";
+    m_autoindex = false;
+    m_cgi_extension = "";
+
     // Setting up the default values
     if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
     if (m_allowed_methods.empty()) {
