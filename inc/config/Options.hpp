@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace config {
-
+#define DEFAULT_BODY_SIZE 8192
 class Opts;
 
 class Options {

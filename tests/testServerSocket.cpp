@@ -1,4 +1,4 @@
-// #include "client/Client.hpp"
+#include "client/Client.hpp"
 #include "sockets/ServerSocket.hpp"
 #include "utils/smt.hpp"
 
@@ -63,7 +63,7 @@ void setOptions(smt::shared_ptr<net::ServerSocket> sock) {
 
 TEST(test_ServerSocket, socket) {
     smt::shared_ptr<net::ServerSocket> sock(
-        new net::ServerSocket(8080, "localhost"));
+        new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getSockFd(), -1);
     ASSERT_NO_THROW(sock->socket());
     ASSERT_GT(sock->getSockFd(), -1);
@@ -71,7 +71,7 @@ TEST(test_ServerSocket, socket) {
 
 TEST(test_ServerSocket, bind) {
     smt::shared_ptr<net::ServerSocket> sock(
-        new net::ServerSocket(8080, "localhost"));
+        new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
     ASSERT_NO_THROW(setOptions(sock)) << errno;
     ASSERT_NO_THROW(sock->bind());
@@ -79,7 +79,7 @@ TEST(test_ServerSocket, bind) {
 
 TEST(test_ServerSocket, listen) {
     smt::shared_ptr<net::ServerSocket> sock(
-        new net::ServerSocket(8080, "localhost"));
+        new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
     ASSERT_NO_THROW(setOptions(sock)) << errno;
     ASSERT_NO_THROW(sock->bind());
@@ -88,7 +88,7 @@ TEST(test_ServerSocket, listen) {
 
 TEST(test_ServerSocket, accept) {
     smt::shared_ptr<net::ServerSocket> sock(
-        new net::ServerSocket(8080, "localhost"));
+        new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
     ASSERT_NO_THROW(setOptions(sock)) << errno;
     ASSERT_NO_THROW(sock->bind());
@@ -97,74 +97,68 @@ TEST(test_ServerSocket, accept) {
     ASSERT_EQ(sock->getPort(), 8080);
 
     // creating client that will try and connect with 8080:localhost
-    // smt::shared_ptr<net::test::Client> client(
-    //     new net::test::Client("8080", "localhost"));
-    // ASSERT_NO_THROW(client->socket());
-    // ASSERT_NO_THROW(client->connect());
+    smt::shared_ptr<net::test::Client> client(
+        new net::test::Client("8080", "localhost"));
+    ASSERT_NO_THROW(client->socket());
+    ASSERT_NO_THROW(client->connect());
 
-    // int connectFd;
-    // ASSERT_NO_THROW(connectFd = sock->accept());
-    // ASSERT_GT(connectFd, -1);
+    int connectFd;
+    ASSERT_NO_THROW(connectFd = sock->accept());
+    ASSERT_GT(connectFd, -1);
 }
 
-// TEST(test_ServerSocket, close) {
-//     smt::shared_ptr<net::ServerAddress> addr(
-//         new net::ServerAddress("8080", "localhost"));
-//     smt::shared_ptr<net::ServerSocket> sock(
-//         new net::ServerSocket(addr));
-//     ASSERT_NO_THROW(sock->socket());
-//     ASSERT_NO_THROW(setOptions(sock)) << errno;
-//     ASSERT_NO_THROW(sock->bind());
-//     ASSERT_NO_THROW(sock->close());
-// }
+TEST(test_ServerSocket, close) {
+    smt::shared_ptr<net::ServerSocket> sock(
+        new net::ServerSocket(8080, "127.0.0.1"));
+    ASSERT_NO_THROW(sock->socket());
+    ASSERT_NO_THROW(setOptions(sock)) << errno;
+    ASSERT_NO_THROW(sock->bind());
+    ASSERT_NO_THROW(sock->close());
+}
 
-// TEST(test_ServerSocket, recv) {
-//     smt::shared_ptr<net::ServerAddress> addr(
-//         new net::ServerAddress("8080", "localhost"));
-//     smt::shared_ptr<net::ServerSocket> sock(
-//         new net::ServerSocket(addr));
-//     ASSERT_NO_THROW(sock->socket());
-//     ASSERT_NO_THROW(setOptions(sock)) << errno;
-//     ASSERT_NO_THROW(sock->bind());
-//     ASSERT_NO_THROW(sock->listen());
+TEST(test_ServerSocket, recv) {
+    smt::shared_ptr<net::ServerSocket> sock(
+        new net::ServerSocket(8080, "127.0.0.1"));
+    ASSERT_NO_THROW(sock->socket());
+    ASSERT_NO_THROW(setOptions(sock)) << errno;
+    ASSERT_NO_THROW(sock->bind());
+    ASSERT_NO_THROW(sock->listen());
 
-// net::test::Client client("8080", "localhost");
-// ASSERT_NO_THROW(client.socket());
-// ASSERT_NO_THROW(client.connect());
-// ASSERT_NO_THROW(client.send("Hello World!"));
+    net::test::Client client("8080", "localhost");
+    ASSERT_NO_THROW(client.socket());
+    ASSERT_NO_THROW(client.connect());
+    ASSERT_NO_THROW(client.send("Hello World!"));
 
-// int connectFd;
-// ASSERT_NO_THROW(connectFd = sock->accept());
-// ASSERT_GT(connectFd, -1);
-// std::string request;
-// ASSERT_NO_THROW(request = sock->recv(connectFd));
-// ASSERT_EQ(request, "Hello World!");
-// }
+    int connectFd;
+    ASSERT_NO_THROW(connectFd = sock->accept());
+    ASSERT_GT(connectFd, -1);
+    std::string request;
+    ASSERT_NO_THROW(request = sock->recv(connectFd));
+    ASSERT_EQ(request, "Hello World!");
+}
 
-// TEST(test_ServerSocket, send) {
-//     smt::shared_ptr<net::ServerAddress> addr(
-//         new net::ServerAddress("8080", "localhost"));
-//     smt::shared_ptr<net::ServerSocket> sock(
-//         new net::ServerSocket(addr));
-//     ASSERT_NO_THROW(sock->socket());
-//     ASSERT_NO_THROW(setOptions(sock)) << errno;
-//     ASSERT_NO_THROW(sock->bind());
-//     ASSERT_NO_THROW(sock->listen());
+TEST(test_ServerSocket, send) {
+    smt::shared_ptr<net::ServerSocket> sock(
+        new net::ServerSocket(8080, "127.0.0.1"));
+    ASSERT_NO_THROW(sock->socket());
+    ASSERT_NO_THROW(setOptions(sock)) << errno;
+    ASSERT_NO_THROW(sock->bind());
+    ASSERT_NO_THROW(sock->listen());
 
-// smt::shared_ptr<net::test::Client> client(
-//     new net::test::Client("8080", "localhost"));
-// ASSERT_NO_THROW(client->socket());
-// ASSERT_NO_THROW(client->connect());
-// ASSERT_NO_THROW(client->send("Hello World!"));
+    smt::shared_ptr<net::test::Client> client(
+        new net::test::Client("8080", "localhost"));
+    ASSERT_NO_THROW(client->socket());
+    ASSERT_NO_THROW(client->connect());
+    ASSERT_NO_THROW(client->send("Hello World!"));
 
-// int connectFd;
-// ASSERT_NO_THROW(connectFd = sock->accept());
-// ASSERT_GT(connectFd, -1);
-// std::string request;
-// ASSERT_NO_THROW(request = sock->recv(connectFd));
-// ASSERT_EQ(request, "Hello World!");
-// ASSERT_NO_THROW(sock->send(connectFd, request));
-// std::string response;
-// ASSERT_NO_THROW(response = client->recv());
-// ASSERT_EQ(response, "Hello World!");
-// }
+    int connectFd;
+    ASSERT_NO_THROW(connectFd = sock->accept());
+    ASSERT_GT(connectFd, -1);
+    std::string request;
+    ASSERT_NO_THROW(request = sock->recv(connectFd));
+    ASSERT_EQ(request, "Hello World!");
+    ASSERT_NO_THROW(sock->send(connectFd, request));
+    std::string response;
+    ASSERT_NO_THROW(response = client->recv());
+    ASSERT_EQ(response, "Hello World!");
+}

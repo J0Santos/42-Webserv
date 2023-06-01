@@ -25,6 +25,7 @@ add_library(${PROJECT_NAME} STATIC
   utils/Route.cpp
   server/Server.cpp
   sockets/ServerSocket.cpp
+  sockets/SocketConnection.cpp
 )
 
 add_library(42::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

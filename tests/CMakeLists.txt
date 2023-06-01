@@ -19,6 +19,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../inc/)
 
 add_executable(${PROJECT_NAME}
   test.cpp
+  client/Client.cpp
   testArgc.cpp
   testArray.cpp
   testCgiHandler.cpp
@@ -37,6 +38,7 @@ add_executable(${PROJECT_NAME}
   testRoute.cpp
   testServerSocket.cpp
   testSmt.cpp
+  testSocketConnection.cpp
   testString.cpp
   testUri.cpp
 )

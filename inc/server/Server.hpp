@@ -14,6 +14,8 @@ namespace webserv {
 # define BACKLOG 42
 #endif
 
+#define READING_BUFFER 8192
+
 class Server {
 
     private:

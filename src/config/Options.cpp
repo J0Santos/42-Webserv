@@ -118,7 +118,7 @@ Opts::Opts(ServerOpts const& srv, LocationOpts const& loc) {
     m_cgi_extension = loc.m_cgi_extension;
 
     // Setting up the default values
-    if (!m_max_body_size) { m_max_body_size = 1000000; }
+    if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
     if (m_allowed_methods.empty()) {
         std::string arr[3] = {"GET", "POST", "DELETE"};
         m_allowed_methods = std::vector<std::string>(arr, arr + 3);
@@ -137,7 +137,7 @@ Opts::Opts(ServerOpts const& srv) {
     m_allowed_methods = srv.m_allowed_methods;
 
     // Setting up the default values
-    if (!m_max_body_size) { m_max_body_size = 1000000; }
+    if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
     if (m_allowed_methods.empty()) {
         std::string arr[3] = {"GET", "POST", "DELETE"};
         m_allowed_methods = std::vector<std::string>(arr, arr + 3);

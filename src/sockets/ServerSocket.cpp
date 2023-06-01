@@ -37,23 +37,22 @@ void ServerSocket::socket(void) {
     }
 }
 
-// smt::shared_ptr<SocketConnection> ServerSocket::getConnection(int connectFd)
-// {
+smt::shared_ptr<SocketConnection> ServerSocket::getConnection(int connectFd) {
 
-// std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
-// it = m_connections.find(connectFd);
-// if (it == m_connections.end()) {
-//     LOG_E(toString() + " has no connection with fd " +
-//           std::to_string(connectFd));
-//     throw NoSuchConnectionException();
-// }
-// return ((*it).second);
-// }
+    std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
+    it = m_connections.find(connectFd);
+    if (it == m_connections.end()) {
+        LOG_E(toString() + " has no connection with fd " +
+              std::to_string(connectFd));
+        throw NoSuchConnectionException();
+    }
+    return ((*it).second);
+}
 
-// std::map< int, smt::shared_ptr<SocketConnection> >
-//     ServerSocket::getConnections(void) {
-//     return (m_connections);
-// }
+std::map< int, smt::shared_ptr<SocketConnection> >
+    ServerSocket::getConnections(void) {
+    return (m_connections);
+}
 
 void ServerSocket::bind(void) {
     if (::bind(m_sockFd, m_addr->getAddress(), m_addr->getLength()) == -1) {
@@ -77,24 +76,24 @@ void ServerSocket::setsockopt(int level, int optname, void const* optval,
     }
 }
 
-// int ServerSocket::accept(void) {
+int ServerSocket::accept(void) {
 
-// sockaddr* connectAddr = new sockaddr;
-// socklen_t len = sizeof(connectAddr);
+    sockaddr* connectAddr = new sockaddr;
+    socklen_t len = sizeof(connectAddr);
 
-// int connectFd = ::accept(m_sockFd, connectAddr, &len);
+    int connectFd = ::accept(m_sockFd, connectAddr, &len);
 
-// if (connectFd < 0) {
-//     LOG_E(toString() + " failure in ::accept()");
-//     throw(AcceptFailureException());
-// }
+    if (connectFd < 0) {
+        LOG_E(toString() + " failure in ::accept()");
+        throw(AcceptFailureException());
+    }
 
-// smt::shared_ptr< SocketConnection > sockConnect(new SocketConnection(
-//     connectFd, reinterpret_cast<sockaddr_in*>(connectAddr), len));
+    smt::shared_ptr< SocketConnection > sockConnect(new SocketConnection(
+        connectFd, reinterpret_cast<sockaddr_in*>(connectAddr), len));
 
-// m_connections[connectFd] = sockConnect;
-// return (connectFd);
-// }
+    m_connections[connectFd] = sockConnect;
+    return (connectFd);
+}
 
 void ServerSocket::close(void) {
 
@@ -110,58 +109,58 @@ void ServerSocket::close(void) {
     m_sockFd = -1;
 }
 
-// void ServerSocket::close(int connectFd) {
+void ServerSocket::close(int connectFd) {
 
-// std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
-// it = m_connections.find(connectFd);
+    std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
+    it = m_connections.find(connectFd);
 
-// if (it == m_connections.end()) {
-//     LOG_E(toString() + " failure in ::close(): no such connection");
-//     throw(NoSuchConnectionException());
-// }
+    if (it == m_connections.end()) {
+        LOG_E(toString() + " failure in ::close(): no such connection");
+        throw(NoSuchConnectionException());
+    }
 
-// m_connections.erase(it);
-// }
+    m_connections.erase(it);
+}
 
-// std::string ServerSocket::recv(int connectFd) {
+std::string ServerSocket::recv(int connectFd) {
 
-// std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
-// it = m_connections.find(connectFd);
+    std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
+    it = m_connections.find(connectFd);
 
-// if (it == m_connections.end()) {
-//     LOG_E(toString() + " failure in ::recv(): no such connection");
-//     throw(NoSuchConnectionException());
-// }
+    if (it == m_connections.end()) {
+        LOG_E(toString() + " failure in ::recv(): no such connection");
+        throw(NoSuchConnectionException());
+    }
 
-// std::string request;
-// try {
-//     request = m_connections[connectFd]->recv();
-// }
-// catch (SocketConnection::RecvFailureException& e) {
-//     LOG_E(toString() + " failure in ::recv(): " + e.what());
-//     throw RecvFailureException();
-// }
-// return (request);
-// }
+    std::string request;
+    try {
+        request = m_connections[connectFd]->recv();
+    }
+    catch (SocketConnection::RecvFailureException& e) {
+        LOG_E(toString() + " failure in ::recv(): " + e.what());
+        throw RecvFailureException();
+    }
+    return (request);
+}
 
-// void ServerSocket::send(int connectFd, std::string const& response) {
+void ServerSocket::send(int connectFd, std::string const& response) {
 
-// std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
-// it = m_connections.find(connectFd);
+    std::map<int, smt::shared_ptr<SocketConnection> >::iterator it;
+    it = m_connections.find(connectFd);
 
-// if (it == m_connections.end()) {
-//     LOG_E(toString() + " failure in ::send(): no such connection");
-//     throw(NoSuchConnectionException());
-// }
+    if (it == m_connections.end()) {
+        LOG_E(toString() + " failure in ::send(): no such connection");
+        throw(NoSuchConnectionException());
+    }
 
-// try {
-//     m_connections[connectFd]->send(response);
-// }
-// catch (SocketConnection::SendFailureException& e) {
-//     LOG_E(toString() + " failure in ::send(): " + e.what());
-//     throw SendFailureException();
-// }
-// }
+    try {
+        m_connections[connectFd]->send(response);
+    }
+    catch (SocketConnection::SendFailureException& e) {
+        LOG_E(toString() + " failure in ::send(): " + e.what());
+        throw SendFailureException();
+    }
+}
 
 std::string ServerSocket::toString(void) const {
     std::ostringstream oss;

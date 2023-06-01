@@ -2,6 +2,7 @@
 #define SERVER_SOCKET_HPP
 
 #include "server/Server.hpp"
+#include "sockets/SocketConnection.hpp"
 #include "utils/Logger.hpp"
 #include "utils/smt.hpp"
 
@@ -29,9 +30,8 @@ class ServerSocket {
         sockaddr*   getAddress(void) const;
         socklen_t   getLength(void) const;
 
-        // smt::shared_ptr<SocketConnection> getConnection(int connectFd);
-        // std::map< int, smt::shared_ptr<SocketConnection> >
-        // getConnections(void);
+        smt::shared_ptr<SocketConnection> getConnection(int connectFd);
+        std::map< int, smt::shared_ptr<SocketConnection> > getConnections(void);
 
         void socket(void);
         void bind(void);
@@ -115,7 +115,7 @@ class ServerSocket {
         int                      m_sockFd;
         smt::shared_ptr<Address> m_addr;
 
-        // std::map< int, smt::shared_ptr<SocketConnection> > m_connections;
+        std::map< int, smt::shared_ptr<SocketConnection> > m_connections;
 };
 
 } // namespace net

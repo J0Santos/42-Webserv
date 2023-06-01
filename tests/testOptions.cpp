@@ -64,7 +64,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockWithDefaultRoute) {
     opt->m_root = "./websites/cgi/";
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
-    opt->m_max_body_size = 1000000;
+    opt->m_max_body_size = DEFAULT_BODY_SIZE;
     opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
     opt->m_index = "";
     opt->m_autoindex = true;
@@ -85,7 +85,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
     opt->m_root = "./websites/cgi/python/";
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
-    opt->m_max_body_size = 1000000;
+    opt->m_max_body_size = DEFAULT_BODY_SIZE;
     opt->m_allowed_methods = std::vector<std::string>({"GET"});
     opt->m_index = "./websites/index.html";
     opt->m_autoindex = false;
@@ -104,7 +104,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockPhRoutped) {
     opt->m_root = "./websites/cgi/php/";
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
-    opt->m_max_body_size = 1000000;
+    opt->m_max_body_size = DEFAULT_BODY_SIZE;
     opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
     opt->m_index = "";
     opt->m_autoindex = false;
@@ -145,7 +145,7 @@ TEST_F(testOptionsExtreme, testThirdBlock) {
     opt->m_root = "./websites/";
     opt->m_server_name = "domain.net";
     opt->m_error_pages[500] = "./websites/errors/500.html";
-    opt->m_max_body_size = 1000000;
+    opt->m_max_body_size = DEFAULT_BODY_SIZE;
     opt->m_allowed_methods =
         std::vector<std::string>({"GET", "POST", "DELETE"});
     opt->m_index = "";
