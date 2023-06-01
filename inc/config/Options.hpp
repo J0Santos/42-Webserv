@@ -69,6 +69,8 @@ class Opts {
         std::string              m_cgi_extension;
 };
 
+std::ostream& operator<<(std::ostream& os, Opts const& rhs);
+
 } // namespace config
 
 #endif /* CONFIG_OPTIONS_HPP */

@@ -2,7 +2,8 @@
 
 namespace config {
 
-LocationOpts::LocationOpts(std::string const& target) : m_target(target) {}
+LocationOpts::LocationOpts(std::string const& target)
+    : m_target(target), m_max_body_size(0), m_autoindex(false) {}
 
 LocationOpts::LocationOpts(LocationOpts const& src) { *this = src; }
 

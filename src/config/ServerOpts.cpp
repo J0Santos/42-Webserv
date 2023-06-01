@@ -2,7 +2,7 @@
 
 namespace config {
 
-ServerOpts::ServerOpts(void) {}
+ServerOpts::ServerOpts(void) : m_max_body_size(0) {}
 
 ServerOpts::ServerOpts(ServerOpts const& src) { *this = src; }
 

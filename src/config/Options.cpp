@@ -60,12 +60,8 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
     }
 
     if (locationIt == (*serverIt).m_locations.end()) {
-        LOG_F("Failed to find options in " << port << ":" << host
-                                           << " for path: " << path);
         return (smt::make_shared(new Opts(*serverIt)));
     }
-
-    // Convert to Opts
     return (smt::make_shared(new Opts(*serverIt, *locationIt)));
 }
 
@@ -86,11 +82,11 @@ std::set< std::pair<int, std::string> > Options::getSocketOptions(void) {
     return (sockOpts);
 }
 
-int Options::getCountOfDirs(std::vector<std::string> const& cmd,
+int Options::getCountOfDirs(std::vector<std::string> const& path,
                             std::vector<std::string> const& target) {
     int count = 0;
-    for (size_t i = 0; i < cmd.size() && i < target.size(); i++) {
-        if (cmd[i] == target[i]) { count++; }
+    for (size_t i = 0; i < path.size() && i < target.size(); i++) {
+        if (path[i] == target[i]) { count++; }
         else { break; }
     }
     return (count);
@@ -158,6 +154,32 @@ bool Opts::operator==(Opts const& rhs) const {
             m_allowed_methods == rhs.m_allowed_methods &&
             m_index == rhs.m_index && m_autoindex == rhs.m_autoindex &&
             m_cgi_extension == rhs.m_cgi_extension);
+}
+
+std::ostream& operator<<(std::ostream& os, Opts const& rhs) {
+    os << "Opts: " << std::endl
+       << "target: " << rhs.m_target << std::endl
+       << "host: " << rhs.m_host << std::endl
+       << "port: " << rhs.m_port << std::endl
+       << "root: " << rhs.m_root << std::endl
+       << "server_name: " << rhs.m_server_name << std::endl
+       << "max_body_size: " << rhs.m_max_body_size << std::endl
+       << "index: " << rhs.m_index << std::endl
+       << "autoindex: " << rhs.m_autoindex << std::endl
+       << "cgi_extension: " << rhs.m_cgi_extension << std::endl
+       << "error_pages:";
+    for (std::map<int, ft::file>::const_iterator it = rhs.m_error_pages.begin();
+         it != rhs.m_error_pages.end(); ++it) {
+        os << it->first << " (" << std::string(it->second) << ")";
+    }
+    os << std::endl << "allowed_methods:";
+    for (std::vector<std::string>::const_iterator it =
+             rhs.m_allowed_methods.begin();
+         it != rhs.m_allowed_methods.end(); ++it) {
+        os << " " << *it;
+    }
+    os << std::endl;
+    return (os);
 }
 
 } // namespace config

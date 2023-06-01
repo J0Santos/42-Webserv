@@ -55,11 +55,11 @@ TEST_F(testOptionsExtreme, testServerOptsExtractionFromOptions) {
     // tommorrow
 }
 
-TEST_F(testOptionsExtreme, testGetOptions) {
+TEST_F(testOptionsExtreme, testGettingFirstBlockWithDefaultRoute) {
 
     smt::shared_ptr<config::Opts> opt(new config::Opts);
     opt->m_target = "/";
-    opt->m_host = "localhost";
+    opt->m_host = "127.0.0.1";
     opt->m_port = "8080";
     opt->m_root = "./websites/cgi/";
     opt->m_server_name = "";
@@ -70,95 +70,92 @@ TEST_F(testOptionsExtreme, testGetOptions) {
     opt->m_autoindex = true;
     opt->m_cgi_extension = "";
 
-    ASSERT_EQ(*(config::Options::getOptions("8080", "localhost", "", "/")),
+    ASSERT_EQ(*config::Options::getOptions("8080", "127.0.0.1", "/"), *opt);
+}
+
+TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
+    smt::shared_ptr<config::Opts> opt(new config::Opts);
+
+    opt->m_target = "/python/";
+    opt->m_host = "127.0.0.1";
+    opt->m_port = "8080";
+    opt->m_root = "./websites/cgi/python/";
+    opt->m_server_name = "";
+    opt->m_error_pages = std::map<int, ft::file>();
+    opt->m_max_body_size = 1000000;
+    opt->m_allowed_methods = std::vector<std::string>({"GET"});
+    opt->m_index = "./websites/index.html";
+    opt->m_autoindex = false;
+    opt->m_cgi_extension = ".py";
+    ASSERT_EQ(
+        *config::Options::getOptions("8080", "127.0.0.1", "/python/me.py"),
+        *opt);
+}
+
+TEST_F(testOptionsExtreme, testGettingFirstBlockPhRoutped) {
+    smt::shared_ptr<config::Opts> opt(new config::Opts);
+
+    opt->m_target = "/php/";
+    opt->m_host = "127.0.0.1";
+    opt->m_port = "8080";
+    opt->m_root = "./websites/cgi/php/";
+    opt->m_server_name = "";
+    opt->m_error_pages = std::map<int, ft::file>();
+    opt->m_max_body_size = 1000000;
+    opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
+    opt->m_index = "";
+    opt->m_autoindex = false;
+    opt->m_cgi_extension = ".php";
+    ASSERT_EQ(*config::Options::getOptions("8080", "127.0.0.1", "/php/me.php"),
               *opt);
 }
 
-TEST_F(testOptionsExtreme, testGetSocketOptions) {
-    // tommorrow
+TEST_F(testOptionsExtreme, testGettingSecondBlockWithDefaultRoute) {
+    smt::shared_ptr<config::Opts> opt(new config::Opts);
+
+    opt->m_target = "/";
+    opt->m_host = "127.0.0.1";
+    opt->m_port = "8081";
+    opt->m_root = "./websites/";
+    opt->m_server_name = "domain.com";
+    opt->m_error_pages[404] = "./websites/errors/404.html";
+    opt->m_max_body_size = 80;
+    opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
+    opt->m_index = "";
+    opt->m_autoindex = false;
+    opt->m_cgi_extension = "";
+    ASSERT_EQ(*config::Options::getOptions("8081", "127.0.0.1", "/"), *opt);
+    ASSERT_EQ(
+        *config::Options::getOptions("8081", "127.0.0.1", "/", "domain.com"),
+        *opt);
+    ASSERT_EQ(*config::Options::getOptions("8081", "127.0.0.1", "/python/",
+                                           "domain.pt"),
+              *opt);
 }
 
-// TEST_F(testOptionsExtreme, testSecondRoute) {
-//     smt::shared_ptr<config::Opts> opt(new config::Opts);
+TEST_F(testOptionsExtreme, testThirdBlock) {
+    smt::shared_ptr<config::Opts> opt(new config::Opts);
 
-// opt->m_target = "/python/";
-// opt->m_host = "localhost";
-// opt->m_port = "8080";
-// opt->m_root = "./websites/cgi/python/";
-// opt->m_server_name = "";
-// opt->m_error_pages = std::map<int, ft::file>();
-// opt->m_max_body_size = 1000000;
-// opt->m_allowed_methods = std::vector<std::string>({"GET"});
-// opt->m_index = "./websites/index.html";
-// opt->m_autoindex = false;
-// opt->m_cgi_extension = ".py";
-// ASSERT_EQ(*(m_opts[2]), *opt);
-// }
+    opt->m_target = "/";
+    opt->m_host = "127.0.0.1";
+    opt->m_port = "8081";
+    opt->m_root = "./websites/";
+    opt->m_server_name = "domain.net";
+    opt->m_error_pages[500] = "./websites/errors/500.html";
+    opt->m_max_body_size = 1000000;
+    opt->m_allowed_methods =
+        std::vector<std::string>({"GET", "POST", "DELETE"});
+    opt->m_index = "";
+    opt->m_autoindex = false;
+    opt->m_cgi_extension = "";
+    ASSERT_EQ(
+        *config::Options::getOptions("8081", "127.0.0.1", "/", "domain.net"),
+        *opt);
+}
 
-// TEST_F(testOptionsExtreme, testThirdRoute) {
-//     smt::shared_ptr<config::Opts> opt(new config::Opts);
-
-// opt->m_target = "/php/";
-// opt->m_host = "localhost";
-// opt->m_port = "8080";
-// opt->m_root = "./websites/cgi/php/";
-// opt->m_server_name = "";
-// opt->m_error_pages = std::map<int, ft::file>();
-// opt->m_max_body_size = 1000000;
-// opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
-// opt->m_index = "";
-// opt->m_autoindex = false;
-// opt->m_cgi_extension = ".php";
-// ASSERT_EQ(*(m_opts[1]), *opt);
-// }
-
-// TEST_F(testOptionsExtreme, testSecondBlock) {
-//     smt::shared_ptr<config::Opts> opt(new config::Opts);
-
-// opt->m_target = "/";
-// opt->m_host = "localhost";
-// opt->m_port = "8081";
-// opt->m_root = "./websites/";
-// opt->m_server_name = "domain.com";
-// opt->m_error_pages[404] = "./websites/errors/404.html";
-// opt->m_max_body_size = 80;
-// opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
-// opt->m_index = "";
-// opt->m_autoindex = false;
-// opt->m_cgi_extension = "";
-// ASSERT_EQ(*(m_opts[3]), *opt);
-// }
-
-// TEST_F(testOptionsExtreme, testThirdBlock) {
-//     smt::shared_ptr<config::Opts> opt(new config::Opts);
-
-// opt->m_target = "/";
-// opt->m_host = "localhost";
-// opt->m_port = "8081";
-// opt->m_root = "./websites/";
-// opt->m_server_name = "domain.net";
-// opt->m_error_pages[500] = "./websites/errors/500.html";
-// opt->m_max_body_size = 1000000;
-// opt->m_allowed_methods =
-//     std::vector<std::string>({"GET", "POST", "DELETE"});
-// opt->m_index = "";
-// opt->m_autoindex = false;
-// opt->m_cgi_extension = "";
-// ASSERT_EQ(*(m_opts[4]), *opt);
-// }
-
-// TEST_F(testOptionsExtreme, testGetOptionsByHostAndPort) {
-//     config::Options::getInstance(m_opts);
-
-// config::Options::getOpts("8080", "localhost", "/", "");
-
-// config::Options::getOpts("8080", "localhost", "/", "great");
-
-// config::Options::getOpts("8081", "localhost", "/", "domain.com");
-
-// config::Options::getOpts("8081", "localhost", "/", "domain.net");
-
-// config::Options::getOpts("8081", "localhost", "/", "domain.pt");
-
-// config::Options::getOpts("8081", "localhost", "/", "");
-// }
+TEST_F(testOptionsExtreme, testGetSocketOptions) {
+    std::set< std::pair<int, std::string> > socketOpts;
+    socketOpts.insert(std::make_pair(8080, "127.0.0.1"));
+    socketOpts.insert(std::make_pair(8081, "127.0.0.1"));
+    ASSERT_EQ(config::Options::getSocketOptions(), socketOpts);
+}
