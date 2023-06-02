@@ -4,8 +4,8 @@
 #include "utils/ft_filesystem.hpp"
 
 #include <map>
+#include <set>
 #include <string>
-#include <vector>
 
 namespace config {
 
@@ -22,14 +22,14 @@ class LocationOpts {
 
         bool operator==(LocationOpts const& rhs) const;
 
-        std::string              m_target;
-        ft::directory            m_root;
-        std::map<int, ft::file>  m_error_pages;
-        unsigned long            m_max_body_size;
-        std::vector<std::string> m_allowed_methods;
-        ft::file                 m_index;
-        bool                     m_autoindex;
-        std::string              m_cgi_extension;
+        std::string             m_target;
+        ft::directory           m_root;
+        std::map<int, ft::file> m_error_pages;
+        unsigned long           m_max_body_size;
+        std::set<std::string>   m_allowed_methods;
+        ft::file                m_index;
+        bool                    m_autoindex;
+        std::string             m_cgi_extension;
 };
 
 } // namespace config

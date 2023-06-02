@@ -12,6 +12,7 @@
 #include "utils/smt.hpp"
 
 #include <map>
+#include <set>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -421,7 +422,7 @@ struct DirectiveTypeTraits<LineAllowMethods> : public DirectiveTypeTraitsBase {
                     LOG_W(getName() << ": invalid method.");
                     return;
                 }
-                m_allowed_methods.push_back(*it);
+                m_allowed_methods.insert(*it);
             }
             m_valid = true;
         }
@@ -444,7 +445,7 @@ struct DirectiveTypeTraits<LineAllowMethods> : public DirectiveTypeTraitsBase {
 
         bool isRouteDirective(void) const { return (true); }
 
-        std::vector<std::string> m_allowed_methods;
+        std::set<std::string> m_allowed_methods;
 
         bool m_valid;
 };

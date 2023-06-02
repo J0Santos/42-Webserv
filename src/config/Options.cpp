@@ -112,9 +112,8 @@ Opts::Opts(ServerOpts const& srv, LocationOpts const& loc)
     m_error_pages = (srv.m_error_pages.empty() ? std::map<int, ft::file>()
                                                : srv.m_error_pages);
     m_max_body_size = srv.m_max_body_size;
-    m_allowed_methods =
-        (srv.m_allowed_methods.empty() ? std::vector<std::string>()
-                                       : srv.m_allowed_methods);
+    m_allowed_methods = (srv.m_allowed_methods.empty() ? std::set<std::string>()
+                                                       : srv.m_allowed_methods);
 
     // Extracting the options from the location block
     m_target = (loc.m_target.empty() ? m_target : loc.m_target);
@@ -134,7 +133,7 @@ Opts::Opts(ServerOpts const& srv, LocationOpts const& loc)
     if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
     if (m_allowed_methods.empty()) {
         std::string arr[3] = {"GET", "POST", "DELETE"};
-        m_allowed_methods = std::vector<std::string>(arr, arr + 3);
+        m_allowed_methods = std::set<std::string>(arr, arr + 3);
     }
 }
 
@@ -148,9 +147,8 @@ Opts::Opts(ServerOpts const& srv) {
     m_error_pages = (srv.m_error_pages.empty() ? std::map<int, ft::file>()
                                                : srv.m_error_pages);
     m_max_body_size = srv.m_max_body_size;
-    m_allowed_methods =
-        (srv.m_allowed_methods.empty() ? std::vector<std::string>()
-                                       : srv.m_allowed_methods);
+    m_allowed_methods = (srv.m_allowed_methods.empty() ? std::set<std::string>()
+                                                       : srv.m_allowed_methods);
 
     m_index = "";
     m_autoindex = false;
@@ -160,7 +158,7 @@ Opts::Opts(ServerOpts const& srv) {
     if (!m_max_body_size) { m_max_body_size = DEFAULT_BODY_SIZE; }
     if (m_allowed_methods.empty()) {
         std::string arr[3] = {"GET", "POST", "DELETE"};
-        m_allowed_methods = std::vector<std::string>(arr, arr + 3);
+        m_allowed_methods = std::set<std::string>(arr, arr + 3);
     }
 }
 
@@ -194,7 +192,7 @@ std::ostream& operator<<(std::ostream& os, Opts const& rhs) {
         os << it->first << " (" << std::string(it->second) << ")";
     }
     os << std::endl << "allowed_methods:";
-    for (std::vector<std::string>::const_iterator it =
+    for (std::set<std::string>::const_iterator it =
              rhs.m_allowed_methods.begin();
          it != rhs.m_allowed_methods.end(); ++it) {
         os << " " << *it;

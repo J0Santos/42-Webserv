@@ -63,17 +63,17 @@ class Opts {
 
         bool operator==(Opts const& rhs) const;
 
-        std::string              m_target;
-        std::string              m_host;
-        std::string              m_port;
-        ft::directory            m_root;
-        std::string              m_server_name;
-        std::map<int, ft::file>  m_error_pages;
-        unsigned long            m_max_body_size;
-        std::vector<std::string> m_allowed_methods;
-        ft::file                 m_index;
-        bool                     m_autoindex;
-        std::string              m_cgi_extension;
+        std::string             m_target;
+        std::string             m_host;
+        std::string             m_port;
+        ft::directory           m_root;
+        std::string             m_server_name;
+        std::map<int, ft::file> m_error_pages;
+        unsigned long           m_max_body_size;
+        std::set<std::string>   m_allowed_methods;
+        ft::file                m_index;
+        bool                    m_autoindex;
+        std::string             m_cgi_extension;
 };
 
 std::ostream& operator<<(std::ostream& os, Opts const& rhs);

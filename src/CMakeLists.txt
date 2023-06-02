@@ -17,6 +17,7 @@ add_library(${PROJECT_NAME} STATIC
   http/Request.cpp
   http/Response.cpp
   http/Uri.cpp
+  server/Middleware.cpp
   server/Server.cpp
   server/webserv.cpp
   sockets/ServerSocket.cpp
