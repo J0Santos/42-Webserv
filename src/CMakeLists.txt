@@ -12,6 +12,7 @@ add_library(${PROJECT_NAME} STATIC
   config/ServerOpts.cpp
   http/ErrorCode.cpp
   http/Handler.cpp
+  http/MimeType.cpp
   http/methods.cpp
   http/Request.cpp
   http/Response.cpp

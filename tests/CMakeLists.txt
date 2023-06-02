@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME}
   testLine.cpp
   testLogger.cpp
   testMethods.cpp
+  testMimeType.cpp
   testOptions.cpp
   testParser.cpp
   testRequest.cpp
