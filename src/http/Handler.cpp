@@ -7,13 +7,13 @@ void handle(smt::shared_ptr<net::ServerSocket> sock, int connectFd) {
 
     // receiving request string
     std::string reqStr = sock->recv(connectFd);
-    LOG_D("Received request: " << reqStr);
+    // LOG_D("Received request: " << reqStr);
 
     // TODO: Handle GetNextRequest
     smt::shared_ptr<Request> request;
     try {
         request = smt::make_shared(new Request(reqStr));
-        // LOG_D(std::endl << request->toString());
+        LOG_D(std::endl << request->toString());
     }
     catch (Request::MalformedRequestException const&) {
         LOG_E("Malformed request");
@@ -27,7 +27,9 @@ void handle(smt::shared_ptr<net::ServerSocket> sock, int connectFd) {
         sock->send(connectFd, response->toString());
         return;
     }
-    sock->send(connectFd, generateErrorResponse(405, opts)->toString());
+    std::string respStr = generateErrorResponse(405, opts)->toString();
+    LOG_D("Sending response: " << std::endl << respStr);
+    sock->send(connectFd, respStr);
 }
 
 smt::shared_ptr<Response>
@@ -50,6 +52,7 @@ smt::shared_ptr<Response>
         else {
             body = std::string((std::istreambuf_iterator<char>(file)),
                                std::istreambuf_iterator<char>());
+            header["Content-Type"] = http::MimeType(filename);
         }
         file.close();
     }
@@ -78,13 +81,8 @@ smt::shared_ptr<Response>
                "</h1>"
                "  </body>"
                "</html>";
+        header["Content-Type"] = "text/html";
     }
-
-    // converting body.size() to str
-    ss.str("");
-    ss << body.size();
-    // setting headers
-    header["Content-Length"] = ss.str();
 
     return (smt::shared_ptr<Response>(new Response(code, header, body)));
 }

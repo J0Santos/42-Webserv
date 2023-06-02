@@ -2,6 +2,7 @@
 #define HTTP_HANDLER_HPP
 
 #include "config/Options.hpp"
+#include "http/MimeType.hpp"
 #include "http/Request.hpp"
 #include "http/Response.hpp"
 #include "sockets/ServerSocket.hpp"
