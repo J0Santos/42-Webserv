@@ -38,8 +38,6 @@ void Server::runServer(void) {
 
         int nfds = epoll_wait(m_epollFd, events, EP_MAX_EVENTS, EP_TIMEOUT);
 
-        LOG_D("webserv::HTTPServer run()");
-
         if (m_state != Running) { break; }
 
         if (nfds < 0) { throw(EpollWaitException()); }
@@ -47,25 +45,21 @@ void Server::runServer(void) {
         for (int i = 0; i < nfds; i++) {
 
             if (m_sockets.find(events[i].data.fd) != m_sockets.end()) {
-
-                LOG_D("webserv::HTTPServer ACK()");
                 int fd = m_sockets[events[i].data.fd]->accept();
                 epollAdd(fd);
             }
             else {
                 std::map<int, smt::shared_ptr<net::ServerSocket> >::iterator it;
                 for (it = m_sockets.begin(); it != m_sockets.end(); it++) {
+
                     smt::shared_ptr<net::ServerSocket> sock = (*it).second;
-                    try {
-                        sock->getConnection(events[i].data.fd);
-                        LOG_D("webserv::HTTPServer REQ()");
-                        http::handle(sock, events[i].data.fd);
-                        epollRemove(events[i].data.fd);
-                        sock->close(events[i].data.fd);
-                        break;
-                    }
-                    catch (std::exception&) {
-                    }
+                    sock->getConnection(events[i].data.fd);
+
+                    Middleware::handleRecv(sock, events[i].data.fd);
+
+                    epollRemove(events[i].data.fd);
+                    sock->close(events[i].data.fd);
+                    break;
                 }
             }
         }
@@ -85,12 +79,10 @@ void Server::startSocket(int port, std::string const& host) {
     int enable = 1;
     sock->setsockopt(SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
-    // // TODO: check siege with this
-    // struct timeval timeout;
-    // timeout.tv_sec = 10;
-    // timeout.tv_usec = 0;
-    // sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct
-    // timeval));
+    struct timeval timeout;
+    timeout.tv_sec = 10;
+    timeout.tv_usec = 0;
+    sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval));
 
     // binding and listening
     sock->bind();

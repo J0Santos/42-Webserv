@@ -1,35 +1,27 @@
 #include "http/Handler.hpp"
 
+#include "http/MimeType.hpp"
+#include "utils/Logger.hpp"
+
 namespace http {
 
-void handle(smt::shared_ptr<net::ServerSocket> sock, int connectFd) {
-    smt::shared_ptr<config::Opts> opts;
+smt::shared_ptr<Response>
+    processRequest(int status, smt::shared_ptr<Request> const request,
+                   smt::shared_ptr<config::Opts> const opts) {
+    (void)request;
+    if (status) { return (generateErrorResponse(status, opts)); }
+    // check if method is allowed
+    // TODO: change m_allowed_methods to a set
+    // if (opts->m_allowed_methods.find(request->getMethod()) ==
+    //     opts->m_allowed_methods.end()) {
+    //     return (generateErrorResponse(405, opts));
+    // }
 
-    // receiving request string
-    std::string reqStr = sock->recv(connectFd);
-    // LOG_D("Received request: " << reqStr);
+    // TODO: check if request is cgi request
 
-    // TODO: Handle GetNextRequest
-    smt::shared_ptr<Request> request;
-    try {
-        request = smt::make_shared(new Request(reqStr));
-        LOG_D(std::endl << request->toString());
-    }
-    catch (Request::MalformedRequestException const&) {
-        LOG_E("Malformed request");
-        generateErrorResponse(400, opts);
-    }
-
-    opts = config::getOptions(sock, request);
-    if (!opts) {
-        LOG_E("No config found for this request");
-        smt::shared_ptr<Response> response = generateErrorResponse(500, opts);
-        sock->send(connectFd, response->toString());
-        return;
-    }
-    std::string respStr = generateErrorResponse(405, opts)->toString();
-    LOG_D("Sending response: " << std::endl << respStr);
-    sock->send(connectFd, respStr);
+    // handle request
+    smt::shared_ptr<Response> response;
+    return (response);
 }
 
 smt::shared_ptr<Response>

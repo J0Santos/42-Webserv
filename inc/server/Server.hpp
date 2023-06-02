@@ -3,6 +3,7 @@
 
 #include "config/Options.hpp"
 #include "http/Handler.hpp"
+#include "server/Middleware.hpp"
 #include "sockets/ServerSocket.hpp"
 #include "utils/smt.hpp"
 
