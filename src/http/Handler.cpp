@@ -1,6 +1,10 @@
 #include "http/Handler.hpp"
 
+#include "config/Options.hpp"
+#include "http/methods.hpp"
 #include "http/MimeType.hpp"
+#include "http/Request.hpp"
+#include "http/Response.hpp"
 #include "utils/Logger.hpp"
 
 namespace http {
@@ -8,20 +12,26 @@ namespace http {
 smt::shared_ptr<Response>
     processRequest(int status, smt::shared_ptr<Request> const request,
                    smt::shared_ptr<config::Opts> const opts) {
-    (void)request;
     if (status) { return (generateErrorResponse(status, opts)); }
-    // check if method is allowed
-    // TODO: change m_allowed_methods to a set
-    // if (opts->m_allowed_methods.find(request->getMethod()) ==
-    //     opts->m_allowed_methods.end()) {
-    //     return (generateErrorResponse(405, opts));
-    // }
 
+    // check if method is allowed
+    if (opts->m_allowed_methods.find(request->getMethod()) ==
+        opts->m_allowed_methods.end()) {
+        LOG_I("Method not allowed");
+        return (generateErrorResponse(405, opts));
+    }
+
+    // TODO: handle request routing
     // TODO: check if request is cgi request
 
-    // handle request
-    smt::shared_ptr<Response> response;
-    return (response);
+    // getting method
+    MethodType method = convertMethod(request->getMethod());
+    switch (method) {
+        case GET: return (methods::GET(request, opts));
+        case POST: return (methods::POST(request, opts));
+        case DELETE: return (methods::DELETE(request, opts));
+        default: return (generateErrorResponse(501, opts));
+    }
 }
 
 smt::shared_ptr<Response>

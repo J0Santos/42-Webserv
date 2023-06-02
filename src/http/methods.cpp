@@ -1,6 +1,36 @@
 #include "http/methods.hpp"
 
+#include "config/Options.hpp"
+#include "http/Handler.hpp"
+#include "http/Request.hpp"
+#include "http/Response.hpp"
+#include "utils/smt.hpp"
+
 namespace http {
+namespace methods {
+
+smt::shared_ptr<http::Response>
+    GET(smt::shared_ptr<http::Request> const request,
+        smt::shared_ptr<config::Opts> const  opts) {
+    (void)request;
+    return (generateErrorResponse(501, opts));
+}
+
+smt::shared_ptr<http::Response>
+    POST(smt::shared_ptr<http::Request> const request,
+         smt::shared_ptr<config::Opts> const  opts) {
+    (void)request;
+    return (generateErrorResponse(502, opts));
+}
+
+smt::shared_ptr<http::Response>
+    DELETE(smt::shared_ptr<http::Request> const request,
+           smt::shared_ptr<config::Opts> const  opts) {
+    (void)request;
+    return (generateErrorResponse(503, opts));
+}
+
+} // namespace methods
 
 MethodType convertMethod(std::string const& methodStr) {
     if (methodStr == "GET") { return (GET); }

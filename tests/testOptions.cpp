@@ -65,7 +65,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockWithDefaultRoute) {
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
     opt->m_max_body_size = DEFAULT_BODY_SIZE;
-    opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
+    opt->m_allowed_methods = std::set<std::string>({"GET", "POST"});
     opt->m_index = "";
     opt->m_autoindex = true;
     opt->m_cgi_extension = "";
@@ -86,7 +86,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
     opt->m_max_body_size = DEFAULT_BODY_SIZE;
-    opt->m_allowed_methods = std::vector<std::string>({"GET"});
+    opt->m_allowed_methods = std::set<std::string>({"GET"});
     opt->m_index = "./websites/index.html";
     opt->m_autoindex = false;
     opt->m_cgi_extension = ".py";
@@ -105,7 +105,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockPhRoutped) {
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
     opt->m_max_body_size = DEFAULT_BODY_SIZE;
-    opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
+    opt->m_allowed_methods = std::set<std::string>({"GET", "POST"});
     opt->m_index = "";
     opt->m_autoindex = false;
     opt->m_cgi_extension = ".php";
@@ -123,7 +123,7 @@ TEST_F(testOptionsExtreme, testGettingSecondBlockWithDefaultRoute) {
     opt->m_server_name = "domain.com";
     opt->m_error_pages[404] = "./websites/errors/404.html";
     opt->m_max_body_size = 80;
-    opt->m_allowed_methods = std::vector<std::string>({"GET", "POST"});
+    opt->m_allowed_methods = std::set<std::string>({"GET", "POST"});
     opt->m_index = "";
     opt->m_autoindex = false;
     opt->m_cgi_extension = "";
@@ -146,8 +146,7 @@ TEST_F(testOptionsExtreme, testThirdBlock) {
     opt->m_server_name = "domain.net";
     opt->m_error_pages[500] = "./websites/errors/500.html";
     opt->m_max_body_size = DEFAULT_BODY_SIZE;
-    opt->m_allowed_methods =
-        std::vector<std::string>({"GET", "POST", "DELETE"});
+    opt->m_allowed_methods = std::set<std::string>({"GET", "POST", "DELETE"});
     opt->m_index = "";
     opt->m_autoindex = false;
     opt->m_cgi_extension = "";

@@ -1,8 +1,11 @@
 #ifndef CGI_ENVP_HPP
 #define CGI_ENVP_HPP
 
-#include "http/Request.hpp"
 #include "utils/ft_array.hpp"
+
+namespace http {
+class Request;
+}
 
 namespace cgi {
 

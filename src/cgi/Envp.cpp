@@ -1,5 +1,7 @@
 #include "cgi/Envp.hpp"
 
+#include "http/Request.hpp"
+
 namespace cgi {
 
 Envp::Envp(void) {}

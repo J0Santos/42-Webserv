@@ -1,9 +1,7 @@
 #ifndef HTTP_HANDLER_HPP
 #define HTTP_HANDLER_HPP
 
-#include "config/Options.hpp"
-#include "http/Request.hpp"
-#include "http/Response.hpp"
+#include "utils/smt.hpp"
 
 #include <string>
 
@@ -16,6 +14,9 @@ class ServerSocket;
 }
 
 namespace http {
+
+class Request;
+class Response;
 
 smt::shared_ptr<Response>
     processRequest(int status, smt::shared_ptr<Request> const request,

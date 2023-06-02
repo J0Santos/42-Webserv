@@ -1,9 +1,22 @@
 #ifndef HTTP_METHODS_HPP
 #define HTTP_METHODS_HPP
 
+#include "utils/smt.hpp"
+
 #include <string>
 
+namespace config {
+class Opts;
+}
+
+namespace net {
+class ServerSocket;
+}
+
 namespace http {
+
+class Request;
+class Response;
 
 typedef enum {
     GET,
@@ -26,6 +39,22 @@ typedef enum {
 
 MethodType convertMethod(std::string const& methodStr);
 Version    convertVersion(std::string const& versionStr);
+
+namespace methods {
+
+smt::shared_ptr<http::Response>
+    GET(smt::shared_ptr<http::Request> const request,
+        smt::shared_ptr<config::Opts> const  opts);
+
+smt::shared_ptr<http::Response>
+    POST(smt::shared_ptr<http::Request> const request,
+         smt::shared_ptr<config::Opts> const  opts);
+
+smt::shared_ptr<http::Response>
+    DELETE(smt::shared_ptr<http::Request> const request,
+           smt::shared_ptr<config::Opts> const  opts);
+
+} // namespace methods
 
 } // namespace http
 
