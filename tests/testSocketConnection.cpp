@@ -9,7 +9,8 @@
 #include <netdb.h>
 #include <string>
 
-class test_SocketConnection : public ::testing::Test {
+class testSocketConnection : public ::testing::Test {
+
         void SetUp(void) {
 
             // creating listener socket binded to 8080:localhost
@@ -55,42 +56,38 @@ class test_SocketConnection : public ::testing::Test {
         smt::shared_ptr<net::SocketConnection> sock;
 };
 
-TEST_F(test_SocketConnection, constructor) {}
+TEST_F(testSocketConnection, testGetSockfd) {
+    ASSERT_GT(sock->getSockFd(), -1);
+}
 
-TEST_F(test_SocketConnection, getSockFd) { ASSERT_GT(sock->getSockFd(), -1); }
+TEST_F(testSocketConnection, testGetPort) { ASSERT_GT(sock->getPort(), 1); }
 
-// getPort() function doesn't return 8080, I don't know why
-// TEST_F(test_SocketConnection, getPort) {
-//     std::cout << "getPort" << std::endl;
-//     ASSERT_EQ(sock->getPort(), 8080);
-// }
-
-TEST_F(test_SocketConnection, getHost) {
+TEST_F(testSocketConnection, testGetHost) {
     ASSERT_EQ(sock->getHost(), "127.0.0.1");
 }
 
-TEST_F(test_SocketConnection, getFamily) {
+TEST_F(testSocketConnection, testGetFamily) {
     ASSERT_EQ(sock->getFamily(), AF_INET);
 }
 
-TEST_F(test_SocketConnection, getAddress) {
+TEST_F(testSocketConnection, testGetAddress) {
     ASSERT_NE(sock->getAddress(), nullptr);
 }
 
-TEST_F(test_SocketConnection, getLength) {
+TEST_F(testSocketConnection, testGetLength) {
     ASSERT_EQ(sock->getLength(), sizeof(sockaddr_in));
 }
 
-TEST_F(test_SocketConnection, close) { ASSERT_NO_THROW(sock->close()); }
+TEST_F(testSocketConnection, testClose) { ASSERT_NO_THROW(sock->close()); }
 
-TEST_F(test_SocketConnection, recv) {
+TEST_F(testSocketConnection, testRecv) {
     ASSERT_NO_THROW(client->send("Hello World!"));
     std::string request;
     ASSERT_NO_THROW(request = sock->recv());
     ASSERT_EQ(request, "Hello World!");
 }
 
-TEST_F(test_SocketConnection, send) {
+TEST_F(testSocketConnection, testSend) {
     ASSERT_NO_THROW(sock->send("Hello World!"));
     std::string response;
     ASSERT_NO_THROW(response = client->recv());

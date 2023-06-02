@@ -3,12 +3,13 @@
 #include "utils/smt.hpp"
 
 #include <gtest/gtest.h>
+void setOptions(smt::shared_ptr<net::ServerSocket> sock);
 
-TEST(test_ServerSocket, constructor) {
+TEST(testServerSocket, testConstructor) {
     ASSERT_NO_THROW(net::ServerSocket(8080, "127.0.0.1"));
 }
 
-TEST(test_ServerSocket, getSockFd) {
+TEST(testServerSocket, testGetSockFd) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getSockFd(), -1);
@@ -16,31 +17,31 @@ TEST(test_ServerSocket, getSockFd) {
     ASSERT_GT(sock->getSockFd(), -1);
 }
 
-TEST(test_ServerSocket, getHost) {
+TEST(testServerSocket, testGetHost) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getHost(), "127.0.0.1");
 }
 
-TEST(test_ServerSocket, getPort) {
+TEST(testServerSocket, testGetPort) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getPort(), 8080);
 }
 
-TEST(test_ServerSocket, getFamily) {
+TEST(testServerSocket, testGetFamily) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getFamily(), AF_INET);
 }
 
-TEST(test_ServerSocket, getType) {
+TEST(testServerSocket, testGetType) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getType(), SOCK_STREAM);
 }
 
-TEST(test_ServerSocket, getAddress) {
+TEST(testServerSocket, testGetAddress) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     sockaddr_in* ptrAddr = reinterpret_cast<sockaddr_in*>(sock->getAddress());
@@ -50,18 +51,7 @@ TEST(test_ServerSocket, getAddress) {
     ASSERT_EQ(SOCK_STREAM, sock->getType());
 }
 
-void setOptions(smt::shared_ptr<net::ServerSocket> sock) {
-
-    int const enable = 1;
-    sock->setsockopt(SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
-    sock->setsockopt(SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(int));
-    struct timeval timeout;
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-    sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval));
-}
-
-TEST(test_ServerSocket, socket) {
+TEST(testServerSocket, testSocket) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_EQ(sock->getSockFd(), -1);
@@ -69,7 +59,7 @@ TEST(test_ServerSocket, socket) {
     ASSERT_GT(sock->getSockFd(), -1);
 }
 
-TEST(test_ServerSocket, bind) {
+TEST(testServerSocket, testBind) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
@@ -77,7 +67,7 @@ TEST(test_ServerSocket, bind) {
     ASSERT_NO_THROW(sock->bind());
 }
 
-TEST(test_ServerSocket, listen) {
+TEST(testServerSocket, testListen) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
@@ -86,7 +76,7 @@ TEST(test_ServerSocket, listen) {
     ASSERT_NO_THROW(sock->listen());
 }
 
-TEST(test_ServerSocket, accept) {
+TEST(testServerSocket, testAccept) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
@@ -96,7 +86,6 @@ TEST(test_ServerSocket, accept) {
     ASSERT_EQ(sock->getHost(), "127.0.0.1");
     ASSERT_EQ(sock->getPort(), 8080);
 
-    // creating client that will try and connect with 8080:localhost
     smt::shared_ptr<net::test::Client> client(
         new net::test::Client("8080", "localhost"));
     ASSERT_NO_THROW(client->socket());
@@ -107,7 +96,7 @@ TEST(test_ServerSocket, accept) {
     ASSERT_GT(connectFd, -1);
 }
 
-TEST(test_ServerSocket, close) {
+TEST(testServerSocket, testClose) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
@@ -116,7 +105,7 @@ TEST(test_ServerSocket, close) {
     ASSERT_NO_THROW(sock->close());
 }
 
-TEST(test_ServerSocket, recv) {
+TEST(testServerSocket, testRecv) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
@@ -137,7 +126,7 @@ TEST(test_ServerSocket, recv) {
     ASSERT_EQ(request, "Hello World!");
 }
 
-TEST(test_ServerSocket, send) {
+TEST(testServerSocket, testSend) {
     smt::shared_ptr<net::ServerSocket> sock(
         new net::ServerSocket(8080, "127.0.0.1"));
     ASSERT_NO_THROW(sock->socket());
@@ -161,4 +150,15 @@ TEST(test_ServerSocket, send) {
     std::string response;
     ASSERT_NO_THROW(response = client->recv());
     ASSERT_EQ(response, "Hello World!");
+}
+
+void setOptions(smt::shared_ptr<net::ServerSocket> sock) {
+
+    int const enable = 1;
+    sock->setsockopt(SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+    sock->setsockopt(SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(int));
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval));
 }
