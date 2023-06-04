@@ -21,7 +21,13 @@ smt::shared_ptr<Response>
         return (generateErrorResponse(405, opts));
     }
 
+    // TODO: change folder's name
+
+    // TODO: handle getNextRequest with max body size and a lot of requests at
+    // the same time.
+
     // TODO: handle request routing
+
     // TODO: check if request is cgi request
 
     // getting method

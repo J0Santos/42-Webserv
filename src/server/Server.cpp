@@ -36,6 +36,7 @@ void Server::runServer(void) {
 
     while (m_state == Running) {
 
+        // Wait for events on registered file descriptors
         int nfds = epoll_wait(m_epollFd, events, EP_MAX_EVENTS, EP_TIMEOUT);
 
         if (m_state != Running) { break; }
@@ -45,10 +46,13 @@ void Server::runServer(void) {
         for (int i = 0; i < nfds; i++) {
 
             if (m_sockets.find(events[i].data.fd) != m_sockets.end()) {
+                // Accept new connection
                 int fd = m_sockets[events[i].data.fd]->accept();
+                // Add socket connection to epoll interest list
                 epollAdd(fd);
             }
             else {
+                // Existing connection with incoming data
                 std::map<int, smt::shared_ptr<net::ServerSocket> >::iterator it;
                 for (it = m_sockets.begin(); it != m_sockets.end(); it++) {
 
@@ -57,8 +61,17 @@ void Server::runServer(void) {
 
                     Middleware::handleRecv(sock, events[i].data.fd);
 
-                    epollRemove(events[i].data.fd);
-                    sock->close(events[i].data.fd);
+                    // // checking if connection is done sending data
+                    // try {
+                    //     sock->getConnection(events[i].data.fd);
+                    //     LOG_D("Socket not closed, still needs to receive
+                    //     more"
+                    //           "things");
+                    // }
+                    // catch (
+                    //     net::ServerSocket::NoSuchConnectionException const&)
+                    //     { epollRemove(events[i].data.fd);
+                    // }
                     break;
                 }
             }
