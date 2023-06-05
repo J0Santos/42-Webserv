@@ -33,7 +33,8 @@ smt::shared_ptr<Response>
     LOG_W(request->getPath().getExtension());
     if (opts->m_cgi_extension == request->getPath().getExtension()) {
         LOG_I("CGI request");
-        return (cgi::runCgiScript(request, opts));
+        std::string resp = cgi::runCgiScript(request, opts);
+        return (smt::make_shared(new Response(resp)));
     }
 
     // getting method

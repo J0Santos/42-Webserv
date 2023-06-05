@@ -3,7 +3,6 @@
 
 #include "config/Options.hpp"
 #include "http/Request.hpp"
-#include "http/Response.hpp"
 #include "utils/smt.hpp"
 
 #include <cstdlib>
@@ -48,9 +47,8 @@ CgiType convertCgiExtension(std::string const& cgiExtension);
 
 std::vector<std::string> splitInfoFromPath(std::string const& path);
 
-smt::shared_ptr<http::Response>
-    runCgiScript(smt::shared_ptr<http::Request> const request,
-                 smt::shared_ptr<config::Opts> const  opts);
+std::string runCgiScript(smt::shared_ptr<http::Request> const request,
+                         smt::shared_ptr<config::Opts> const  opts);
 
 } // namespace cgi
 

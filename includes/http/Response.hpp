@@ -17,6 +17,7 @@ class Response {
 
         Response(void);
         Response(Response const& src);
+        Response(std::string const& respStr);
         Response(int code, std::map<std::string, std::string> headers,
                  std::string body = "", std::string version = "HTTP/1.1");
 
@@ -33,10 +34,14 @@ class Response {
 
         std::string const toString(void) const;
 
+        struct MalformedResponseException : public std::exception {
+                char const* what(void) const throw();
+        };
+
     private:
 
         ErrorCode                          m_code;
-        std::map<std::string, std::string> m_header;
+        std::map<std::string, std::string> m_headers;
         std::string                        m_body;
         std::string                        m_version;
 };

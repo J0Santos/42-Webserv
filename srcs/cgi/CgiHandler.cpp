@@ -1,5 +1,7 @@
 #include "cgi/CgiHandler.hpp"
 
+#include "cgi/Argv.hpp"
+#include "cgi/Envp.hpp"
 #include "utils/ft_array.hpp"
 #include "utils/Logger.hpp"
 
@@ -129,20 +131,25 @@ CgiType convertCgiExtension(std::string const& cgiExtension) {
     return (Unknown);
 }
 
-smt::shared_ptr<http::Response>
-    runCgiScript(smt::shared_ptr<http::Request> const request,
-                 smt::shared_ptr<config::Opts> const  opts) {
-    (void)request;
+std::string runCgiScript(smt::shared_ptr<http::Request> const request,
+                         smt::shared_ptr<config::Opts> const  opts) {
+    // TODO: check if its needed
     (void)opts;
-    return (nullptr);
-    // create argv
-    //
+    // TODO: get path in a smarter way
+    char* path = new char[17];
+    strcpy(path, "/usr/bin/python3");
 
-    // create envp
+    std::vector<std::string> vArgv;
+    vArgv.push_back("/usr/bin/python3");
+    vArgv.push_back("./websites/cgi/python/test.py");
 
-    // create CgiHandler
+    Argv argv(vArgv);
 
-    // run cgi script
+    Envp       envp(request);
+    CgiHandler cgi(path, argv, envp);
+    // TODO: the cgi returns a string instead of a response, check if its
+    // necesary to do a converted.
+    return (cgi.run());
 }
 
 } // namespace cgi

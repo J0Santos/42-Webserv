@@ -48,3 +48,17 @@ TEST(testResponse, testResponseStringConversion) {
               "HTTP/1.1 404 Not Found\r\nContent-Length: 12\r\nContent-Type: "
               "text/plain\r\n\r\nHello World!");
 }
+
+TEST(testResponse, testResponseStringConstructor) {
+    std::string respStr =
+        "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nContent-Type: "
+        "text/plain\r\n\r\n";
+    http::Response resp(respStr);
+    ASSERT_EQ(resp.getCode(), 404);
+    ASSERT_EQ(resp.getBody(), "");
+    ASSERT_EQ(resp.getHeaders().size(), 2);
+    ASSERT_EQ(resp.getHeader("Content-Length"), "0");
+    ASSERT_EQ(resp.getHeader("Content-Type"), "text/plain");
+    ASSERT_EQ(resp.getReason(), "Not Found");
+    ASSERT_EQ(resp.toString(), respStr);
+}

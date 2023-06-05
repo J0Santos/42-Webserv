@@ -1,6 +1,8 @@
 #ifndef CGI_ENVP_HPP
 #define CGI_ENVP_HPP
 
+#include "utils/smt.hpp"
+
 #include <string>
 #include <vector>
 
@@ -15,7 +17,7 @@ class Envp {
     public:
 
         Envp(void);
-        Envp(http::Request const& request);
+        Envp(smt::shared_ptr<http::Request> request);
         Envp(Envp const& src);
 
         ~Envp(void);

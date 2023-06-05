@@ -7,12 +7,12 @@ namespace cgi {
 
 Envp::Envp(void) {}
 
-Envp::Envp(http::Request const& request) {
-    fillEnvp("REQUEST_METHOD", request.getMethod());
-    fillEnvp("SCRIPT_NAME", request.getPath());
-    fillEnvp("QUERY_STRING", request.getQuery());
-    fillEnvp("CONTENT_LENGTH", request.getHeader("Content-Length"));
-    fillEnvp("CONTENT_TYPE", request.getHeader("Content-Type"));
+Envp::Envp(smt::shared_ptr<http::Request> request) {
+    fillEnvp("REQUEST_METHOD", request->getMethod());
+    fillEnvp("SCRIPT_NAME", request->routeRequest());
+    fillEnvp("QUERY_STRING", request->getQuery());
+    fillEnvp("CONTENT_LENGTH", request->getHeader("Content-Length"));
+    fillEnvp("CONTENT_TYPE", request->getHeader("Content-Type"));
 }
 
 Envp::Envp(Envp const& src) { *this = src; }
