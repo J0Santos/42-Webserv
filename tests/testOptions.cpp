@@ -197,3 +197,27 @@ TEST(testSocketOptions, testSocketOptionsExtreme) {
 
     system("rm /tmp/testsOptions2.tmp");
 }
+
+class TestAgain : public ::testing::Test {
+    protected:
+
+        TestAgain(void) {
+            system("touch /tmp/testsOptions3.tmp");
+            system("echo \"server {\n"
+                   "listen 8080;\n"
+                   "location /python {\n"
+                   "  root ./websites/cgi/python;\n"
+                   "}\n"
+                   "allow_methods GET;\n"
+                   "}\" >> /tmp/testsOptions3.tmp\n");
+            config::parse("/tmp/testsOptions3.tmp");
+        }
+
+        ~TestAgain(void) { system("rm /tmp/testsOptions3.tmp"); }
+};
+
+TEST_F(TestAgain, testFavicon) {
+    ASSERT_EQ(config::Options::getOptions("8080", "127.0.0.1", "/favicon.ico")
+                  ->m_target,
+              "/");
+}

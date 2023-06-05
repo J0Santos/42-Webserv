@@ -42,13 +42,17 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
 
     // Find Location Block With Target that best Matches request path
     std::vector<std::string> pathVector = ft::string::split(path, "/");
-    int                      oldCount = -1;
+    int                      oldCount = 0;
 
+    std::vector<LocationOpts>::const_iterator defaultLocation =
+        (*serverIt).m_locations.end();
     std::vector<LocationOpts>::const_iterator locationIt =
         (*serverIt).m_locations.end();
     for (std::vector<LocationOpts>::const_iterator it =
              (*serverIt).m_locations.begin();
          it != (*serverIt).m_locations.end(); ++it) {
+
+        if ((*it).m_target == "/") { defaultLocation = it; }
 
         std::vector<std::string> target =
             ft::string::split((*it).m_target, "/");
@@ -61,6 +65,9 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
     }
 
     if (locationIt == (*serverIt).m_locations.end()) {
+        if (defaultLocation != (*serverIt).m_locations.end()) {
+            return (smt::make_shared(new Opts(*serverIt, *defaultLocation)));
+        }
         return (smt::make_shared(new Opts(*serverIt)));
     }
     return (smt::make_shared(new Opts(*serverIt, *locationIt)));
