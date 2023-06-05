@@ -1,7 +1,7 @@
 project(webserv_lib)
 
 add_library(${PROJECT_NAME} STATIC
-  cgi/Argc.cpp
+  cgi/Argv.cpp
   cgi/CgiHandler.cpp
   cgi/Envp.cpp
   config/DirectiveTypeTraits.cpp

@@ -1,21 +1,22 @@
 #ifndef CGI_ARGC_HPP
 #define CGI_ARGC_HPP
 
-#include "utils/ft_array.hpp"
+#include <string>
+#include <vector>
 
 namespace cgi {
 
-class Argc {
+class Argv {
 
     public:
 
-        Argc(void);
-        Argc(std::vector<std::string> const& argc);
-        Argc(Argc const& src);
+        Argv(void);
+        Argv(std::vector<std::string> const& argc);
+        Argv(Argv const& src);
 
-        ~Argc(void);
+        ~Argv(void);
 
-        Argc& operator=(Argc const& rhs);
+        Argv& operator=(Argv const& rhs);
 
         operator char**(void) const;
 

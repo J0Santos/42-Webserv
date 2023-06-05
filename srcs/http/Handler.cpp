@@ -25,6 +25,7 @@ smt::shared_ptr<Response>
     // TODO: handle getNextRequest with max body size and a lot of requests at
     // the same time.
     http::Route route(opts->m_target, opts->m_root);
+    request->setRoute(route);
 
     // TODO: handle request routing
 

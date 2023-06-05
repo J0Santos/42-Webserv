@@ -20,7 +20,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../includes/)
 add_executable(${PROJECT_NAME}
   test.cpp
   client/Client.cpp
-  testArgc.cpp
+  testArgv.cpp
   testArray.cpp
   testCgiHandler.cpp
   testDirectives.cpp
