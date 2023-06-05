@@ -191,10 +191,10 @@ tab		:= $(empty)	$(empty)
 
 BIN_ROOT	:= bin/
 DEP_ROOT	:= dep/
-INC_ROOT	:= inc/
+INC_ROOT	:= includes/
 LIB_ROOT	:= lib/
 OBJ_ROOT	:= obj/
-SRC_ROOT	:= src/
+SRC_ROOT	:= srcs/
 TEST_ROOT	:= build/tests/
 
 # **************************************************************************** #
