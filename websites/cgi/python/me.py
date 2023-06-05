@@ -2,8 +2,9 @@
 import os
 import urllib.parse
 
-print("Content-Type: text/html")
-print()
+print("HTTP/1.1 200 OK\r")
+print("Content-Type: text/html\r")
+
 
 # Get the query string from the environment
 query_string = os.environ.get("QUERY_STRING", "")
@@ -12,11 +13,14 @@ query_string = os.environ.get("QUERY_STRING", "")
 params = urllib.parse.parse_qs(query_string)
 
 # Print the parameters as HTML
-print("<html><body>")
-print("<h1>Query Parameters:</h1>")
-print("<ul>")
+body : str = "<html><body>"
+body += "<h1>Query Parameters:</h1>"
+body += "<ul>"
 for name, values in params.items():
     for value in values:
-        print("<li>{0}={1}</li>".format(name, value))
-print("</ul>")
-print("</body></html>")
+        body += "<li>{0}={1}</li>".format(name, value)
+body += "</ul>"
+body += "</body></html>"
+print(f"Content-Length: {len(body)}\r")
+print("\r")
+print(body, end="")

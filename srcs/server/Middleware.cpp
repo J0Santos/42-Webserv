@@ -40,6 +40,8 @@ void Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
         smt::shared_ptr<http::Response> response =
             http::processRequest(status, request, opts);
 
+        LOG_D("Response: " << std::endl << response->toString());
+
         // send response
         sock->send(fd, response->toString());
 

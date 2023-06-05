@@ -30,7 +30,7 @@ class Envp {
 
         void fillEnvp(std::string const& key, std::string const& value);
 
-        std::vector<std::string> m_argc;
+        std::vector<std::string> m_envp;
 };
 
 } // namespace cgi

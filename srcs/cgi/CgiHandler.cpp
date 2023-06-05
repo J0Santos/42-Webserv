@@ -19,7 +19,7 @@ CgiHandler::~CgiHandler(void) {
 }
 
 std::string CgiHandler::run(void) const {
-    // verify if script exists and binary exists
+    // TODO: verify if script exists and binary exists
     return (runAsChildProcess());
 }
 
@@ -141,7 +141,7 @@ std::string runCgiScript(smt::shared_ptr<http::Request> const request,
 
     std::vector<std::string> vArgv;
     vArgv.push_back("/usr/bin/python3");
-    vArgv.push_back("./websites/cgi/python/test.py");
+    vArgv.push_back(request->routeRequest());
 
     Argv argv(vArgv);
 
@@ -149,7 +149,9 @@ std::string runCgiScript(smt::shared_ptr<http::Request> const request,
     CgiHandler cgi(path, argv, envp);
     // TODO: the cgi returns a string instead of a response, check if its
     // necesary to do a converted.
-    return (cgi.run());
+    std::string resp = cgi.run();
+    LOG_I("Cgi response: " + resp);
+    return (resp);
 }
 
 } // namespace cgi
