@@ -14,7 +14,7 @@ project(${PROJECT_NAME})
 
 option(test "Build gtests" OFF)
 
-add_subdirectory(src)
+add_subdirectory(srcs)
 if (test)
 	add_subdirectory(tests)
 	enable_testing()
@@ -26,7 +26,7 @@ endif()
 # set(CMAKE_CXX_FLAGS "-g -Wall -Werror -Wextra -std=c++98")
 set(CMAKE_CXX_FLAGS "-g -Wall -Werror -Wextra -g")
 
-include_directories(${CMAKE_SOURCE_DIR}/inc)
+include_directories(${CMAKE_SOURCE_DIR}/includes)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} srcs/main.cpp)
 target_link_libraries(${PROJECT_NAME} 42::webserv_lib)

@@ -15,7 +15,7 @@ project(${PROJECT_NAME})
 enable_testing()
 find_package(PkgConfig)
 
-include_directories(${CMAKE_SOURCE_DIR}/../inc/)
+include_directories(${CMAKE_SOURCE_DIR}/../includes/)
 
 add_executable(${PROJECT_NAME}
   test.cpp
