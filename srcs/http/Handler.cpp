@@ -6,6 +6,7 @@
 #include "http/Request.hpp"
 #include "http/Response.hpp"
 #include "utils/Logger.hpp"
+#include "utils/Route.hpp"
 
 namespace http {
 
@@ -21,10 +22,9 @@ smt::shared_ptr<Response>
         return (generateErrorResponse(405, opts));
     }
 
-    // TODO: change folder's name
-
     // TODO: handle getNextRequest with max body size and a lot of requests at
     // the same time.
+    http::Route route(opts->m_target, opts->m_root);
 
     // TODO: handle request routing
 

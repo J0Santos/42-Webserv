@@ -3,6 +3,7 @@
 
 #include "http/methods.hpp"
 #include "http/Uri.hpp"
+#include "utils/Route.hpp"
 #include "utils/smt.hpp"
 
 #include <map>
@@ -34,6 +35,9 @@ class Request {
         ft::file    getPath(void) const;
         std::string getQuery(void) const;
 
+        void        setRoute(Route const& route);
+        std::string routeRequest(void) const;
+
         std::string const& toString(void) const;
 
         struct MalformedRequestException : public std::exception {
@@ -47,6 +51,8 @@ class Request {
         std::map<std::string, std::string> m_headers;
         std::string                        m_body;
         smt::shared_ptr<Uri>               m_uri;
+
+        Route m_route;
 
         std::string m_reqStr;
 };

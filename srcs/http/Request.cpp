@@ -117,46 +117,16 @@ ft::file Request::getPath(void) const { return (m_uri->getPath()); }
 
 std::string Request::getQuery(void) const { return (m_uri->getQuery()); }
 
+void Request::setRoute(Route const& route) { m_route = route; }
+
+std::string Request::routeRequest(void) const {
+    return (m_route.route(getPath()));
+}
+
 std::string const& Request::toString(void) const { return (m_reqStr); }
 
 char const* Request::MalformedRequestException::what(void) const throw() {
     return ("Request: malformed request.");
-}
-
-std::string getRequest(std::string const& reqStr) {
-    static std::string buffer;
-    std::string        ret;
-
-    if (!reqStr.empty()) { buffer = reqStr; }
-
-    // getting request until the end of headers
-    size_t endHeaders = buffer.find("\r\n\r\n");
-    if (endHeaders == std::string::npos) {
-        ret = buffer;
-        buffer.clear();
-        return (ret);
-    }
-    ret = buffer.substr(0, endHeaders + 4);
-
-    // getting content-length
-    size_t pos = ret.find("Content-Length: ");
-    if (pos != std::string::npos) {
-        // getting Content-Length
-        std::string        l;
-        std::istringstream iss(buffer.substr(pos + 16));
-        iss >> l;
-
-        // converting to int
-        int               len;
-        std::stringstream ss(l);
-        ss >> len;
-
-        // adding body to ret
-        if (len > 0) { ret += buffer.substr(endHeaders + 4, len); }
-    }
-
-    buffer = buffer.substr(ret.size());
-    return (ret);
 }
 
 } // namespace http
