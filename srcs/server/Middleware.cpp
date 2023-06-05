@@ -1,8 +1,10 @@
 #include "server/Middleware.hpp"
 
 #include "config/Options.hpp"
+#include "http/Handler.hpp"
 #include "http/Request.hpp"
 #include "http/Response.hpp"
+#include "sockets/ServerSocket.hpp"
 
 namespace webserv {
 

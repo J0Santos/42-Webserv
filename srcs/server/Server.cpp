@@ -1,5 +1,9 @@
 #include "server/Server.hpp"
 
+#include "config/Options.hpp"
+#include "http/Handler.hpp"
+#include "server/Middleware.hpp"
+
 namespace webserv {
 
 Server::Server(void) : m_state(Ready) {}

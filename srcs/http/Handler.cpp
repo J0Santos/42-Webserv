@@ -1,5 +1,6 @@
 #include "http/Handler.hpp"
 
+#include "cgi/CgiHandler.hpp"
 #include "config/Options.hpp"
 #include "http/methods.hpp"
 #include "http/MimeType.hpp"
@@ -24,12 +25,16 @@ smt::shared_ptr<Response>
 
     // TODO: handle getNextRequest with max body size and a lot of requests at
     // the same time.
+
     http::Route route(opts->m_target, opts->m_root);
     request->setRoute(route);
 
-    // TODO: handle request routing
-
     // TODO: check if request is cgi request
+    LOG_W(request->getPath().getExtension());
+    if (opts->m_cgi_extension == request->getPath().getExtension()) {
+        LOG_I("CGI request");
+        return (cgi::runCgiScript(request, opts));
+    }
 
     // getting method
     MethodType method = convertMethod(request->getMethod());

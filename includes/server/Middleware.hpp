@@ -1,7 +1,6 @@
 #ifndef SERVER_MIDDLEWARE_HPP
 #define SERVER_MIDDLEWARE_HPP
 
-#include "http/Handler.hpp"
 #include "utils/smt.hpp"
 
 #include <string>

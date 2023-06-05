@@ -1,5 +1,6 @@
 #include "http/Request.hpp"
 
+#include "http/methods.hpp"
 #include "utils/Logger.hpp"
 
 namespace http {

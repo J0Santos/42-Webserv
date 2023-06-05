@@ -1,5 +1,6 @@
 #include "cgi/Envp.hpp"
 #include "http/Request.hpp"
+#include "utils/ft_array.hpp"
 
 #include <gtest/gtest.h>
 

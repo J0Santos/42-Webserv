@@ -1,14 +1,12 @@
 #ifndef WEBSERV_SERVER_HPP
 #define WEBSERV_SERVER_HPP
 
-#include "config/Options.hpp"
-#include "http/Handler.hpp"
-#include "server/Middleware.hpp"
 #include "sockets/ServerSocket.hpp"
 #include "utils/smt.hpp"
 
 #include <cstring>
 #include <map>
+#include <string>
 #include <sys/epoll.h>
 #include <unistd.h>
 

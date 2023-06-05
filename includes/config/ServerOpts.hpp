@@ -3,7 +3,6 @@
 
 #include "config/LocationOpts.hpp"
 #include "utils/ft_filesystem.hpp"
-#include "utils/Host.hpp"
 
 #include <map>
 #include <set>

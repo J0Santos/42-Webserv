@@ -1,7 +1,6 @@
 #ifndef HTTP_REQUEST_HPP
 #define HTTP_REQUEST_HPP
 
-#include "http/methods.hpp"
 #include "http/Uri.hpp"
 #include "utils/Route.hpp"
 #include "utils/smt.hpp"

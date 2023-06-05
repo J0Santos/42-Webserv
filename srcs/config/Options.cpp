@@ -1,5 +1,6 @@
 #include "config/Options.hpp"
 
+#include "sockets/ServerSocket.hpp"
 #include "utils/ft_string.hpp"
 
 namespace config {

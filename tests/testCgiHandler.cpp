@@ -1,8 +1,13 @@
+#include "cgi/Argv.hpp"
 #include "cgi/CgiHandler.hpp"
+#include "cgi/Envp.hpp"
+#include "http/Request.hpp"
+#include "utils/ft_array.hpp"
 #include "utils/Logger.hpp"
 
 #include <gtest/gtest.h>
 
+// TODO: Refactor this with Argv and Envp and better examples and asserts
 TEST(testCgiTypes, testConvertType) {
     EXPECT_EQ(cgi::convertCgiExtension(".py"), cgi::Py);
     EXPECT_EQ(cgi::convertCgiExtension(".php"), cgi::Php);
@@ -66,8 +71,6 @@ TEST(testCgi, testingRequestToIndex) {
     cgi::CgiHandler cgi(path, argv, envp);
     auto            resp = cgi.run();
     LOG_D(resp);
-    // path
-    // envp
 }
 
 TEST(testCgi, testingCreatingAFile) {
@@ -88,7 +91,7 @@ TEST(testCgi, testingCreatingAFile) {
     LOG_D(resp);
 }
 
-TEST(testCgi, testingTestFile) {
+TEST(testCgi, testingCreateFile) {
     char* path = new char[17];
     strcpy(path, "/usr/bin/python3");
 
@@ -105,4 +108,20 @@ TEST(testCgi, testingTestFile) {
     cgi::CgiHandler cgi(path, argv, envp);
     auto            resp = cgi.run();
     LOG_D(resp);
+}
+
+TEST(testCgi, testCgiWithArgvAndEnvp) {
+    char* path = new char[17];
+    strcpy(path, "/usr/bin/python3");
+
+    cgi::Argv       argv({"/usr/bin/python3", "./websites/cgi/python/test.py"});
+    http::Request   req("POST "
+                          "/cgi/myscript.py HTTP/1.1\r\n"
+                          "Host: example.com\r\n"
+                          "Accept-Encoding: gzip, deflate, br\r\n"
+                          "Accept-Language: en-US,en;q=0.9\r\n"
+                          "Connection: keep-alive\r\n\r\n");
+    cgi::Envp       envp(req);
+    cgi::CgiHandler cgi(path, argv, envp);
+    auto            resp = cgi.run();
 }

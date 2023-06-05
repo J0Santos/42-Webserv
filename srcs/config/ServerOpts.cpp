@@ -1,5 +1,7 @@
 #include "config/ServerOpts.hpp"
 
+#include "utils/Host.hpp"
+
 namespace config {
 
 ServerOpts::ServerOpts(void) : m_max_body_size(0) {}

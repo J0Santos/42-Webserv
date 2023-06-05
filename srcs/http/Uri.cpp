@@ -1,5 +1,6 @@
 #include "http/Uri.hpp"
 
+#include "utils/ft_string.hpp"
 #include "utils/Logger.hpp"
 
 namespace http {

@@ -2,7 +2,6 @@
 #define HTTP_URI_HPP
 
 #include "utils/ft_filesystem.hpp"
-#include "utils/ft_string.hpp"
 
 #include <string>
 

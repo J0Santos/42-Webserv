@@ -1,10 +1,10 @@
 #ifndef CONFIG_OPTIONS_HPP
 #define CONFIG_OPTIONS_HPP
 
-#include "config/DirectiveTypeTraits.hpp"
+#include "config/LocationOpts.hpp"
 #include "config/ServerOpts.hpp"
 #include "http/Request.hpp"
-#include "sockets/ServerSocket.hpp"
+#include "utils/ft_filesystem.hpp"
 #include "utils/smt.hpp"
 
 #include <set>

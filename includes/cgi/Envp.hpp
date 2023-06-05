@@ -1,7 +1,8 @@
 #ifndef CGI_ENVP_HPP
 #define CGI_ENVP_HPP
 
-#include "utils/ft_array.hpp"
+#include <string>
+#include <vector>
 
 namespace http {
 class Request;

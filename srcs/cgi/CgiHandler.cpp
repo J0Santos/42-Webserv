@@ -1,5 +1,6 @@
 #include "cgi/CgiHandler.hpp"
 
+#include "utils/ft_array.hpp"
 #include "utils/Logger.hpp"
 
 namespace cgi {
@@ -9,13 +10,10 @@ CgiHandler::CgiHandler(char* path, char** argv, char** envp,
     : m_path(path), m_argv(argv), m_envp(envp), m_body(body) {}
 
 CgiHandler::~CgiHandler(void) {
-    for (int i = 0; m_argv[i]; i++) { delete[] m_argv[i]; }
-    delete[] m_argv;
 
-    for (int i = 0; m_envp[i]; i++) { delete[] m_envp[i]; }
-    delete[] m_envp;
-
-    delete[] m_path;
+    ft::array::erase(m_envp);
+    ft::array::erase(m_argv);
+    delete m_path;
 }
 
 std::string CgiHandler::run(void) const {
@@ -129,6 +127,22 @@ CgiType convertCgiExtension(std::string const& cgiExtension) {
     if (cgiExtension == ".php") { return (Php); }
     if (cgiExtension == ".cgi") { return (Cgi); }
     return (Unknown);
+}
+
+smt::shared_ptr<http::Response>
+    runCgiScript(smt::shared_ptr<http::Request> const request,
+                 smt::shared_ptr<config::Opts> const  opts) {
+    (void)request;
+    (void)opts;
+    return (nullptr);
+    // create argv
+    //
+
+    // create envp
+
+    // create CgiHandler
+
+    // run cgi script
 }
 
 } // namespace cgi
