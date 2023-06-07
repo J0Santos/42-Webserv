@@ -22,11 +22,9 @@ int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
         smt::shared_ptr<http::Request> request;
         try {
             request = smt::make_shared(new http::Request(reqStr));
-            // LOG_I("Received Request" << std::endl << request->toString());
         }
         catch (http::Request::MalformedRequestException const&) {
             LOG_E("Malformed request");
-            LOG_D("TODO: Here we should remove the socket and continue");
             status = 404;
         }
 
@@ -35,7 +33,6 @@ int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
         }
         catch (config::Options::NoSuchOptionsException const&) {
             LOG_E("No config found for this request");
-            LOG_D("TODO: Here we should remove the socket and continue");
             status = 500;
         }
 
