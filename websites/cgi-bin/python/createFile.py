@@ -1,5 +1,9 @@
 import os
 import sys
+import cgi, cgitb
+
+# Create instance of FieldStorage
+form = cgi.FieldStorage()
 
 def handle_post_request():
     content_length = int(os.environ.get('CONTENT_LENGTH', 0))
@@ -35,4 +39,5 @@ def handle_post_request():
 # Entry point of the script
 if __name__ == '__main__':
     if os.environ.get('REQUEST_METHOD') == 'POST':
-        handle_post_request()
+        printFieldStorage()
+        # handle_post_request()

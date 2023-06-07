@@ -44,7 +44,7 @@ std::string CgiHandler::runAsChildProcess(void) const {
         return (resp);
     }
     // check if request type is POST
-    if (getMethod() == "POST") {
+    if (get("REQUEST_METHOD") == "POST") {
         write(input_fd, m_body.c_str(), m_body.size());
         rewind(input);
     }
@@ -92,15 +92,16 @@ std::string CgiHandler::runAsChildProcess(void) const {
     return (resp);
 }
 
-std::string CgiHandler::getMethod(void) const {
-    std::string method = "GET";
+std::string CgiHandler::get(std::string key) const {
+    key += "=";
+    std::string value;
     for (int i = 0; m_envp[i]; i++) {
-        if (strncmp(m_envp[i], "REQUEST_METHOD=", 15) == 0) {
-            method = m_envp[i] + 15;
+        if (strncmp(m_envp[i], key.c_str(), key.size()) == 0) {
+            value = m_envp[i] + key.size();
             break;
         }
     }
-    return (method);
+    return (value);
 }
 
 std::vector<std::string> splitInfoFromPath(std::string const& path) {

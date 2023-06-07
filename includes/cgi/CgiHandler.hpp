@@ -32,7 +32,7 @@ class CgiHandler {
     private:
 
         std::string runAsChildProcess(void) const;
-        std::string getMethod(void) const;
+        std::string get(std::string key) const;
 
         char*  m_path;
         char** m_argv;
