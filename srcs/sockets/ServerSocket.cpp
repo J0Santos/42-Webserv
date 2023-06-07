@@ -89,7 +89,7 @@ int ServerSocket::accept(void) {
         connectFd, reinterpret_cast<sockaddr_in*>(connectAddr), len));
 
     // m_connections[connectFd] = sockConnect;
-	m_connections.insert(std::make_pair(connectFd, sockConnect));
+    m_connections.insert(std::make_pair(connectFd, sockConnect));
     return (connectFd);
 }
 
@@ -132,11 +132,15 @@ std::string ServerSocket::recv(int connectFd) {
 
     std::string request;
     try {
-        request = m_connections[connectFd]->recv();
+        request = (*it).second->recv();
     }
-    catch (SocketConnection::RecvFailureException& e) {
+    catch (SocketConnection::ConnectionClosedException const& e) {
+        LOG_E(toString() + " failure in ::recv() " + e.what());
+        m_connections.erase(it);
+    }
+    catch (SocketConnection::RecvFailureException const& e) {
         LOG_E(toString() + " failure in ::recv(): " + e.what());
-        throw RecvFailureException();
+        m_connections.erase(it);
     }
     return (request);
 }
@@ -152,11 +156,11 @@ void ServerSocket::send(int connectFd, std::string const& response) {
     }
 
     try {
-        m_connections[connectFd]->send(response);
+        (*it).second->send(response);
     }
     catch (SocketConnection::SendFailureException& e) {
         LOG_E(toString() + " failure in ::send(): " + e.what());
-        throw SendFailureException();
+        m_connections.erase(it);
     }
 }
 
