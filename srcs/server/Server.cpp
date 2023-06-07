@@ -106,7 +106,7 @@ void Server::startSocket(int port, std::string const& host) {
     sock->listen();
 
     // adding socket to epoll list
-    epollAdd(sock->getSockFd(), EPOLLIN);
+    epollAdd(sock->getSockFd());
 
     // adding socket to sockets list
     m_sockets.insert(std::make_pair(sock->getSockFd(), sock));

@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} STATIC
   http/MimeType.cpp
   http/methods.cpp
   http/Request.cpp
+  http/RequestBuffer.cpp
   http/Response.cpp
   http/Uri.cpp
   server/Middleware.cpp

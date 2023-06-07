@@ -35,6 +35,7 @@ add_executable(${PROJECT_NAME}
   testOptions.cpp
   testParser.cpp
   testRequest.cpp
+  testRequestBuffer.cpp
   testResponse.cpp
   testRoute.cpp
   testServerSocket.cpp

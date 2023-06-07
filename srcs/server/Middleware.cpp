@@ -18,34 +18,38 @@ void Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
     reqStr = getNextRequest(reqStr);
     while (!reqStr.empty()) {
 
-        smt::shared_ptr<http::Request> request;
-        try {
-            request = smt::make_shared(new http::Request(reqStr));
-            LOG_I("Received Request" << std::endl << request->toString());
-        }
-        catch (http::Request::MalformedRequestException const&) {
-            LOG_E("Malformed request");
-            LOG_D("TODO: Here we should remove the socket and continue");
-            status = 404;
-        }
+        LOG_D("Request: " << std::endl << reqStr);
+        // // This is commented, for now because where trying a echo server
+        // approach smt::shared_ptr<http::Request> request; try {
+        //     request = smt::make_shared(new http::Request(reqStr));
+        //     LOG_I("Received Request" << std::endl << request->toString());
+        // }
+        // catch (http::Request::MalformedRequestException const&) {
+        //     LOG_E("Malformed request");
+        //     LOG_D("TODO: Here we should remove the socket and continue");
+        //     status = 404;
+        // }
 
-        try {
-            opts = getOptions(sock, request);
-        }
-        catch (config::Options::NoSuchOptionsException const&) {
-            LOG_E("No config found for this request");
-            LOG_D("TODO: Here we should remove the socket and continue");
-            status = 500;
-        }
+        // try {
+        //     opts = getOptions(sock, request);
+        // }
+        // catch (config::Options::NoSuchOptionsException const&) {
+        //     LOG_E("No config found for this request");
+        //     LOG_D("TODO: Here we should remove the socket and continue");
+        //     status = 500;
+        // }
 
-        // handle request
-        smt::shared_ptr<http::Response> response =
-            http::processRequest(status, request, opts);
+        // // handle request
+        // smt::shared_ptr<http::Response> response =
+        //     http::processRequest(status, request, opts);
 
-        LOG_D("Response: " << std::endl << response->toString());
+        // LOG_D("Response: " << std::endl << response->toString());
 
-        // send response
-        sock->send(fd, response->toString());
+        // // send response
+        // sock->send(fd, response->toString());
+
+        (void)status;
+        sock->send(fd, reqStr);
 
         reqStr = getNextRequest();
     }
@@ -101,4 +105,5 @@ smt::shared_ptr<config::Opts>
                                         request->getPath(),
                                         request->getHeader("Host")));
 }
+
 } // namespace webserv
