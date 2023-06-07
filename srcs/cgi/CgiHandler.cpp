@@ -134,25 +134,27 @@ CgiType convertCgiExtension(std::string const& cgiExtension) {
 
 std::string runCgiScript(smt::shared_ptr<http::Request> const request,
                          smt::shared_ptr<config::Opts> const  opts) {
-    // TODO: check if its needed
+    // // TODO: check if its needed
+    // (void)opts;
+    // // TODO: get path in a smarter way
+    // char* path = new char[17];
+    // strcpy(path, "/usr/bin/python3");
+
+    // std::vector<std::string> vArgv;
+    // vArgv.push_back("/usr/bin/python3");
+    // vArgv.push_back(request->routeRequest());
+
+    // Argv argv();
+
+    // Envp       envp(request);
+    // CgiHandler cgi(path, argv, envp);
+    // // TODO: the cgi returns a string instead of a response, check if its
+    // // necesary to do a converted.
+    // std::string resp = cgi.run();
+    // LOG_I("Cgi response: " + resp);
+    (void)request;
     (void)opts;
-    // TODO: get path in a smarter way
-    char* path = new char[17];
-    strcpy(path, "/usr/bin/python3");
-
-    std::vector<std::string> vArgv;
-    vArgv.push_back("/usr/bin/python3");
-    vArgv.push_back(request->routeRequest());
-
-    Argv argv(vArgv);
-
-    Envp       envp(request);
-    CgiHandler cgi(path, argv, envp);
-    // TODO: the cgi returns a string instead of a response, check if its
-    // necesary to do a converted.
-    std::string resp = cgi.run();
-    LOG_I("Cgi response: " + resp);
-    return (resp);
+    return ("");
 }
 
 } // namespace cgi
