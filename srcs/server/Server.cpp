@@ -63,7 +63,6 @@ void Server::runServer(void) {
 
                     smt::shared_ptr<net::ServerSocket> sock = (*it).second;
                     try {
-
                         sock->getConnection(events[i].data.fd);
                     }
                     catch (
