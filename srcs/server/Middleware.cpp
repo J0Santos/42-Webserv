@@ -43,7 +43,10 @@ int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
         // send response
         sock->send(fd, response->toString());
 
+        // checking status
         if (status) { break; }
+
+        // getting next request
         reqStr = http::RequestBuffer::getNextRequest(fd);
     }
     return (status);
