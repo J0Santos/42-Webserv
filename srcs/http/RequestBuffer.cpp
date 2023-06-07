@@ -67,4 +67,8 @@ std::string RequestBuffer::getNextRequest(int fd, std::string reqStr) {
     return (ret);
 }
 
+bool RequestBuffer::hasRequest(int fd) {
+    return (getInstance().m_buffers.find(fd) != getInstance().m_buffers.end());
+}
+
 } // namespace http

@@ -2,6 +2,7 @@
 
 #include "config/Options.hpp"
 #include "http/Handler.hpp"
+#include "http/RequestBuffer.hpp"
 #include "server/Middleware.hpp"
 
 namespace webserv {
@@ -65,17 +66,9 @@ void Server::runServer(void) {
 
                     Middleware::handleRecv(sock, events[i].data.fd);
 
-                    // // checking if connection is done sending data
-                    // try {
-                    //     sock->getConnection(events[i].data.fd);
-                    //     LOG_D("Socket not closed, still needs to receive
-                    //     more"
-                    //           "things");
-                    // }
-                    // catch (
-                    //     net::ServerSocket::NoSuchConnectionException const&)
-                    //     { epollRemove(events[i].data.fd);
-                    // }
+                    if (!http::RequestBuffer::hasRequest(events[i].data.fd)) {
+                        sock->close(events[i].data.fd);
+                    }
                     break;
                 }
             }

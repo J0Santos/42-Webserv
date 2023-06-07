@@ -5,10 +5,13 @@
 TEST(testRequestBuffer, testBasicRequest) {
     std::string req0 = "HTTP/1.1 404\r\nContent-Type=text/html\r\n\r\n";
     ASSERT_EQ(http::RequestBuffer::getNextRequest(1, req0), req0);
+    ASSERT_TRUE(http::RequestBuffer::hasRequest(1));
     ASSERT_TRUE(http::RequestBuffer::getNextRequest(1).empty());
+    ASSERT_FALSE(http::RequestBuffer::hasRequest(1));
     ASSERT_EQ(http::RequestBuffer::getNextRequest(2, req0), req0);
     ASSERT_EQ(http::RequestBuffer::getNextRequest(2, req0), req0);
     ASSERT_TRUE(http::RequestBuffer::getNextRequest(2).empty());
+    ASSERT_FALSE(http::RequestBuffer::hasRequest(2));
 }
 
 TEST(testRequestBuffer, testBasicRequestWithBody) {
