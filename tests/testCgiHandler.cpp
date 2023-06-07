@@ -15,113 +15,67 @@ TEST(testCgiTypes, testConvertType) {
     EXPECT_EQ(cgi::convertCgiExtension("other"), cgi::Unknown);
 }
 
-TEST(testSplitInfoFromPath, testAllCases) {
+class testCgi : public ::testing::Test {
+    protected:
 
-    EXPECT_EQ(
-        cgi::splitInfoFromPath("/path/to/script.cgi/param1/param2"),
-        std::vector<std::string>({"/path/to/script.cgi", "/param1/param2"}));
+        void SetUp(void) {
+            std::string reqStr = "GET /python/test.py?name=sotto HTTP/1.1\r\n"
+                                 "Host: x\r\n\r\n";
+            m_req = smt::make_shared(new http::Request(reqStr));
+            http::Route route("/python/", "./websites/cgi-bin/python/");
+            m_req->setRoute(route);
+        }
 
-    EXPECT_EQ(
-        cgi::splitInfoFromPath("/path/to/script/param1/param2.py"),
-        std::vector<std::string>({"/path/to/script/param1/param2.py", ""}));
+        smt::shared_ptr<http::Request> m_req;
+};
 
-    EXPECT_EQ(cgi::splitInfoFromPath("/path/to/script.conf/param1/param2.py"),
-              std::vector<std::string>(
-                  {"/path/to/script.conf/param1/param2.py", ""}));
-
-    EXPECT_EQ(
-        cgi::splitInfoFromPath("/path/to/script.conf/param2.py/file/info"),
-        std::vector<std::string>(
-            {"/path/to/script.conf/param2.py", "/file/info"}));
+TEST_F(testCgi, testArgv) {
+    cgi::CgiHandler cgi(m_req);
+    char**          argv = cgi.getArgv();
+    EXPECT_STREQ(argv[0], "test.py");
+    EXPECT_STREQ(argv[1], NULL);
 }
 
-char** vectorToCharPointerArray(std::vector<std::string> const& vec) {
-    // Allocate memory for char** array
-    char** charArray = new char*[vec.size() + 1];
-
-    // Copy each string to char* array
-    for (size_t i = 0; i < vec.size(); ++i) {
-        // Allocate memory for each char* element
-        charArray[i] = new char[vec[i].size() + 1];
-
-        // Copy string data to char* element
-        strcpy(charArray[i], vec[i].c_str());
-    }
-
-    // Add NULL as the last element
-    charArray[vec.size()] = NULL;
-
-    return charArray;
+TEST_F(testCgi, testEnvp) {
+    cgi::CgiHandler cgi(m_req);
+    char**          envp = cgi.getEnvp();
+    EXPECT_STREQ(envp[0], "REQUEST_METHOD=GET");
+    EXPECT_STREQ(envp[1], "PATH_INFO=test.py");
+    EXPECT_STREQ(envp[2], "DOCUMENT_ROOT=./websites/cgi-bin/python/");
+    EXPECT_STREQ(envp[3], "QUERY_STRING=name=sotto");
+    EXPECT_STREQ(envp[4], "CONTENT_LENGTH=");
+    EXPECT_STREQ(envp[5], "CONTENT_TYPE=");
+    EXPECT_STREQ(envp[6], NULL);
 }
 
-TEST(testCgi, testingRequestToIndex) {
-    // argv
-    char* path = new char[17];
-    strcpy(path, "/usr/bin/python3");
-    char** argv = vectorToCharPointerArray(
-        {"/usr/bin/python3", "./websites/cgi/python/index.py"});
-
-    char** envp = vectorToCharPointerArray(
-        {"REQUEST_METHOD=GET", "SCRIPT_NAME=./websites/cgi/python/index.py",
-         "HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-         "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1234.56 "
-         "Safari/537.36"});
-
-    cgi::CgiHandler cgi(path, argv, envp);
-    auto            resp = cgi.run();
-    LOG_D(resp);
+TEST_F(testCgi, testingHelloWorld) {
+    // creating file
+    system("touch ./websites/cgi-bin/python/test.py");
+    system("chmod +x ./websites/cgi-bin/python/test.py");
+    system("echo '#!/usr/bin/env python\n"
+           "print(\"Hello World!\")' > "
+           "./websites/cgi-bin/python/test.py");
+    cgi::CgiHandler cgi(m_req);
+    std::string     res = cgi.run();
+    EXPECT_EQ("Hello World!\n", res);
+    system("rm ./websites/cgi-bin/python/test.py");
 }
 
-TEST(testCgi, testingCreatingAFile) {
-    char* path = new char[17];
-    strcpy(path, "/usr/bin/python3");
+TEST_F(testCgi, testingQuery) {
+    system("touch ./websites/cgi-bin/python/test.py");
+    system("chmod +x ./websites/cgi-bin/python/test.py");
+    system("echo '#!/usr/bin/env python\n"
+           "import cgi\n"
+           "form = cgi.FieldStorage()\n"
+           "print(form.getvalue(\"name\"))' > "
+           "./websites/cgi-bin/python/test.py");
 
-    char** argv = vectorToCharPointerArray(
-        {"/usr/bin/python3", "./websites/cgi/python/createFile.py"});
-
-    char** envp = vectorToCharPointerArray(
-        {"REQUEST_METHOD=POST", "CONTENT_LENGTH=12", "CONTENT_TYPE=text/plain",
-         "SCRIPT_NAME=./websites/cgi/python/createFile.py",
-         "HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-         "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1234.56 "
-         "Safari/537.36"});
-    cgi::CgiHandler cgi(path, argv, envp, "Hello World!");
-    auto            resp = cgi.run();
-    LOG_D(resp);
+    cgi::CgiHandler cgi(m_req);
+    std::string     res = cgi.run();
+    EXPECT_EQ("sotto\n", res);
+    system("rm ./websites/cgi-bin/python/test.py");
 }
 
-TEST(testCgi, testingCreateFile) {
-    char* path = new char[17];
-    strcpy(path, "/usr/bin/python3");
-
-    char** argv = vectorToCharPointerArray(
-        {"/usr/bin/python3", "./websites/cgi/python/test.py"});
-
-    char** envp = vectorToCharPointerArray(
-        {"REQUEST_METHOD=POST", "CONTENT_LENGTH=12", "CONTENT_TYPE=text/plain",
-         "SCRIPT_NAME=./websites/cgi/python/test.py",
-         "HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-         "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1234.56 "
-         "Safari/537.36",
-         "QUERY_STRING=?param1=value1&param2=value2"});
-    cgi::CgiHandler cgi(path, argv, envp);
-    auto            resp = cgi.run();
-    LOG_D(resp);
-}
-
-TEST(testCgi, testCgiWithArgvAndEnvp) {
-    char* path = new char[17];
-    strcpy(path, "/usr/bin/python3");
-
-    cgi::Argv argv({"/usr/bin/python3", "./websites/cgi/python/test.py"});
-    smt::shared_ptr<http::Request> req(
-        new http::Request("POST "
-                          "/cgi/myscript.py HTTP/1.1\r\n"
-                          "Host: example.com\r\n"
-                          "Accept-Encoding: gzip, deflate, br\r\n"
-                          "Accept-Language: en-US,en;q=0.9\r\n"
-                          "Connection: keep-alive\r\n\r\n"));
-    cgi::Envp       envp(req);
-    cgi::CgiHandler cgi(path, argv, envp);
-    auto            resp = cgi.run();
+TEST_F(testCgi, testCreateFile) {
+    // TODO
 }

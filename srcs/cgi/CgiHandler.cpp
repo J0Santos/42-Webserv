@@ -3,25 +3,25 @@
 #include "cgi/Argv.hpp"
 #include "cgi/Envp.hpp"
 #include "utils/ft_array.hpp"
+#include "utils/ft_filesystem.hpp"
 #include "utils/Logger.hpp"
 
 namespace cgi {
 
-CgiHandler::CgiHandler(char* path, char** argv, char** envp,
-                       std::string const& body)
-    : m_path(path), m_argv(argv), m_envp(envp), m_body(body) {}
-
-CgiHandler::~CgiHandler(void) {
-
-    ft::array::erase(m_envp);
-    ft::array::erase(m_argv);
-    delete m_path;
+CgiHandler::CgiHandler(smt::shared_ptr<http::Request> const request) {
+    m_cgiDir = ft::file(request->routeRequest()).getDirectory();
+    m_argv = Argv(ft::file(request->routeRequest()).getFilename());
+    m_envp = Envp(request);
+    m_body = request->getBody();
 }
 
-std::string CgiHandler::run(void) const {
-    // TODO: verify if script exists and binary exists
-    return (runAsChildProcess());
-}
+CgiHandler::~CgiHandler(void) {}
+
+Argv const& CgiHandler::getArgv(void) const { return (m_argv); }
+
+Envp const& CgiHandler::getEnvp(void) const { return (m_envp); }
+
+std::string CgiHandler::run(void) const { return (runAsChildProcess()); }
 
 std::string CgiHandler::runAsChildProcess(void) const {
     std::string resp;
@@ -43,11 +43,16 @@ std::string CgiHandler::runAsChildProcess(void) const {
         LOG_E("Failed to get temporary infile fd.");
         return (resp);
     }
-    // check if request type is POST
-    if (get("REQUEST_METHOD") == "POST") {
+    // TODO: check if request type is POST
+    if (m_envp.get("REQUEST_METHOD") == "POST") {
         write(input_fd, m_body.c_str(), m_body.size());
         rewind(input);
     }
+
+    // convert argv and envp to char**
+    char** argv = m_argv;
+    char** envp = m_envp;
+
     pid_t pid = fork();
     if (pid < 0) {
         LOG_E("Failed to spawn child process.");
@@ -58,8 +63,11 @@ std::string CgiHandler::runAsChildProcess(void) const {
         dup2(input_fd, STDIN_FILENO);
         dup2(output_fd, STDOUT_FILENO);
 
-        execve(m_path, m_argv, m_envp);
+        chdir(std::string(m_cgiDir).c_str());
+        execve(argv[0], argv, envp);
         perror("execve() failed");
+        ft::array::erase(argv);
+        ft::array::erase(envp);
 
         // Child process
         LOG_E("Failed call to execve in child process.");
@@ -80,6 +88,10 @@ std::string CgiHandler::runAsChildProcess(void) const {
         std::string body(buf);
         resp = body;
     }
+
+    // Free memory
+    ft::array::erase(argv);
+    ft::array::erase(envp);
 
     // Reset STDIN and STDOUT
     dup2(stdin_reference, STDIN_FILENO);
@@ -104,27 +116,6 @@ std::string CgiHandler::get(std::string key) const {
     return (value);
 }
 
-std::vector<std::string> splitInfoFromPath(std::string const& path) {
-
-    std::vector<std::string> subs(2);
-
-    size_t pos = path.find(".");
-    while (pos != std::string::npos) {
-        std::string ext = path.substr(pos);
-        ext = (ext.find("/") != std::string::npos)
-                  ? ext.substr(0, ext.find("/"))
-                  : ext;
-        if (cgi::convertCgiExtension(ext) != cgi::Unknown) {
-            subs[0] = path.substr(0, pos + ext.size());
-            subs[1] = path.substr(pos + ext.size());
-            break;
-        }
-        pos = path.find(".", pos + 1);
-    }
-
-    return (subs);
-}
-
 CgiType convertCgiExtension(std::string const& cgiExtension) {
     if (cgiExtension == ".py") { return (Py); }
     if (cgiExtension == ".php") { return (Php); }
@@ -132,8 +123,7 @@ CgiType convertCgiExtension(std::string const& cgiExtension) {
     return (Unknown);
 }
 
-std::string runCgiScript(smt::shared_ptr<http::Request> const request,
-                         smt::shared_ptr<config::Opts> const  opts) {
+std::string runCgiScript(smt::shared_ptr<http::Request> const request) {
     // // TODO: check if its needed
     // (void)opts;
     // // TODO: get path in a smarter way
@@ -153,7 +143,6 @@ std::string runCgiScript(smt::shared_ptr<http::Request> const request,
     // std::string resp = cgi.run();
     // LOG_I("Cgi response: " + resp);
     (void)request;
-    (void)opts;
     return ("");
 }
 

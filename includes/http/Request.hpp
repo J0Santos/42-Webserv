@@ -28,11 +28,12 @@ class Request {
         std::string const  getHeader(std::string const& key) const;
         std::string const& getBody(void) const;
 
-        std::string getScheme(void) const;
-        std::string getHost(void) const;
-        std::string getPort(void) const;
-        ft::file    getPath(void) const;
-        std::string getQuery(void) const;
+        std::string          getScheme(void) const;
+        std::string          getHost(void) const;
+        std::string          getPort(void) const;
+        ft::file             getPath(void) const;
+        std::string          getQuery(void) const;
+        ft::directory const& getRoot(void) const;
 
         void        setRoute(Route const& route);
         std::string routeRequest(void) const;

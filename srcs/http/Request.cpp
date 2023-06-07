@@ -118,6 +118,10 @@ ft::file Request::getPath(void) const { return (m_uri->getPath()); }
 
 std::string Request::getQuery(void) const { return (m_uri->getQuery()); }
 
+ft::directory const& Request::getRoot(void) const {
+    return (m_route.getRoot());
+}
+
 void Request::setRoute(Route const& route) { m_route = route; }
 
 std::string Request::routeRequest(void) const {

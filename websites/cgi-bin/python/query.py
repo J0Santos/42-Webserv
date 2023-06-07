@@ -1,10 +1,10 @@
 #!/usr/bin/python3
+
 import os
 import urllib.parse
 
 print("HTTP/1.1 200 OK\r")
 print("Content-Type: text/html\r")
-
 
 # Get the query string from the environment
 query_string = os.environ.get("QUERY_STRING", "")
