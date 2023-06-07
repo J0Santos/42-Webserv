@@ -62,7 +62,14 @@ void Server::runServer(void) {
                 for (it = m_sockets.begin(); it != m_sockets.end(); it++) {
 
                     smt::shared_ptr<net::ServerSocket> sock = (*it).second;
-                    sock->getConnection(events[i].data.fd);
+                    try {
+
+                        sock->getConnection(events[i].data.fd);
+                    }
+                    catch (
+                        net::ServerSocket::NoSuchConnectionException const&) {
+                        continue;
+                    }
 
                     int status =
                         Middleware::handleRecv(sock, events[i].data.fd);

@@ -13,21 +13,21 @@ smt::shared_ptr<http::Response>
     GET(smt::shared_ptr<http::Request> const request,
         smt::shared_ptr<config::Opts> const  opts) {
     (void)request;
-    return (generateErrorResponse(501, opts));
+    return (generateErrorResponse(200, opts));
 }
 
 smt::shared_ptr<http::Response>
     POST(smt::shared_ptr<http::Request> const request,
          smt::shared_ptr<config::Opts> const  opts) {
     (void)request;
-    return (generateErrorResponse(502, opts));
+    return (generateErrorResponse(201, opts));
 }
 
 smt::shared_ptr<http::Response>
     DELETE(smt::shared_ptr<http::Request> const request,
            smt::shared_ptr<config::Opts> const  opts) {
     (void)request;
-    return (generateErrorResponse(503, opts));
+    return (generateErrorResponse(202, opts));
 }
 
 } // namespace methods
