@@ -25,7 +25,7 @@ namespace webserv {
 class Middleware {
     public:
 
-        static void handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd);
+        static int handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd);
 
         static smt::shared_ptr<config::Opts>
             getOptions(smt::shared_ptr<net::ServerSocket> sock,

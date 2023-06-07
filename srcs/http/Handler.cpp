@@ -14,7 +14,14 @@ namespace http {
 smt::shared_ptr<Response>
     processRequest(int status, smt::shared_ptr<Request> const request,
                    smt::shared_ptr<config::Opts> const opts) {
+
     if (status) { return (generateErrorResponse(status, opts)); }
+
+    // checking max body size
+    if (request->getBody().size() > opts->m_max_body_size) {
+        LOG_E("Body size too large");
+        return (generateErrorResponse(400, opts));
+    }
 
     // check if method is allowed
     if (opts->m_allowed_methods.find(request->getMethod()) ==
@@ -23,19 +30,16 @@ smt::shared_ptr<Response>
         return (generateErrorResponse(405, opts));
     }
 
-    // TODO: handle getNextRequest with max body size and a lot of requests at
-    // the same time.
-
     http::Route route(opts->m_target, opts->m_root);
     request->setRoute(route);
 
-    // TODO: move this to methods implementation
-    if (!opts->m_cgi_extension.empty() &&
-        opts->m_cgi_extension == request->getPath().getExtension()) {
-        LOG_I("Running Cgi in " << request->routeRequest());
-        std::string resp = cgi::runCgiScript(request, opts);
-        return (smt::make_shared(new Response(resp)));
-    }
+    // // TODO: move this to methods implementation
+    // if (!opts->m_cgi_extension.empty() &&
+    //     opts->m_cgi_extension == request->getPath().getExtension()) {
+    //     LOG_I("Running Cgi in " << request->routeRequest());
+    //     std::string resp = cgi::runCgiScript(request, opts);
+    //     return (smt::make_shared(new Response(resp)));
+    // }
 
     // getting method
     MethodType method = convertMethod(request->getMethod());

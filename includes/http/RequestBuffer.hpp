@@ -12,6 +12,7 @@ class RequestBuffer {
 
         static std::string getNextRequest(int fd, std::string reqStr = "");
         static bool        hasRequest(int fd);
+        static void        cleanBuffer(int fd);
 
     private:
 

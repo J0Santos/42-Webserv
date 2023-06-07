@@ -9,7 +9,7 @@
 
 namespace webserv {
 
-void Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
+int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
     smt::shared_ptr<config::Opts> opts(new config::Opts());
 
     // receiving request string
@@ -43,13 +43,13 @@ void Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
         smt::shared_ptr<http::Response> response =
             http::processRequest(status, request, opts);
 
-        LOG_D("Response: " << std::endl << response->toString());
-
         // send response
         sock->send(fd, response->toString());
 
+        if (status) { break; }
         reqStr = http::RequestBuffer::getNextRequest(fd);
     }
+    return (status);
 }
 
 smt::shared_ptr<config::Opts>

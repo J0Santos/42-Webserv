@@ -71,4 +71,10 @@ bool RequestBuffer::hasRequest(int fd) {
     return (getInstance().m_buffers.find(fd) != getInstance().m_buffers.end());
 }
 
+void RequestBuffer::cleanBuffer(int fd) {
+    if (getInstance().m_buffers.find(fd) != getInstance().m_buffers.end()) {
+        getInstance().m_buffers.erase(fd);
+    }
+}
+
 } // namespace http

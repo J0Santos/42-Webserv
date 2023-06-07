@@ -64,9 +64,13 @@ void Server::runServer(void) {
                     smt::shared_ptr<net::ServerSocket> sock = (*it).second;
                     sock->getConnection(events[i].data.fd);
 
-                    Middleware::handleRecv(sock, events[i].data.fd);
+                    int status =
+                        Middleware::handleRecv(sock, events[i].data.fd);
 
-                    if (!http::RequestBuffer::hasRequest(events[i].data.fd)) {
+                    if (!http::RequestBuffer::hasRequest(events[i].data.fd) ||
+                        status) {
+                        http::RequestBuffer::cleanBuffer(events[i].data.fd);
+                        epollRemove(events[i].data.fd);
                         sock->close(events[i].data.fd);
                     }
                     break;
