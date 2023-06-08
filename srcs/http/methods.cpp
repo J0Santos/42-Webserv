@@ -2,24 +2,112 @@
 
 #include "config/Options.hpp"
 #include "http/Handler.hpp"
+#include "http/MimeType.hpp"
 #include "http/Request.hpp"
 #include "http/Response.hpp"
 #include "utils/smt.hpp"
+
+#include <dirent.h>
+#include <sstream>
+
+// #include <fstream>
+// #include <unistd.h>
 
 namespace http {
 namespace methods {
 
 smt::shared_ptr<http::Response>
+    generateAutoIndexResponse(smt::shared_ptr<http::Request> const req) {
+
+    smt::shared_ptr<http::Response> resp;
+
+    // Get the list of files in the directory
+    std::string routedPath = req->routeRequest();
+    std::string path = req->getPath();
+
+    std::stringstream ss;
+    ss << "<html><head><title>Index of " << path << "</title></head><body>"
+       << "<h1>Index of " << path << "</h1>"
+       << "<ul>";
+
+    dirent* entry;
+    DIR*    dir = opendir(routedPath.c_str());
+    while ((entry = readdir(dir)) != NULL) {
+        std::string fileName = entry->d_name;
+        LOG_I("Autoindex: " << fileName);
+        if (fileName != "." && fileName != "..") {
+            ss << "<li><a href=\"" << std::string(ft::directory(path))
+               << fileName << "\">" << fileName << "</a></li>";
+        }
+    }
+    closedir(dir);
+
+    ss << "</ul>";
+    ss << "</body></html>";
+
+    // creating body
+    std::string body = ss.str();
+
+    // creating headers
+    std::map<std::string, std::string> headers;
+    headers["Content-Type"] = "text/html";
+
+    resp = smt::make_shared(new http::Response(200, headers, body));
+    return (resp);
+}
+
+smt::shared_ptr<http::Response>
     GET(smt::shared_ptr<http::Request> const request,
         smt::shared_ptr<config::Opts> const  opts) {
-    (void)request;
-    return (generateErrorResponse(200, opts));
+
+    smt::shared_ptr<http::Response> resp;
+
+    // check if file/directory is valid
+    std::string file = request->routeRequest();
+    if (!ft::file(file).isValid() && !ft::directory(file).isValid()) {
+        return (generateErrorResponse(404, opts));
+    }
+
+    // checking if its a directory
+    if (ft::file(file).isDirectory()) {
+        // check for index and autoindex
+        if (!std::string(opts->m_index).empty()) {
+            file = opts->m_index;
+            if (!ft::file(file).isValid()) {
+                // TODO: check if status code is correct
+                return (generateErrorResponse(404, opts));
+            }
+        }
+        else if (opts->m_autoindex) {
+            return (generateAutoIndexResponse(request));
+        }
+        else {
+            // TODO: check if status code is correct
+            return (generateErrorResponse(403, opts));
+        }
+    }
+
+    // TODO: check if its a cgi file
+    // checking if its a regular file
+    std::map<std::string, std::string> headers;
+    headers["Content-Type"] = http::MimeType(file);
+    std::string body = ft::file(file).read();
+
+    // return response
+    resp = smt::make_shared(new http::Response(200, headers, body));
+    return (resp);
 }
 
 smt::shared_ptr<http::Response>
     POST(smt::shared_ptr<http::Request> const request,
          smt::shared_ptr<config::Opts> const  opts) {
     (void)request;
+    // check if filepath is allowed, check if file is allowed
+    // checking routed file - if its crawler
+
+    // append to file if it exists
+    // create a new file
+    // return response
     return (generateErrorResponse(201, opts));
 }
 
@@ -27,6 +115,14 @@ smt::shared_ptr<http::Response>
     DELETE(smt::shared_ptr<http::Request> const request,
            smt::shared_ptr<config::Opts> const  opts) {
     (void)request;
+    // checking routed file - if its crawler
+    // checking routed file - if exists
+
+    // exit if file is a directory (see status code)
+
+    // delete the file
+
+    // return response
     return (generateErrorResponse(202, opts));
 }
 

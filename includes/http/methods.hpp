@@ -54,6 +54,9 @@ smt::shared_ptr<http::Response>
     DELETE(smt::shared_ptr<http::Request> const request,
            smt::shared_ptr<config::Opts> const  opts);
 
+smt::shared_ptr<http::Response>
+    generateAutoIndexResponse(smt::shared_ptr<http::Request> const req);
+
 } // namespace methods
 
 } // namespace http
