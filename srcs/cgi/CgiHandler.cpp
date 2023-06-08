@@ -26,6 +26,9 @@ std::string CgiHandler::run(void) const { return (runAsChildProcess()); }
 std::string CgiHandler::runAsChildProcess(void) const {
     std::string resp;
 
+    // TODO: File and dups need proper error handling
+    // the ideal is throw an exception for then to be generated a 500
+
     FILE* input = tmpfile();
     int   input_fd = fileno(input);
 
@@ -47,7 +50,7 @@ std::string CgiHandler::runAsChildProcess(void) const {
     if (m_envp.get("REQUEST_METHOD") == "POST") {
         LOG_I("Writing body to temporary file. " << m_body);
         write(input_fd, m_body.c_str(), m_body.size());
-        rewind(input);
+        // rewind(input);
     }
 
     // convert argv and envp to char**

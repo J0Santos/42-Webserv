@@ -19,6 +19,7 @@ def save_file(upload_file, upload_dir):
     # print('upload dir: ', upload_dir)
     # Save the file to the specified directory
     with open(upload_file, 'wb') as f:
+
         while True:
             # Get Body from stdin
             chunk = sys.stdin.read(1024)

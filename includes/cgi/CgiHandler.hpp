@@ -46,6 +46,9 @@ class CgiHandler {
         std::string m_body;
 };
 
+// TODO: remove python folder
+// TODO: make routes more intuitive
+
 enum CgiType { Py, Php, Cgi, Unknown };
 
 CgiType convertCgiExtension(std::string const& cgiExtension);
