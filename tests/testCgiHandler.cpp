@@ -75,7 +75,3 @@ TEST_F(testCgi, testingQuery) {
     EXPECT_EQ("sotto\n", res);
     system("rm ./websites/cgi-bin/python/test.py");
 }
-
-TEST_F(testCgi, testCreateFile) {
-    // TODO
-}
