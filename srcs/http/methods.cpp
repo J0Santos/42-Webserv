@@ -9,9 +9,7 @@
 
 #include <dirent.h>
 #include <sstream>
-
-// #include <fstream>
-// #include <unistd.h>
+#include <unistd.h>
 
 namespace http {
 namespace methods {
@@ -137,15 +135,24 @@ smt::shared_ptr<http::Response>
 smt::shared_ptr<http::Response>
     DELETE(smt::shared_ptr<http::Request> const request,
            smt::shared_ptr<config::Opts> const  opts) {
-    (void)request;
+    smt::shared_ptr<http::Response> resp;
+
     // checking if file is valid
+    std::string file = request->routeRequest();
+    if (ft::file(file).isDirectory()) {
+        return (generateErrorResponse(403, opts));
+    }
+    if (!ft::file(file).isValid()) {
+        return (generateErrorResponse(404, opts));
+    }
 
-    // exit if file is a directory (see status code)
-
-    // delete the file
+    // Delete the file
+    if (unlink(file.c_str()) == -1) { generateErrorResponse(403, opts); }
 
     // return response
-    return (generateErrorResponse(202, opts));
+    std::map<std::string, std::string> headers;
+    resp = smt::make_shared(new http::Response(204, headers));
+    return (resp);
 }
 
 } // namespace methods

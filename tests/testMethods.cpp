@@ -268,3 +268,58 @@ TEST_F(testPostMethod, testFileExists) {
 
     system("rm -f /tmp/testFile");
 }
+
+class testDeleteMethod : public ::testing::Test {
+    protected:
+
+        void SetUp(void) {
+            m_opts = smt::make_shared(new config::Opts);
+            m_opts->m_target = "/";
+            m_opts->m_root = "/tmp/";
+            m_opts->m_index = "";
+            m_opts->m_autoindex = false;
+            m_route = http::Route(m_opts->m_target, m_opts->m_root);
+        }
+
+        smt::shared_ptr<config::Opts> m_opts;
+        http::Route                   m_route;
+};
+
+TEST_F(testDeleteMethod, testIsDirectory) {
+    system("mkdir -p /tmp/testDirectory");
+    std::string reqStr = "DELETE /testDirectory HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n\r\n";
+
+    smt::shared_ptr<http::Request> req(new http::Request(reqStr));
+    req->setRoute(m_route);
+    smt::shared_ptr<http::Response> res = http::methods::DELETE(req, m_opts);
+    EXPECT_EQ(res->getCode(), 403);
+    EXPECT_FALSE(res->getBody().empty());
+    system("rm -rf /tmp/testDirectory");
+}
+
+TEST_F(testDeleteMethod, testFileDoesNotExist) {
+
+    std::string reqStr = "DELETE /testFile HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n\r\n";
+
+    smt::shared_ptr<http::Request> req(new http::Request(reqStr));
+    req->setRoute(m_route);
+    smt::shared_ptr<http::Response> res = http::methods::DELETE(req, m_opts);
+    EXPECT_EQ(res->getCode(), 404);
+    EXPECT_FALSE(res->getBody().empty());
+}
+
+TEST_F(testDeleteMethod, testDeleteFile) {
+
+    system("touch /tmp/testFile");
+    std::string reqStr = "DELETE /testFile HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n\r\n";
+
+    smt::shared_ptr<http::Request> req(new http::Request(reqStr));
+    req->setRoute(m_route);
+    smt::shared_ptr<http::Response> res = http::methods::DELETE(req, m_opts);
+    EXPECT_EQ(res->getCode(), 204);
+    EXPECT_TRUE(res->getBody().empty());
+    system("rm -f /tmp/testFile");
+}
