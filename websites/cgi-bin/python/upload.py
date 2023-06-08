@@ -15,13 +15,16 @@ def generate404():
 
 def save_file(upload_file, upload_dir):
 
+    # print('upload file: ', upload_file)
+    # print('upload dir: ', upload_dir)
     # Save the file to the specified directory
     with open(upload_file, 'wb') as f:
         while True:
             # Get Body from stdin
-            chunk = sys.stdin.buffer.read(1024)
+            chunk = sys.stdin.read(1024)
             if not chunk:
                 break
+            print('chunk: ', chunk)
             f.write(chunk)
 
     return upload_file
@@ -46,4 +49,3 @@ save_file(upload_file, upload_dir)
 print('HTTP/1.1 201 Created\r')
 print('Content-type: text/plain\r')
 print('\r')
-

@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-import os
-import sys
-
-body = "<!DOCTYPE html> <html> <head>   <title>Hello Page</title> </head> <body>   <h1>Hello, World!</h1>   <p>Welcome to my hello page.</p> </body> </html>"
-print('HTTP/1.1 200 OK\r')
-print('Content-Type: text/html\r')
-print(f'Content-Length: {len(body)}\r')
-print('\r')
-print(body, end='')
+print("HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: 148\r\n"
+        "\r\n"
+        "<!DOCTYPE html> <html> <head>   <title>Hello "
+        "Page</title> </head> <body>   <h1>Hello, World!</h1> "
+        "  <p>Welcome to my hello page.</p> </body> </html>", end="")
