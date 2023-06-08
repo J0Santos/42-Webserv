@@ -45,6 +45,7 @@ std::string CgiHandler::runAsChildProcess(void) const {
     }
     // TODO: check if request type is POST
     if (m_envp.get("REQUEST_METHOD") == "POST") {
+        LOG_I("Writing body to temporary file. " << m_body);
         write(input_fd, m_body.c_str(), m_body.size());
         rewind(input);
     }

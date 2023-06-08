@@ -57,6 +57,13 @@ smt::shared_ptr<http::Response>
 smt::shared_ptr<http::Response>
     generateAutoIndexResponse(smt::shared_ptr<http::Request> const req);
 
+smt::shared_ptr<http::Response>
+    generateCgiResponse(smt::shared_ptr<http::Request> const request,
+                        smt::shared_ptr<config::Opts> const  opts);
+
+smt::shared_ptr<Response>
+    generateErrorResponse(int code, smt::shared_ptr<config::Opts> const opts);
+
 } // namespace methods
 
 } // namespace http
