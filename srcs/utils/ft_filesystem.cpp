@@ -150,7 +150,7 @@ std::string file::read(void) const {
 }
 
 std::string file::write(std::string const& str) const {
-    if (!exists() || isDirectory()) { throw InvalidFileException(); }
+    if (!isCrawler() || isDirectory()) { throw InvalidFileException(); }
     std::ofstream file(m_file.c_str());
     if (!file.is_open()) { throw FailedToOpenFileException(); }
 

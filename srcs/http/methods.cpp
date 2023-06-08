@@ -34,7 +34,6 @@ smt::shared_ptr<http::Response>
     DIR*    dir = opendir(routedPath.c_str());
     while ((entry = readdir(dir)) != NULL) {
         std::string fileName = entry->d_name;
-        LOG_I("Autoindex: " << fileName);
         if (fileName != "." && fileName != "..") {
             ss << "<li><a href=\"" << std::string(ft::directory(path))
                << fileName << "\">" << fileName << "</a></li>";
@@ -101,22 +100,45 @@ smt::shared_ptr<http::Response>
 smt::shared_ptr<http::Response>
     POST(smt::shared_ptr<http::Request> const request,
          smt::shared_ptr<config::Opts> const  opts) {
-    (void)request;
-    // check if filepath is allowed, check if file is allowed
-    // checking routed file - if its crawler
 
-    // append to file if it exists
-    // create a new file
-    // return response
-    return (generateErrorResponse(201, opts));
+    smt::shared_ptr<http::Response> resp;
+
+    std::string file = request->routeRequest();
+
+    // checking if directory of file is valid
+    ft::directory fileDir = ft::file(file).getDirectory();
+    if (!fileDir.isValid()) { return (generateErrorResponse(404, opts)); }
+
+    // checking if file exists
+    if (ft::file(request->getPath()).isCrawler()) {
+        return (generateErrorResponse(404, opts));
+    }
+
+    // checking if file exists
+    if (!ft::file(file).exists()) {
+        std::ofstream f(file.c_str(), std::ios_base::app);
+        if (!f.good()) { return (generateErrorResponse(403, opts)); }
+        f << request->getBody();
+        f.close();
+    }
+    else {
+        std::ofstream f(file.c_str(), std::ofstream::out | std::ofstream::app);
+        if (!f.good()) { return (generateErrorResponse(403, opts)); }
+        f << request->getBody();
+        f.close();
+    }
+
+    std::map<std::string, std::string> headers;
+    resp = smt::make_shared(new http::Response(201, headers));
+
+    return (resp);
 }
 
 smt::shared_ptr<http::Response>
     DELETE(smt::shared_ptr<http::Request> const request,
            smt::shared_ptr<config::Opts> const  opts) {
     (void)request;
-    // checking routed file - if its crawler
-    // checking routed file - if exists
+    // checking if file is valid
 
     // exit if file is a directory (see status code)
 

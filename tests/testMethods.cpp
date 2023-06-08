@@ -177,11 +177,94 @@ TEST_F(testGetMethod, testAutoIndex) {
     req->setRoute(m_route);
     smt::shared_ptr<http::Response> res = http::methods::GET(req, m_opts);
 
-    LOG_D(res->toString());
-
     EXPECT_EQ(res->getCode(), 200);
     EXPECT_FALSE(res->getBody().empty());
     EXPECT_EQ(res->getHeader("Content-Type"), "text/html");
 
     system("rm -rf /tmp/testDirectory");
+}
+
+class testPostMethod : public ::testing::Test {
+    protected:
+
+        void SetUp(void) {
+            m_opts = smt::make_shared(new config::Opts);
+            m_opts->m_target = "/";
+            m_opts->m_root = "/tmp/";
+            m_opts->m_index = "";
+            m_opts->m_autoindex = false;
+            m_route = http::Route(m_opts->m_target, m_opts->m_root);
+        }
+
+        smt::shared_ptr<config::Opts> m_opts;
+        http::Route                   m_route;
+};
+
+TEST_F(testPostMethod, testCrawlerFile) {
+    std::string reqStr = "POST /../testFile HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n"
+                         "Content-Length: 12\r\n"
+                         "Content-Type: text/plain\r\n\r\n"
+                         "Hello World!";
+
+    smt::shared_ptr<http::Request> req(new http::Request(reqStr));
+    req->setRoute(m_route);
+    smt::shared_ptr<http::Response> res = http::methods::POST(req, m_opts);
+    EXPECT_EQ(res->getCode(), 404);
+    EXPECT_FALSE(res->getBody().empty());
+}
+
+TEST_F(testPostMethod, testFileDoesNotExist) {
+    std::string reqStr = "POST /testFile HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n"
+                         "Content-Length: 12\r\n"
+                         "Content-Type: text/plain\r\n\r\n"
+                         "Hello World!";
+
+    smt::shared_ptr<http::Request> req(new http::Request(reqStr));
+    req->setRoute(m_route);
+    smt::shared_ptr<http::Response> res = http::methods::POST(req, m_opts);
+    EXPECT_EQ(res->getCode(), 201);
+    EXPECT_TRUE(res->getBody().empty());
+
+    // getting file content
+    reqStr = "GET /testFile HTTP/1.1\r\n"
+             "Host: localhost:8080\r\n\r\n";
+    req = smt::make_shared(new http::Request(reqStr));
+    req->setRoute(m_route);
+
+    res = http::methods::GET(req, m_opts);
+    EXPECT_EQ(res->getCode(), 200);
+    EXPECT_EQ(res->getBody(), "Hello World!");
+
+    system("rm -f /tmp/testFile");
+}
+
+TEST_F(testPostMethod, testFileExists) {
+    std::string reqStr = "POST /testFile HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n"
+                         "Content-Length: 12\r\n"
+                         "Content-Type: text/plain\r\n\r\n"
+                         "Hello World!";
+
+    smt::shared_ptr<http::Request> req(new http::Request(reqStr));
+    req->setRoute(m_route);
+    smt::shared_ptr<http::Response> res = http::methods::POST(req, m_opts);
+    EXPECT_EQ(res->getCode(), 201);
+    EXPECT_TRUE(res->getBody().empty());
+    res = http::methods::POST(req, m_opts);
+    EXPECT_EQ(res->getCode(), 201);
+    EXPECT_TRUE(res->getBody().empty());
+
+    // getting file content
+    reqStr = "GET /testFile HTTP/1.1\r\n"
+             "Host: localhost:8080\r\n\r\n";
+    req = smt::make_shared(new http::Request(reqStr));
+    req->setRoute(m_route);
+
+    res = http::methods::GET(req, m_opts);
+    EXPECT_EQ(res->getCode(), 200);
+    EXPECT_EQ(res->getBody(), "Hello World!Hello World!");
+
+    system("rm -f /tmp/testFile");
 }
