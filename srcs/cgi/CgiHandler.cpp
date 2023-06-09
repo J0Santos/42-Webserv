@@ -24,34 +24,44 @@ Envp const& CgiHandler::getEnvp(void) const { return (m_envp); }
 std::string CgiHandler::run(void) const { return (runAsChildProcess()); }
 
 std::string CgiHandler::runAsChildProcess(void) const {
+
     std::string resp;
+    int         pipeFd[2];
+    int         pipeOut[2];
 
-    // TODO: File and dups need proper error handling
-    // the ideal is throw an exception for then to be generated a 500
-
-    FILE* input = tmpfile();
-    int   input_fd = fileno(input);
-
-    FILE* output = tmpfile();
-    int   output_fd = fileno(output);
-
-    int stdin_reference = dup(STDIN_FILENO);
-    int stdout_reference = dup(STDOUT_FILENO);
-
-    if (!input || !output || stdin_reference < 0) {
-        LOG_E("Failed to create temporary files.");
+    // creating stdin ref
+    int stdinRef = dup(STDIN_FILENO);
+    if (stdinRef < 0) {
+        LOG_E("Failed to create a STDIN reference");
         return (resp);
     }
-    if (input_fd < 0) {
-        LOG_E("Failed to get temporary infile fd.");
+
+    // creating stdout ref
+    int stdoutRef = dup(STDOUT_FILENO);
+    if (stdoutRef < 0) {
+        LOG_E("Failed to create a STDOUT reference");
         return (resp);
     }
-    // TODO: check if request type is POST
+
+    // TODO: check if an empty response throws
+    if (pipe(pipeFd) == -1) {
+        LOG_E("Failed to create a pipe or request");
+        return (resp);
+    }
+    if (pipe(pipeOut) == -1) {
+        LOG_E("Failed to create a pipe of body");
+        return (resp);
+    }
+
+    // writing body into pipe
     if (m_envp.get("REQUEST_METHOD") == "POST") {
-        LOG_I("Writing body to temporary file. " << m_body);
-        write(input_fd, m_body.c_str(), m_body.size());
-        // rewind(input);
+        int bytes = write(pipeFd[1], m_body.c_str(), m_body.size());
+        if (bytes < 0) {
+            perror("Failed to write body into script");
+            return (resp);
+        }
     }
+    close(pipeFd[1]);
 
     // convert argv and envp to char**
     char** argv = m_argv;
@@ -59,53 +69,168 @@ std::string CgiHandler::runAsChildProcess(void) const {
 
     pid_t pid = fork();
     if (pid < 0) {
-        LOG_E("Failed to spawn child process.");
+        LOG_E("Failed to fork");
         return (resp);
     }
-    else if (pid == 0) {
-        // Direct I/O to temporary file;
-        dup2(input_fd, STDIN_FILENO);
-        dup2(output_fd, STDOUT_FILENO);
+    else if (pid == 0) { // child process
 
+        // closing write end of pipe
+        close(pipeOut[0]);
+
+        // closing read end of pipe
+        if (dup2(pipeOut[1], STDOUT_FILENO) == -1) {
+            perror("Failed to redirect out end of pipeOut");
+            exit(EXIT_FAILURE);
+        }
+        close(pipeOut[1]);
+
+        if (m_envp.get("REQUEST_METHOD") == "POST") {
+            if (dup2(pipeFd[0], STDIN_FILENO)) {
+                // TODO
+                exit(EXIT_FAILURE);
+            }
+            close(pipeFd[0]);
+        }
         chdir(std::string(m_cgiDir).c_str());
         execve(argv[0], argv, envp);
-        perror("execve() failed");
-        ft::array::erase(argv);
-        ft::array::erase(envp);
-
-        // Child process
-        LOG_E("Failed call to execve in child process.");
-        exit(500);
+        perror("Failed to execute script");
+        exit(EXIT_FAILURE);
     }
-    // From here on out we are always in parent cause child either executed or
-    // exited
-    int status;
+    else { // parent process
 
-    waitpid(pid, &status, 0);
-    if (WIFEXITED(status)) {
-        int  bytesRead = 0;
-        char buf[2049];
-        lseek(output_fd, 0, SEEK_SET);
-        while ((bytesRead = read(output_fd, buf, 2048)) > 0) {
-            buf[bytesRead] = '\0';
+        // closing read end of pipe
+        close(pipeFd[0]);
+
+        // closing write end of pipe
+        close(pipeFd[1]);
+
+        int status;
+        waitpid(pid, &status, 0);
+        close(pipeFd[0]);
+        close(pipeOut[1]);
+
+        if (WIFEXITED(status) && WEXITSTATUS(status) == EXIT_SUCCESS) {
+            // reading response
+            int  bytes = 0;
+            char buf[4096];
+            while ((bytes = read(pipeOut[0], buf, 4096)) > 0) {
+                buf[bytes] = '\0';
+                resp += std::string(buf, bytes);
+            }
+            std::string body(buf);
+            resp = body;
         }
-        std::string body(buf);
-        resp = body;
+        else {
+            LOG_E("Child process finished with an error");
+            ft::array::erase(argv);
+            ft::array::erase(envp);
+            return (resp);
+        }
     }
 
-    // Free memory
+    // freeing envp and argc
     ft::array::erase(argv);
     ft::array::erase(envp);
 
-    // Reset STDIN and STDOUT
-    dup2(stdin_reference, STDIN_FILENO);
-    dup2(stdout_reference, STDOUT_FILENO);
+    close(pipeOut[0]);
 
-    // Close temporary files
-    fclose(input);
-    fclose(output);
+    // restoring pipes
+    if (dup2(stdinRef, STDIN_FILENO) < 0) {
+        LOG_E("Failed to restore STDIN");
+        return ("");
+    }
+    if (dup2(stdoutRef, STDOUT_FILENO) < 0) {
+        LOG_E("Failed to restore STDOUT");
+        return ("");
+    }
+
+    close(stdinRef);
+    close(stdoutRef);
 
     return (resp);
+
+    // std::string resp;
+    // FILE* input = tmpfile();
+    // int   input_fd = fileno(input);
+
+    // FILE* output = tmpfile();
+    // int   output_fd = fileno(output);
+
+    // int stdin_reference = dup(STDIN_FILENO);
+    // int stdout_reference = dup(STDOUT_FILENO);
+
+    // if (!input || !output || stdin_reference < 0) {
+    //     LOG_E("Failed to create temporary files.");
+    //     return (resp);
+    // }
+    // if (input_fd < 0) {
+    //     LOG_E("Failed to get temporary infile fd.");
+    //     return (resp);
+    // }
+
+    // if (m_envp.get("REQUEST_METHOD") == "POST") {
+    //     LOG_I("Writing body to temporary file. " << m_body);
+    //     write(input_fd, m_body.c_str(), m_body.size());
+    //     rewind(input);
+    // }
+    // // convert argv and envp to char**
+    // char** argv = m_argv;
+    // char** envp = m_envp;
+
+    // pid_t pid = fork();
+    // if (pid < 0) {
+    //     LOG_E("Failed to spawn child process.");
+    //     return (resp);
+    // }
+    // else if (pid == 0) {
+    //     // Direct I/O to temporary file;
+    //     dup2(input_fd, STDIN_FILENO);
+    //     dup2(output_fd, STDOUT_FILENO);
+
+    // chdir(std::string(m_cgiDir).c_str());
+    // execve(argv[0], argv, envp);
+    // perror("execve() failed");
+    // ft::array::erase(argv);
+    // ft::array::erase(envp);
+
+    // // Child process
+    // LOG_E("Failed call to execve in child process.");
+    // exit(500);
+    // }
+    // // else {
+    // //     if (m_envp.get("REQUEST_METHOD") == "POST") {
+    // //         LOG_I("Writing body to temporary file. " << m_body);
+    // //         write(input_fd, m_body.c_str(), m_body.size());
+    // //         rewind(input);
+    // //     }
+    // // }
+    // // From here on out we are always in parent cause child either executed
+    // or
+    // // exited
+    // int status;
+
+    // waitpid(pid, &status, 0);
+    // if (WIFEXITED(status)) {
+    //     int  bytesRead = 0;
+    //     char buf[2049];
+    //     lseek(output_fd, 0, SEEK_SET);
+    //     while ((bytesRead = read(output_fd, buf, 2048)) > 0) {
+    //         buf[bytesRead] = '\0';
+    //     }
+    //     std::string body(buf);
+    //     resp = body;
+    // }
+
+    // // Free memory
+    // ft::array::erase(argv);
+    // ft::array::erase(envp);
+
+    // // Reset STDIN and STDOUT
+    // // Close temporary files
+    // fclose(input);
+    // fclose(output);
+
+    // return (resp);
 }
 
 std::string CgiHandler::get(std::string key) const {

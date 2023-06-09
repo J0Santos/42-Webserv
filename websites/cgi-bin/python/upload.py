@@ -13,25 +13,20 @@ def generate404():
     print(body, end='')
     sys.exit(0)
 
-def save_file(upload_file, upload_dir):
+def save_file(upload_file, body):
 
     # print('upload file: ', upload_file)
     # print('upload dir: ', upload_dir)
     # Save the file to the specified directory
-    with open(upload_file, 'wb') as f:
+    sys.stderr.write(upload_file)
+    absolute_path = os.path.expanduser(upload_file)
+    open(absolute_path, 'wb').write(bytes(body, 'UTF-8'))
 
-        while True:
-            # Get Body from stdin
-            chunk = sys.stdin.read(1024)
-            if not chunk:
-                break
-            print('chunk: ', chunk)
-            f.write(chunk)
-
-    return upload_file
+    return file
 
 
 
+file = sys.stdin.read()
 # Get the file from the form data
 form = cgi.FieldStorage()
 upload_file = form.getvalue('file', None)
@@ -44,7 +39,7 @@ os.makedirs(upload_dir, exist_ok=True)
 upload_file = os.path.join(upload_dir, upload_file)
 
 # Save the file to the specified directory
-save_file(upload_file, upload_dir)
+save_file(upload_file, file)
 
 # Print the path to the saved file as the response
 print('HTTP/1.1 201 Created\r')

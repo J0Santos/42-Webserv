@@ -7,6 +7,8 @@ static void stop(int);
 void webserv(std::string const& filename) {
     signal(SIGINT, stop);
 
+    LOG_LVL(LogLevel::Info);
+
     LOG_I("Reading config file: " << filename << "...");
     try {
         config::parse(filename);

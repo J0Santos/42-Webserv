@@ -12,7 +12,6 @@ namespace http {
 Response::Response(Response const& src) { *this = src; }
 
 Response::Response(std::string const& respStr) {
-    LOG_D(respStr);
     std::vector<std::string> subs;
 
     size_t endPos = respStr.find("\r\n\r\n");
