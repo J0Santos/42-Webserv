@@ -78,7 +78,6 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
         }
         m_body = body;
     }
-    // if (reqStr.size() > endPos + 4) { m_body = reqStr.substr(endPos + 4); }
 }
 
 Request::Request(Request const& src) { *this = src; }

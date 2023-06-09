@@ -2,6 +2,7 @@
 
 #include "sockets/ServerSocket.hpp"
 #include "utils/ft_string.hpp"
+#include "utils/Logger.hpp"
 
 namespace config {
 
@@ -25,6 +26,18 @@ smt::shared_ptr<Opts> Options::getOptions(std::string const& port,
                                           std::string const& header) {
     std::vector<ServerOpts> options = getInstance()->m_options;
     smt::shared_ptr<Opts>   opts;
+
+    // checking header
+    // see if header has a port
+    // check if port is equal to port and then take it off
+    size_t pos = header.find(":");
+    if (pos != std::string::npos) {
+        if (header.substr(pos + 1) != port) {
+            // TODO: check this
+            const_cast<std::string&>(header).clear();
+        }
+        else { const_cast<std::string&>(header) = header.substr(0, pos); }
+    }
 
     // Get The Server Block with the Port And Host And Header
     std::vector<ServerOpts>::const_iterator serverIt = options.end();
