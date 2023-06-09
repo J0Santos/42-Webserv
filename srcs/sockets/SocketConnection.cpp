@@ -73,20 +73,20 @@ std::string SocketConnection::toString(void) const {
 }
 
 char const* SocketConnection::CloseFailureException::what(void) const throw() {
-    return ("Socket Connection: failure in ::close()");
+    return ("Socket Connection: failure in ::close().");
 }
 
 char const* SocketConnection::SendFailureException::what(void) const throw() {
-    return ("Socket Connection: failure in ::send()");
+    return ("Socket Connection: failure in ::send().");
 }
 
 char const* SocketConnection::RecvFailureException::what(void) const throw() {
-    return ("Socket Connection: failure in ::recv()");
+    return ("Socket Connection: failure in ::recv().");
 }
 
 char const* SocketConnection::ConnectionClosedException::what(void) const
     throw() {
-    return ("Socket Connection: connection closed");
+    return ("Socket Connection: connection closed.");
 }
 
 /* Address */

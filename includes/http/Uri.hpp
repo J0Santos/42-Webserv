@@ -19,10 +19,11 @@ class Uri {
         std::string getPort(void) const;
         ft::file    getPath(void) const;
         std::string getQuery(void) const;
+        std::string const toString(void) const;
 
     private:
 
-        // std::string m_target;
+        std::string m_uri;
         std::string m_scheme;
         std::string m_host;
         std::string m_port;

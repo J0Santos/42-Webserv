@@ -171,39 +171,39 @@ std::string ServerSocket::toString(void) const {
 }
 
 char const* ServerSocket::SocketFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::socket()");
+    return ("Server Socket: failure in ::socket().");
 }
 
 char const* ServerSocket::BindFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::bind()");
+    return ("Server Socket: failure in ::bind().");
 }
 
 char const* ServerSocket::ListenFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::listen()");
+    return ("Server Socket: failure in ::listen().");
 }
 
 char const* ServerSocket::SetOptFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::setsockopt()");
+    return ("Server Socket: failure in ::setsockopt().");
 }
 
 char const* ServerSocket::AcceptFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::accept()");
+    return ("Server Socket: failure in ::accept().");
 }
 
 char const* ServerSocket::CloseFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::close()");
+    return ("Server Socket: failure in ::close().");
 }
 
 char const* ServerSocket::SendFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::send()");
+    return ("Server Socket: failure in ::send().");
 }
 
 char const* ServerSocket::RecvFailureException::what(void) const throw() {
-    return ("Server Socket: failure in ::recv()");
+    return ("Server Socket: failure in ::recv().");
 }
 
 char const* ServerSocket::NoSuchConnectionException::what(void) const throw() {
-    return ("Server Socket: no such connection");
+    return ("Server Socket: no such connection.");
 }
 
 /* Address */

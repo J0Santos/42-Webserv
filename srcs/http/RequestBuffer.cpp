@@ -22,56 +22,71 @@ RequestBuffer& RequestBuffer::getInstance(void) {
 }
 
 std::string RequestBuffer::getNextRequest(int fd, std::string reqStr) {
-    // getting buffer for this fd
+    std::string req;
     std::string buff = reqStr;
 
     RequestBuffer& rb = getInstance();
+    // trying to find if fd is already in buffer list
     if (rb.m_buffers.find(fd) != rb.m_buffers.end()) {
+        // updating buff with previous buffer
         buff = rb.m_buffers[fd];
         buff += reqStr;
         if (buff.empty()) {
+            // if buffer is empty, then the fd is removed from buffers list
             rb.m_buffers.erase(fd);
-            return ("");
+            return (req);
         }
     }
-    else { rb.m_buffers.insert(std::make_pair(fd, buff)); }
+    else {
+        // adding buffer to list
+        rb.m_buffers.insert(std::make_pair(fd, buff));
+    }
 
-    std::string ret;
+
+    // parsing buff into a request
 
     size_t endHeaders = buff.find("\r\n\r\n");
-    // Request is incomplete
-    if (endHeaders == std::string::npos) { return (""); }
+    if (endHeaders == std::string::npos) {
+        // Request is incomplete
+        return (req);
+    }
 
     // getting request until the end of headers
-    ret = buff.substr(0, endHeaders + 4);
+    req = buff.substr(0, endHeaders + 4);
 
-    // getting Content-Length
-    size_t startPos = ret.find("Content-Length: ");
+    // parsing body of request - if there is one
+    size_t startPos = req.find("Content-Length: ");
     if (startPos != std::string::npos) {
-        size_t endPos = ret.find("\r\n", startPos);
+        size_t endPos = req.find("\r\n", startPos);
         // getting Content-Length
         int len = ft::string::stoi(buff.substr(startPos + 16, endPos));
 
         // checking if body is complete
-        if (buff.size() < endHeaders + 4 + len) { return (""); }
+        if (buff.size() < endHeaders + 4 + len) { 
+            req.clear();
+            return (req);
+        }
 
         // adding body to ret
-        if (len) { ret += buff.substr(endHeaders + 4, len); }
+        if (len) { req += buff.substr(endHeaders + 4, len); }
     }
 
-    buff = buff.substr(ret.size());
+    // removing req from buffer
+    buff = buff.substr(req.size());
 
     // updating buffer for this fd
     rb.m_buffers[fd] = buff;
 
-    return (ret);
+    return (req);
 }
 
 bool RequestBuffer::hasRequest(int fd) {
+    // returns true if the buffer for that fd is not empty
     return (getInstance().m_buffers.find(fd) != getInstance().m_buffers.end());
 }
 
 void RequestBuffer::cleanBuffer(int fd) {
+    // clears buffer from fd
     if (getInstance().m_buffers.find(fd) != getInstance().m_buffers.end()) {
         getInstance().m_buffers.erase(fd);
     }

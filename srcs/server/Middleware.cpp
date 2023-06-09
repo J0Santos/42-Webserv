@@ -12,41 +12,45 @@ namespace webserv {
 int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
     smt::shared_ptr<config::Opts> opts(new config::Opts());
 
-    // receiving request string
+    // receiving string from sockets recv
     std::string reqStr = sock->recv(fd);
 
+    // parsing the request from reqStr
     int status = 0;
     reqStr = http::RequestBuffer::getNextRequest(fd, reqStr);
     while (!reqStr.empty()) {
-
         smt::shared_ptr<http::Request> request;
         try {
+            // creating a http::Request based on string
             request = smt::make_shared(new http::Request(reqStr));
         }
         catch (http::Request::MalformedRequestException const&) {
-            LOG_E("Malformed request");
-            status = 404;
+            // checking if communication is valid for HTTP/1.1
+            LOG_E("Malformed request, socket will responde with a 400.");
+            status = 400;
         }
 
         try {
+            // getting options from config file corresponding with request
             opts = getOptions(sock, request);
         }
         catch (config::Options::NoSuchOptionsException const&) {
-            LOG_E("No config found for this request");
+            // this error will never happen, but its handled anyways
+            LOG_E("Failure in server, failed to find a config block for this request.");
             status = 500;
         }
 
-        // handle request
+        // handle http request
         smt::shared_ptr<http::Response> response =
             http::processRequest(status, request, opts);
 
-        // send response
+        // send response as string
         sock->send(fd, response->toString());
 
-        // checking status
+        // if an error occured, the status will not check for more requests
         if (status) { break; }
 
-        // getting next request
+        // getting next request form reqStr if there is one
         reqStr = http::RequestBuffer::getNextRequest(fd);
     }
     return (status);
@@ -56,6 +60,7 @@ smt::shared_ptr<config::Opts>
     Middleware::getOptions(smt::shared_ptr<net::ServerSocket> sock,
                            smt::shared_ptr<http::Request>     request) {
 
+    // calling getOptions from options
     std::stringstream ss;
     ss << sock->getPort();
     return (config::Options::getOptions(ss.str(), sock->getHost(),

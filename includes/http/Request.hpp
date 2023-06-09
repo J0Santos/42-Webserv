@@ -39,6 +39,7 @@ class Request {
         std::string routeRequest(void) const;
 
         std::string const& toString(void) const;
+        std::string const debug(void) const;
 
         struct MalformedRequestException : public std::exception {
                 char const* what(void) const throw();

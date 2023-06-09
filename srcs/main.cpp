@@ -1,5 +1,10 @@
 #include "webserv.hpp"
 
+// TODO: make route better
+// TODO: make mimetypes in utils and mabe others
+// TODO: make sure all cgi scripts have python 3 to them
+// TODO: check for all stringstreams that could be replaced for stoi
+// TODO: here maybe make all the alone functions inside classes, as statics
 int main(int argc, char const* argv[]) {
     (void)argc;
     (void)argv;

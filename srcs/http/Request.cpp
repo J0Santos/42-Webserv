@@ -5,6 +5,9 @@
 
 namespace http {
 
+#define SP   " "
+#define CRLF "\r\n"
+
 Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
     std::vector<std::string> subs;
 
@@ -78,6 +81,7 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
         }
         m_body = body;
     }
+    LOG_D(debug());
 }
 
 Request::Request(Request const& src) { *this = src; }
@@ -128,6 +132,10 @@ std::string Request::routeRequest(void) const {
 }
 
 std::string const& Request::toString(void) const { return (m_reqStr); }
+
+std::string const Request::debug(void) const {
+    return (m_method + SP + m_uri->toString() + SP + m_version);
+}
 
 char const* Request::MalformedRequestException::what(void) const throw() {
     return ("Request: malformed request.");

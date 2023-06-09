@@ -8,9 +8,6 @@
 
 namespace http {
 
-#define SP   " "
-#define CRLF "\r\n"
-
 class Response {
 
     public:
@@ -33,6 +30,7 @@ class Response {
         std::string getReason(void) const;
 
         std::string const toString(void) const;
+        std::string const debug(void) const;
 
         struct MalformedResponseException : public std::exception {
                 char const* what(void) const throw();

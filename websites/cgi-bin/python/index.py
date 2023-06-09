@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 print("HTTP/1.1 200 OK\r\n"
         "Content-Type: text/html\r\n"
