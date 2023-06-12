@@ -5,7 +5,7 @@
 
 namespace http {
 
-Uri::Uri(std::string const& uri): m_uri(uri) {
+Uri::Uri(std::string const& uri) : m_uri(uri) {
 
     std::string str = ft::string::trim(uri);
 

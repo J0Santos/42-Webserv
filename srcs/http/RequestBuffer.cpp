@@ -42,7 +42,6 @@ std::string RequestBuffer::getNextRequest(int fd, std::string reqStr) {
         rb.m_buffers.insert(std::make_pair(fd, buff));
     }
 
-
     // parsing buff into a request
 
     size_t endHeaders = buff.find("\r\n\r\n");
@@ -62,7 +61,7 @@ std::string RequestBuffer::getNextRequest(int fd, std::string reqStr) {
         int len = ft::string::stoi(buff.substr(startPos + 16, endPos));
 
         // checking if body is complete
-        if (buff.size() < endHeaders + 4 + len) { 
+        if (buff.size() < endHeaders + 4 + len) {
             req.clear();
             return (req);
         }

@@ -11,10 +11,6 @@ class testParser : public ::testing::Test {
         }
 
         virtual ~testParser(void) { system("rm test.conf"); }
-
-        // virtual void SetUp(void) {}
-
-        // virtual void TearDown(void) {}
 };
 
 TEST_F(testParser, testFileOpen) {

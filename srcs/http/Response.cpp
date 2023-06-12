@@ -26,17 +26,17 @@ Response::Response(std::string const& respStr) {
     std::string        startLine;
 
     // getting first line
-    getline(iss, startLine); 
+    getline(iss, startLine);
 
     // parsing and validating headers
     std::string line;
     while (getline(iss, line) && line != "\r") {
-        
+
         if (line.find("\r") != line.size() - 1) {
             LOG_W("Malformed request: invalid header end.");
             throw(MalformedResponseException());
         }
-        
+
         line = line.substr(0, line.size() - 1);
         size_t pos = line.find(": ");
         if (pos == std::string::npos || !pos || pos == line.size() - 2) {
