@@ -32,9 +32,6 @@ class ErrorCode {
 
         int         m_code;
         std::string m_reason;
-
-        static std::string const m_reasons[];
-        static int const         m_codes[];
 };
 
 } // namespace http
