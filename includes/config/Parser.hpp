@@ -43,7 +43,8 @@ class Parser {
         std::vector<ServerOpts> m_directives;
 };
 
-void parse(ft::file const& filename);
+template<>
+void Parser::parseLine<LineEnd>(std::vector<std::string> const& args, int level);
 
 } // namespace config
 

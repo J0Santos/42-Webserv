@@ -82,6 +82,31 @@ void Parser::parseLine(std::vector<std::string> const& args, int level) {
     }
 }
 
+template<>
+void Parser::parseLine<LineEnd>(std::vector<std::string> const& args,
+                                int                             level) {
+    // checking if the directive's level (position) is valid
+    if (level == 0) {
+        LOG_W("directive { is not a global directive.");
+        error();
+    }
+    if (level == 1) {
+        // creating the directive based on line type
+        DirectiveTypeTraits<LineEnd> directive(args, m_directives.back());
+
+        // checking if directive is valid
+        if (!directive.isValid()) { error(); }
+    }
+    if (level == 2) {
+        // creating the directive based on line type
+        DirectiveTypeTraits<LineEnd> directive(
+            args, m_directives.back().m_locations.back());
+
+        // checking if directive is valid
+        if (!directive.isValid()) { error(); }
+    }
+}
+
 char const* Parser::InvalidSyntaxException::what(void) const throw() {
     return ("config::parser: invalid syntax.");
 }

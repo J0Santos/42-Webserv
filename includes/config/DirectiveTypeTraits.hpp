@@ -25,13 +25,11 @@ class DirectiveTypeTraitsBase {
         DirectiveTypeTraitsBase(std::string const& name);
         virtual ~DirectiveTypeTraitsBase(void);
 
-        bool operator==(DirectiveTypeTraitsBase const& rhs) const;
-
         virtual std::string getName(void) const;
 
-        virtual void set(std::vector<ServerOpts>&) const = 0;
-        virtual void set(ServerOpts&) const = 0;
-        virtual void set(LocationOpts&) const = 0;
+        virtual void set(std::vector<ServerOpts>&) const;
+        virtual void set(ServerOpts&) const;
+        virtual void set(LocationOpts&) const;
 
         virtual bool isValid(void) const;
 
@@ -55,7 +53,7 @@ struct DirectiveTypeTraits<LineBlock> : public DirectiveTypeTraitsBase {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
             }
-            if (args[0] != "server") {
+            if (args[0] != getName()) {
                 LOG_W(getName() << ": invalid directive.");
                 return;
             }
@@ -72,9 +70,13 @@ struct DirectiveTypeTraits<LineBlock> : public DirectiveTypeTraitsBase {
             opts.push_back(ServerOpts());
         }
 
-        void set(ServerOpts&) const {}
+        void set(ServerOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
-        void set(LocationOpts&) const {}
+        void set(LocationOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         bool isGlobalDirective(void) const { return (true); }
 };
@@ -88,7 +90,7 @@ struct DirectiveTypeTraits<LineRoute> : public DirectiveTypeTraitsBase {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
             }
-            if (args[0] != "location") {
+            if (args[0] != getName()) {
                 LOG_W(getName() << ": invalid directive.");
                 return;
             }
@@ -102,13 +104,28 @@ struct DirectiveTypeTraits<LineRoute> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const {
+            // search for a location with the same target
+            for (std::vector<LocationOpts>::iterator it =
+                     opts.m_locations.begin();
+                 it != opts.m_locations.end(); ++it) {
+                if (it->m_target == m_target) {
+                    LOG_W(getName() << ": target " << m_target
+                                    << " already exists. This route will be "
+                                       "ignored.");
+                    return;
+                }
+            }
             opts.m_locations.push_back(LocationOpts(m_target));
         }
 
-        void set(LocationOpts&) const {}
+        void set(LocationOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         bool isBlockDirective(void) const { return (true); }
 
@@ -124,8 +141,52 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
                 LOG_W(getName() << ": invalid number of elements.");
                 return;
             }
-            if (args[0] != "}") {
+            if (args[0] != getName()) {
                 LOG_W(getName() << ": invalid directive.");
+                return;
+            }
+            m_valid = true;
+        }
+
+        DirectiveTypeTraits(std::vector<std::string> const& args,
+                            ServerOpts&                     opts)
+            : DirectiveTypeTraitsBase(LINE_END) {
+            if (args.size() != 1) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive.");
+                return;
+            }
+            if (opts.m_host.empty() && opts.m_port.empty()) {
+                LOG_W(
+                    getName()
+                    << ": trying to close block without listen directive set.");
+                return;
+            }
+            if (std::string(opts.m_root).empty()) {
+                LOG_W(getName() << ": trying to close block without root "
+                                   "directive set.");
+                return;
+            }
+            m_valid = true;
+        }
+
+        DirectiveTypeTraits(std::vector<std::string> const& args,
+                            LocationOpts&                   opts)
+            : DirectiveTypeTraitsBase(LINE_END) {
+            if (args.size() != 1) {
+                LOG_W(getName() << ": invalid number of elements.");
+                return;
+            }
+            if (args[0] != getName()) {
+                LOG_W(getName() << ": invalid directive.");
+                return;
+            }
+            if (std::string(opts.m_root).empty()) {
+                LOG_W(getName() << ": trying to close block without root "
+                                   "directive set.");
                 return;
             }
             m_valid = true;
@@ -133,11 +194,16 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts&) const {}
 
-        void set(LocationOpts&) const {}
+        void set(LocationOpts&) const {
+            // check if root was sets
+            // also check if any other host:port:serverName was set
+        }
 
         bool isBlockDirective(void) const { return (true); }
 
@@ -191,14 +257,18 @@ struct DirectiveTypeTraits<LineListen> : public DirectiveTypeTraitsBase {
             m_valid = true;
         }
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const {
             opts.m_host = m_host;
             opts.m_port = m_port;
         }
 
-        void set(LocationOpts&) const {}
+        void set(LocationOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         ~DirectiveTypeTraits(void) {}
 
@@ -228,11 +298,15 @@ struct DirectiveTypeTraits<LineServerName> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const { opts.m_server_name = m_server_name; }
 
-        void set(LocationOpts&) const {}
+        void set(LocationOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         bool isBlockDirective(void) const { return (true); }
 
@@ -262,7 +336,9 @@ struct DirectiveTypeTraits<LineRoot> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const { opts.m_root = m_root; }
 
@@ -311,7 +387,9 @@ struct DirectiveTypeTraits<LineErrorPage> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const { opts.m_error_pages = m_error_pages; }
 
@@ -349,7 +427,9 @@ struct DirectiveTypeTraits<LineMaxBodySize> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const {
             opts.m_max_body_size = m_max_body_size;
@@ -392,7 +472,9 @@ struct DirectiveTypeTraits<LineAllowMethods> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(ServerOpts& opts) const {
             opts.m_allowed_methods = m_allowed_methods;
@@ -432,9 +514,13 @@ struct DirectiveTypeTraits<LineIndex> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
-        void set(ServerOpts&) const {}
+        void set(ServerOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(LocationOpts& ops) const { ops.m_index = m_index; }
 
@@ -467,9 +553,13 @@ struct DirectiveTypeTraits<LineAutoIndex> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
-        void set(ServerOpts&) const {}
+        void set(ServerOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(LocationOpts& ops) const { ops.m_autoindex = m_autoindex; }
 
@@ -501,9 +591,13 @@ struct DirectiveTypeTraits<LineCgiExtension> : public DirectiveTypeTraitsBase {
 
         ~DirectiveTypeTraits(void) {}
 
-        void set(std::vector<ServerOpts>&) const {}
+        void set(std::vector<ServerOpts>&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
-        void set(ServerOpts&) const {}
+        void set(ServerOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(LocationOpts& ops) const {
             ops.m_cgi_extension = m_cgi_extension;
