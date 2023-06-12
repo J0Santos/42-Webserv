@@ -32,6 +32,8 @@ class Parser {
 
         std::vector<ServerOpts> const& getOptions(void) const;
 
+        static void parse(ft::file const& filename);
+
     private:
 
         std::string   m_line;

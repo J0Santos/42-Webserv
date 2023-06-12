@@ -53,7 +53,8 @@ void Parser::parseLine(std::vector<std::string> const& args, int level) {
     if (level == 0) {
         // checking if directive is valid outside a server block
         if (directive.isBlockDirective() || directive.isRouteDirective()) {
-            LOG_W("directive " << directive.getName() << " is not a global directive.");
+            LOG_W("directive " << directive.getName()
+                               << " is not a global directive.");
             error();
         }
         // updating m_directives
@@ -62,7 +63,8 @@ void Parser::parseLine(std::vector<std::string> const& args, int level) {
     if (level == 1) {
         // checking if directive is valid inside server block
         if (!directive.isBlockDirective()) {
-            LOG_W("directive " << directive.getName() << " is not a server directive.");
+            LOG_W("directive " << directive.getName()
+                               << " is not a server directive.");
             error();
         }
         // updating m_directives
@@ -71,7 +73,8 @@ void Parser::parseLine(std::vector<std::string> const& args, int level) {
     else if (level == 2) {
         // checking if directive is valid inside location block
         if (!directive.isRouteDirective()) {
-            LOG_W("directive " << directive.getName() << " is not a location directive.");
+            LOG_W("directive " << directive.getName()
+                               << " is not a location directive.");
             error();
         }
         // updating m_directives
@@ -83,10 +86,10 @@ char const* Parser::InvalidSyntaxException::what(void) const throw() {
     return ("config::parser: invalid syntax.");
 }
 
-void parse(ft::file const& filename) {
+void Parser::parse(ft::file const& filename) {
     // creating a config parser for filename
     Parser parser(filename);
-    
+
     // parsing file per line
     int level = 0;
     while (parser.nextLine()) {

@@ -19,7 +19,7 @@ class testOptionsExtreme : public ::testing::Test {
                    "  }\n"
                    "\n"
                    "  location /python/ {\n"
-                   "    root          ./websites/cgi-bin/python;\n"
+                   "    root          ./websites/cgi-bin;\n"
                    "    index         ./websites/index.html;\n"
                    "    fastcgi_pass  .py;\n"
                    "    allow_methods GET;\n"
@@ -39,7 +39,7 @@ class testOptionsExtreme : public ::testing::Test {
                    "  listen         8081:localhost;\n"
                    "  root           ./websites/;\n"
                    "  location /python/ {\n"
-                   "    root ./websites/cgi-bin/python;\n"
+                   "    root ./websites/cgi-bin;\n"
                    "  }\n"
                    "  server_name    domain.net;\n"
                    "  error_page 500 ./websites/errors/500.html;\n"
@@ -52,7 +52,7 @@ class testOptionsExtreme : public ::testing::Test {
 TEST_F(testOptionsExtreme, testGettingFirstBlockWithDefaultRoute) {
 
     try {
-        config::parse("/tmp/testsOptions.tmp");
+        config::Parser::parse("/tmp/testsOptions.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -81,7 +81,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockWithDefaultRoute) {
 TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
 
     try {
-        config::parse("/tmp/testsOptions.tmp");
+        config::Parser::parse("/tmp/testsOptions.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -92,7 +92,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
     opt->m_target = "/python/";
     opt->m_host = "127.0.0.1";
     opt->m_port = "8080";
-    opt->m_root = "./websites/cgi-bin/python/";
+    opt->m_root = "./websites/cgi-bin/";
     opt->m_server_name = "";
     opt->m_error_pages = std::map<int, ft::file>();
     opt->m_max_body_size = DEFAULT_BODY_SIZE;
@@ -108,7 +108,7 @@ TEST_F(testOptionsExtreme, testGettingFirstBlockPythonRouted) {
 TEST_F(testOptionsExtreme, testGettingSecondBlockWithDefaultRoute) {
 
     try {
-        config::parse("/tmp/testsOptions.tmp");
+        config::Parser::parse("/tmp/testsOptions.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -139,7 +139,7 @@ TEST_F(testOptionsExtreme, testGettingSecondBlockWithDefaultRoute) {
 TEST_F(testOptionsExtreme, testThirdBlock) {
 
     try {
-        config::parse("/tmp/testsOptions.tmp");
+        config::Parser::parse("/tmp/testsOptions.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -166,7 +166,7 @@ TEST_F(testOptionsExtreme, testThirdBlock) {
 TEST_F(testOptionsExtreme, testNoLocationBlock) {
 
     try {
-        config::parse("/tmp/testsOptions.tmp");
+        config::Parser::parse("/tmp/testsOptions.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -193,7 +193,7 @@ TEST_F(testOptionsExtreme, testNoLocationBlock) {
 TEST_F(testOptionsExtreme, testGetSocketOptions) {
 
     try {
-        config::parse("/tmp/testsOptions.tmp");
+        config::Parser::parse("/tmp/testsOptions.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -229,7 +229,7 @@ TEST(testSocketOptions, testSocketOptionsExtreme) {
            "}\" >> /tmp/testsOptions2.tmp\n");
 
     try {
-        config::parse("/tmp/testsOptions2.tmp");
+        config::Parser::parse("/tmp/testsOptions2.tmp");
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;

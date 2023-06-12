@@ -23,7 +23,7 @@ class testCgi : public ::testing::Test {
                                  "Host: x\r\n\r\n";
             m_req = smt::make_shared(new http::Request(reqStr));
             smt::shared_ptr<http::Route> route(
-                new http::Route("/python/", "./websites/cgi-bin/python/"));
+                new http::Route("/python/", "./websites/cgi-bin/"));
             m_req->setRoute(route);
         }
 
@@ -42,7 +42,7 @@ TEST_F(testCgi, testEnvp) {
     char**          envp = cgi.getEnvp();
     EXPECT_STREQ(envp[0], "REQUEST_METHOD=GET");
     EXPECT_STREQ(envp[1], "PATH_INFO=test.py");
-    EXPECT_STREQ(envp[2], "DOCUMENT_ROOT=./websites/cgi-bin/python/");
+    EXPECT_STREQ(envp[2], "DOCUMENT_ROOT=./websites/cgi-bin/");
     EXPECT_STREQ(envp[3], "QUERY_STRING=name=sotto");
     EXPECT_STREQ(envp[4], "CONTENT_LENGTH=");
     EXPECT_STREQ(envp[5], "CONTENT_TYPE=");
@@ -51,28 +51,28 @@ TEST_F(testCgi, testEnvp) {
 
 TEST_F(testCgi, testingHelloWorld) {
     // creating file
-    system("touch ./websites/cgi-bin/python/test.py");
-    system("chmod +x ./websites/cgi-bin/python/test.py");
+    system("touch ./websites/cgi-bin/test.py");
+    system("chmod +x ./websites/cgi-bin/test.py");
     system("echo '#!/usr/bin/env python\n"
            "print(\"Hello World!\")' > "
-           "./websites/cgi-bin/python/test.py");
+           "./websites/cgi-bin/test.py");
     cgi::CgiHandler cgi(m_req);
     std::string     res = cgi.run();
     EXPECT_EQ("Hello World!\n", res);
-    system("rm ./websites/cgi-bin/python/test.py");
+    system("rm ./websites/cgi-bin/test.py");
 }
 
 TEST_F(testCgi, testingQuery) {
-    system("touch ./websites/cgi-bin/python/test.py");
-    system("chmod +x ./websites/cgi-bin/python/test.py");
+    system("touch ./websites/cgi-bin/test.py");
+    system("chmod +x ./websites/cgi-bin/test.py");
     system("echo '#!/usr/bin/env python\n"
            "import cgi\n"
            "form = cgi.FieldStorage()\n"
            "print(form.getvalue(\"name\"))' > "
-           "./websites/cgi-bin/python/test.py");
+           "./websites/cgi-bin/test.py");
 
     cgi::CgiHandler cgi(m_req);
     std::string     res = cgi.run();
     EXPECT_EQ("sotto\n", res);
-    system("rm ./websites/cgi-bin/python/test.py");
+    system("rm ./websites/cgi-bin/test.py");
 }

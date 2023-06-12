@@ -13,14 +13,14 @@ void webserv(std::string const& filename) {
     // reading config file an handling errors
     LOG_I("Reading config file: " << filename << "...");
     try {
-        config::parse(filename);
+        config::Parser::parse(filename);
     }
     catch (ft::InvalidFileException const& e) {
-        LOG_F(filename << ": " << e.what() );
+        LOG_F(filename << ": " << e.what());
         exit(EXIT_FAILURE);
     }
     catch (ft::FailedToOpenFileException const& e) {
-        LOG_F(filename << ": " << e.what() );
+        LOG_F(filename << ": " << e.what());
         exit(EXIT_FAILURE);
     }
     catch (config::Parser::InvalidSyntaxException const& e) {
@@ -52,7 +52,8 @@ void webserv(std::string const& filename) {
         exit(EXIT_FAILURE);
     }
     catch (std::exception& e) {
-        LOG_F("System failure while server was running: " << std::string(e.what()));
+        LOG_F("System failure while server was running: "
+              << std::string(e.what()));
         exit(EXIT_FAILURE);
     }
 }
