@@ -3,9 +3,9 @@
 #include "cgi/CgiHandler.hpp"
 #include "config/Options.hpp"
 #include "http/Handler.hpp"
-#include "utils/MimeType.hpp"
 #include "http/Request.hpp"
 #include "http/Response.hpp"
+#include "utils/MimeType.hpp"
 #include "utils/smt.hpp"
 
 #include <dirent.h>
