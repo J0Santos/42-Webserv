@@ -109,7 +109,6 @@ struct DirectiveTypeTraits<LineRoute> : public DirectiveTypeTraitsBase {
         }
 
         void set(ServerOpts& opts) const {
-            // search for a location with the same target
             for (std::vector<LocationOpts>::iterator it =
                      opts.m_locations.begin();
                  it != opts.m_locations.end(); ++it) {
@@ -149,7 +148,7 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
         }
 
         DirectiveTypeTraits(std::vector<std::string> const& args,
-                            ServerOpts&                     opts)
+                            std::vector<ServerOpts>&        opts)
             : DirectiveTypeTraitsBase(LINE_END) {
             if (args.size() != 1) {
                 LOG_W(getName() << ": invalid number of elements.");
@@ -159,16 +158,26 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
                 LOG_W(getName() << ": invalid directive.");
                 return;
             }
-            if (opts.m_host.empty() && opts.m_port.empty()) {
+            ServerOpts opt = opts.back();
+            if (opt.m_host.empty() && opt.m_port.empty()) {
                 LOG_W(
                     getName()
                     << ": trying to close block without listen directive set.");
                 return;
             }
-            if (std::string(opts.m_root).empty()) {
+            if (std::string(opt.m_root).empty()) {
                 LOG_W(getName() << ": trying to close block without root "
                                    "directive set.");
                 return;
+            }
+            // checking for port:host:server_name duplicates
+            for (std::vector<ServerOpts>::iterator it = opts.begin();
+                 it != opts.end() - 1; ++it) {
+                if (it->m_host == opt.m_host && it->m_port == opt.m_port) {
+                    LOG_W(getName() << ": duplicate port:host:server_name "
+                                       "combination.");
+                    return;
+                }
             }
             m_valid = true;
         }
@@ -198,11 +207,12 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
             LOG_W(getName() << ": invalid function call.");
         }
 
-        void set(ServerOpts&) const {}
+        void set(ServerOpts&) const {
+            LOG_W(getName() << ": invalid function call.");
+        }
 
         void set(LocationOpts&) const {
-            // check if root was sets
-            // also check if any other host:port:serverName was set
+            LOG_W(getName() << ": invalid function call.");
         }
 
         bool isBlockDirective(void) const { return (true); }

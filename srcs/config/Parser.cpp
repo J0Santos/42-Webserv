@@ -92,7 +92,7 @@ void Parser::parseLine<LineEnd>(std::vector<std::string> const& args,
     }
     if (level == 1) {
         // creating the directive based on line type
-        DirectiveTypeTraits<LineEnd> directive(args, m_directives.back());
+        DirectiveTypeTraits<LineEnd> directive(args, m_directives);
 
         // checking if directive is valid
         if (!directive.isValid()) { error(); }
