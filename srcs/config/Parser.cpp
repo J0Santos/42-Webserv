@@ -52,7 +52,7 @@ void Parser::parseLine(std::vector<std::string> const& args, int level) {
     // checking if the directive's level (position) is valid
     if (level == 0) {
         // checking if directive is valid outside a server block
-        if (directive.isBlockDirective() || directive.isRouteDirective()) {
+        if (!directive.isGlobalDirective()) {
             LOG_W("directive " << directive.getName()
                                << " is not a global directive.");
             error();

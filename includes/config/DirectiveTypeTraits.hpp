@@ -34,8 +34,12 @@ class DirectiveTypeTraitsBase {
         std::string const getName(void);
 
         virtual bool isValid(void) const = 0;
-        virtual bool isBlockDirective(void) const = 0;
-        virtual bool isRouteDirective(void) const = 0;
+
+        virtual bool isBlockDirective(void) const { return (false); }
+
+        virtual bool isRouteDirective(void) const { return (false); }
+
+        virtual bool isGlobalDirective(void) const { return (false); }
 
         std::string const m_name;
 };
@@ -75,9 +79,7 @@ struct DirectiveTypeTraits<LineBlock> : public DirectiveTypeTraitsBase {
 
         bool isValid(void) const { return (m_valid); }
 
-        bool isBlockDirective(void) const { return (false); }
-
-        bool isRouteDirective(void) const { return (false); }
+        bool isGlobalDirective(void) const { return (true); }
 
         bool m_valid;
 };
@@ -116,8 +118,6 @@ struct DirectiveTypeTraits<LineRoute> : public DirectiveTypeTraitsBase {
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (true); }
-
-        bool isRouteDirective(void) const { return (false); }
 
         bool        m_valid;
         std::string m_target;
@@ -218,8 +218,6 @@ struct DirectiveTypeTraits<LineListen> : public DirectiveTypeTraitsBase {
 
         bool isBlockDirective(void) const { return (true); }
 
-        bool isRouteDirective(void) const { return (false); }
-
         bool m_valid;
 
         std::string m_host;
@@ -255,8 +253,6 @@ struct DirectiveTypeTraits<LineServerName> : public DirectiveTypeTraitsBase {
         bool isValid(void) const { return (m_valid); }
 
         bool isBlockDirective(void) const { return (true); }
-
-        bool isRouteDirective(void) const { return (false); }
 
         bool m_valid;
 
@@ -481,8 +477,6 @@ struct DirectiveTypeTraits<LineIndex> : public DirectiveTypeTraitsBase {
 
         bool isValid(void) const { return (m_valid); }
 
-        bool isBlockDirective(void) const { return (false); }
-
         bool isRouteDirective(void) const { return (true); }
 
         ft::file m_index;
@@ -523,8 +517,6 @@ struct DirectiveTypeTraits<LineAutoIndex> : public DirectiveTypeTraitsBase {
 
         bool isValid(void) const { return (m_valid); }
 
-        bool isBlockDirective(void) const { return (false); }
-
         bool isRouteDirective(void) const { return (true); }
 
         bool m_autoindex;
@@ -564,8 +556,6 @@ struct DirectiveTypeTraits<LineCgiExtension> : public DirectiveTypeTraitsBase {
         }
 
         bool isValid(void) const { return (m_valid); }
-
-        bool isBlockDirective(void) const { return (false); }
 
         bool isRouteDirective(void) const { return (true); }
 
