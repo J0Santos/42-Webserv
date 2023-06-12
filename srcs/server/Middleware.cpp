@@ -9,7 +9,7 @@
 
 namespace webserv {
 
-int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
+void Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
     smt::shared_ptr<config::Opts> opts(new config::Opts());
 
     // receiving string from sockets recv
@@ -19,26 +19,32 @@ int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
     int status = 0;
     reqStr = http::RequestBuffer::getNextRequest(fd, reqStr);
     while (!reqStr.empty()) {
+
         smt::shared_ptr<http::Request> request;
         try {
             // creating a http::Request based on string
             request = smt::make_shared(new http::Request(reqStr));
-        }
-        catch (http::Request::MalformedRequestException const&) {
-            // checking if communication is valid for HTTP/1.1
-            LOG_E("Malformed request, socket will responde with a 400.");
-            status = 400;
-        }
-
-        try {
             // getting options from config file corresponding with request
             opts = getOptions(sock, request);
         }
+        catch (http::Request::MalformedRequestException const&) {
+            // checking if communication is valid HTTP/1.1
+            LOG_E("Malformed request, socket will responde with a 400.");
+            status = 400;
+            opts = getOptions(sock);
+        }
         catch (config::Options::NoSuchOptionsException const&) {
             // this error will never happen, but its handled anyways
-            LOG_E("Failure in server, failed to find a config block for this request.");
+            LOG_E("Failure in server, failed to find a config block for this "
+                  "request.");
             status = 500;
+            opts = getOptions(sock);
         }
+
+        // Setting up route
+        smt::shared_ptr<http::Route> route;
+        route = smt::make_shared(new http::Route(opts->m_target, opts->m_root));
+        request->setRoute(route);
 
         // handle http request
         smt::shared_ptr<http::Response> response =
@@ -47,13 +53,9 @@ int Middleware::handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd) {
         // send response as string
         sock->send(fd, response->toString());
 
-        // if an error occured, the status will not check for more requests
-        if (status) { break; }
-
         // getting next request form reqStr if there is one
         reqStr = http::RequestBuffer::getNextRequest(fd);
     }
-    return (status);
 }
 
 smt::shared_ptr<config::Opts>
@@ -66,6 +68,15 @@ smt::shared_ptr<config::Opts>
     return (config::Options::getOptions(ss.str(), sock->getHost(),
                                         request->getPath(),
                                         request->getHeader("Host")));
+}
+
+smt::shared_ptr<config::Opts>
+    Middleware::getOptions(smt::shared_ptr<net::ServerSocket> sock) {
+
+    // calling default getOpyions from options
+    std::stringstream ss;
+    ss << sock->getPort();
+    return (config::Options::getOptions(ss.str(), sock->getHost(), "/"));
 }
 
 } // namespace webserv

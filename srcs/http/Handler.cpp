@@ -30,9 +30,6 @@ smt::shared_ptr<Response>
         return (methods::generateErrorResponse(405, opts));
     }
 
-    http::Route route(opts->m_target, opts->m_root);
-    request->setRoute(route);
-
     // getting method
     MethodType method = convertMethod(request->getMethod());
     switch (method) {

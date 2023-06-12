@@ -48,7 +48,7 @@ void Server::runServer(void) {
         // checking server state
         if (m_state != Running) { break; }
 
-        if (nfds < 0) { 
+        if (nfds < 0) {
             LOG_E("Epoll wait failure.");
             throw(EpollWaitException());
         }
@@ -75,22 +75,21 @@ void Server::runServer(void) {
                     }
                     catch (
                         net::ServerSocket::NoSuchConnectionException const&) {
-                        // Socket connection is not connected to this socket, moving on
+                        // Socket connection is not connected to this socket,
+                        // moving on
                         continue;
                     }
 
-                    // calling in middleware to handle what the socket has to say
-                    int status =
-                        Middleware::handleRecv(sock, events[i].data.fd);
+                    // calling in middleware to handle what the socket has to
+                    // say
+                    Middleware::handleRecv(sock, events[i].data.fd);
 
-                    if (!http::RequestBuffer::hasRequest(events[i].data.fd) ||
-                        status) {
+                    if (!http::RequestBuffer::hasRequest(events[i].data.fd)) {
                         // closing socket connection
                         http::RequestBuffer::cleanBuffer(events[i].data.fd);
                         epollRemove(events[i].data.fd);
                         sock->close(events[i].data.fd);
                     }
-
                     break;
                 }
             }
@@ -116,7 +115,8 @@ void Server::startSocket(int port, std::string const& host) {
     // struct timeval timeout;
     // timeout.tv_sec = 10;
     // timeout.tv_usec = 0;
-    // sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval));
+    // sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct
+    // timeval));
 
     // binding and listening socket
     sock->bind();
@@ -158,19 +158,19 @@ void Server::run(void) { getInstance()->runServer(); }
 void Server::stop(void) { getInstance()->stopServer(); }
 
 char const* Server::EpollCreateException::what(void) const throw() {
-    return ("webserv::Server epoll_create system call failure");
+    return ("webserv::Server epoll_create system call failure.");
 }
 
 char const* Server::EpollAddException::what(void) const throw() {
-    return ("webserv::Server epoll_ctl (add) system call failure");
+    return ("webserv::Server epoll_ctl (add) system call failure.");
 }
 
 char const* Server::EpollRemoveException::what(void) const throw() {
-    return ("webserv::Server epoll_ctl (remove) system call failure");
+    return ("webserv::Server epoll_ctl (remove) system call failure.");
 }
 
 char const* Server::EpollWaitException::what(void) const throw() {
-    return ("webserv::Server epoll_wait system call failure");
+    return ("webserv::Server epoll_wait system call failure.");
 }
 
 } // namespace webserv

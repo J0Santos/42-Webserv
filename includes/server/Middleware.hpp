@@ -25,11 +25,14 @@ namespace webserv {
 class Middleware {
     public:
 
-        static int handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd);
+        static void handleRecv(smt::shared_ptr<net::ServerSocket> sock, int fd);
 
         static smt::shared_ptr<config::Opts>
             getOptions(smt::shared_ptr<net::ServerSocket> sock,
                        smt::shared_ptr<http::Request>     request);
+
+        static smt::shared_ptr<config::Opts>
+            getOptions(smt::shared_ptr<net::ServerSocket> sock);
 };
 
 } // namespace webserv

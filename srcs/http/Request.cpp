@@ -122,13 +122,13 @@ ft::file Request::getPath(void) const { return (m_uri->getPath()); }
 std::string Request::getQuery(void) const { return (m_uri->getQuery()); }
 
 ft::directory const& Request::getRoot(void) const {
-    return (m_route.getRoot());
+    return (m_route->getRoot());
 }
 
-void Request::setRoute(Route const& route) { m_route = route; }
+void Request::setRoute(smt::shared_ptr<Route> route) { m_route = route; }
 
 std::string Request::routeRequest(void) const {
-    return (m_route.route(getPath()));
+    return (m_route->route(getPath()));
 }
 
 std::string const& Request::toString(void) const { return (m_reqStr); }

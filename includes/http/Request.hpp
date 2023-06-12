@@ -35,11 +35,11 @@ class Request {
         std::string          getQuery(void) const;
         ft::directory const& getRoot(void) const;
 
-        void        setRoute(Route const& route);
+        void        setRoute(smt::shared_ptr<Route> route);
         std::string routeRequest(void) const;
 
         std::string const& toString(void) const;
-        std::string const debug(void) const;
+        std::string const  debug(void) const;
 
         struct MalformedRequestException : public std::exception {
                 char const* what(void) const throw();
@@ -52,13 +52,10 @@ class Request {
         std::map<std::string, std::string> m_headers;
         std::string                        m_body;
         smt::shared_ptr<Uri>               m_uri;
-
-        Route m_route;
+        smt::shared_ptr<Route>             m_route;
 
         std::string m_reqStr;
 };
-
-std::string getRequest(std::string const& reqStr = "");
 
 } // namespace http
 
