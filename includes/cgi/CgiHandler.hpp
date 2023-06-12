@@ -18,7 +18,10 @@
 
 namespace cgi {
 
+enum CgiType { Py, Php, Cgi, Unknown };
+
 class CgiHandler {
+
     public:
 
         CgiHandler(void);
@@ -34,6 +37,8 @@ class CgiHandler {
 
         std::string run(void) const;
 
+        static CgiType convertCgiExtension(std::string const& cgiExtension);
+
     private:
 
         std::string runAsChildProcess(void) const;
@@ -45,15 +50,6 @@ class CgiHandler {
 
         std::string m_body;
 };
-
-// TODO: remove python folder
-// TODO: make routes more intuitive
-
-enum CgiType { Py, Php, Cgi, Unknown };
-
-CgiType convertCgiExtension(std::string const& cgiExtension);
-
-std::string runCgiScript(smt::shared_ptr<http::Request> const request);
 
 } // namespace cgi
 

@@ -173,9 +173,11 @@ struct DirectiveTypeTraits<LineEnd> : public DirectiveTypeTraitsBase {
             // checking for port:host:server_name duplicates
             for (std::vector<ServerOpts>::iterator it = opts.begin();
                  it != opts.end() - 1; ++it) {
-                if (it->m_host == opt.m_host && it->m_port == opt.m_port) {
-                    LOG_W(getName() << ": duplicate port:host:server_name "
-                                       "combination.");
+                if (it->m_host == opt.m_host && it->m_port == opt.m_port &&
+                    it->m_server_name == opt.m_server_name) {
+                    LOG_W(getName()
+                          << ": duplicate " << opt.m_port << ":" << opt.m_host
+                          << ":" << opt.m_server_name << " combination.");
                     return;
                 }
             }
@@ -591,7 +593,7 @@ struct DirectiveTypeTraits<LineCgiExtension> : public DirectiveTypeTraitsBase {
                 LOG_W(getName() << ": invalid directive name.");
                 return;
             }
-            if (cgi::convertCgiExtension(args[1]) == cgi::Unknown) {
+            if (cgi::CgiHandler::convertCgiExtension(args[1]) == cgi::Unknown) {
                 LOG_W(getName() << ": invalid cgi extension.");
                 return;
             }

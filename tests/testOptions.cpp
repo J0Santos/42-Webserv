@@ -219,6 +219,12 @@ TEST(testSocketOptions, testSocketOptionsExtreme) {
            "}\n"
            "\n"
            "server {\n"
+           "  listen 8080;\n"
+           "  server_name domain.com;\n"
+           "  root ./websites/;\n"
+           "}\n"
+           "\n"
+           "server {\n"
            "  listen 80;\n"
            "  root ./websites/;\n"
            "}\n"
@@ -233,6 +239,7 @@ TEST(testSocketOptions, testSocketOptionsExtreme) {
     }
     catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
+        system("rm /tmp/testsOptions2.tmp");
         FAIL();
     }
 

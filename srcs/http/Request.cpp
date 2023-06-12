@@ -72,9 +72,7 @@ Request::Request(std::string const& reqStr) : m_reqStr(reqStr) {
     std::string body = reqStr.substr(endPos + 4);
     // convert Content-Length to int
     if (m_headers.find("Content-Length") != m_headers.end()) {
-        size_t            len;
-        std::stringstream ss(m_headers["Content-Length"]);
-        ss >> len;
+        size_t len = ft::string::stoul(m_headers["Content-Length"]);
         if (body.size() != len) {
             LOG_W("Malformed request: invalid body size");
             throw(MalformedRequestException());

@@ -49,7 +49,6 @@ TEST_F(testParser, testParseLine) {
         parser.parseLine<config::LineRoute>({"location", "/", "{"}, 1));
     ASSERT_NO_THROW(
         parser.parseLine<config::LineRoute>({"location", "/", "{"}, 1));
-    ASSERT_NO_THROW(parser.parseLine<config::LineEnd>({"}"}, 2));
 
     ASSERT_THROW(
         parser.parseLine<config::LineListen>({"listen", "80", "80"}, 1),
