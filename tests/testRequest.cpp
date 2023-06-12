@@ -123,7 +123,8 @@ TEST(testRequest, testRoutes) {
         "Connection: keep-alive\r\n\r\n";
     smt::shared_ptr<http::Request> request;
     ASSERT_NO_THROW(request = smt::make_shared(new http::Request(req)));
-    http::Route route("/python/", "./websites/python/");
+    smt::shared_ptr<http::Route> route(
+        new http::Route("/python/", "./websites/python/"));
     ASSERT_NO_THROW(request->setRoute(route));
     ASSERT_EQ(request->routeRequest(),
               "./websites/python/me.py/path/to/script");

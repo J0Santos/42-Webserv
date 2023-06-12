@@ -3,7 +3,7 @@
 #include "cgi/CgiHandler.hpp"
 #include "config/Options.hpp"
 #include "http/Handler.hpp"
-#include "http/MimeType.hpp"
+#include "utils/MimeType.hpp"
 #include "http/Request.hpp"
 #include "http/Response.hpp"
 #include "utils/smt.hpp"

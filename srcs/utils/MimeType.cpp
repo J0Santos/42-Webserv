@@ -1,4 +1,4 @@
-#include "http/MimeType.hpp"
+#include "utils/MimeType.hpp"
 
 #include "utils/Logger.hpp"
 

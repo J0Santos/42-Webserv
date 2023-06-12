@@ -3,10 +3,10 @@
 #include "cgi/CgiHandler.hpp"
 #include "config/Options.hpp"
 #include "http/methods.hpp"
-#include "http/MimeType.hpp"
 #include "http/Request.hpp"
 #include "http/Response.hpp"
 #include "utils/Logger.hpp"
+#include "utils/MimeType.hpp"
 #include "utils/Route.hpp"
 
 namespace http {

@@ -22,7 +22,8 @@ class testCgi : public ::testing::Test {
             std::string reqStr = "GET /python/test.py?name=sotto HTTP/1.1\r\n"
                                  "Host: x\r\n\r\n";
             m_req = smt::make_shared(new http::Request(reqStr));
-            http::Route route("/python/", "./websites/cgi-bin/python/");
+            smt::shared_ptr<http::Route> route(
+                new http::Route("/python/", "./websites/cgi-bin/python/"));
             m_req->setRoute(route);
         }
 

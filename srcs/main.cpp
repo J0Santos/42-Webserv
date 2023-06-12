@@ -1,7 +1,6 @@
 #include "webserv.hpp"
 
 // TODO: test with valgrind
-// TODO: make route better
 // TODO: make mimetypes in utils and mabe others
 // TODO: make sure all cgi scripts have python 3 to them
 // TODO: check for all stringstreams that could be replaced for stoi

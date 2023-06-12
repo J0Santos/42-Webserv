@@ -35,11 +35,12 @@ class testGetMethod : public ::testing::Test {
             m_opts->m_root = "/tmp/";
             m_opts->m_index = "";
             m_opts->m_autoindex = false;
-            m_route = http::Route(m_opts->m_target, m_opts->m_root);
+            m_route = smt::make_shared(
+                new http::Route(m_opts->m_target, m_opts->m_root));
         }
 
         smt::shared_ptr<config::Opts> m_opts;
-        http::Route                   m_route;
+        smt::shared_ptr<http::Route>  m_route;
 };
 
 TEST_F(testGetMethod, testFileNotFound) {
@@ -193,11 +194,12 @@ class testPostMethod : public ::testing::Test {
             m_opts->m_root = "/tmp/";
             m_opts->m_index = "";
             m_opts->m_autoindex = false;
-            m_route = http::Route(m_opts->m_target, m_opts->m_root);
+            m_route = smt::make_shared(
+                new http::Route(m_opts->m_target, m_opts->m_root));
         }
 
         smt::shared_ptr<config::Opts> m_opts;
-        http::Route                   m_route;
+        smt::shared_ptr<http::Route>  m_route;
 };
 
 TEST_F(testPostMethod, testCrawlerFile) {
@@ -278,11 +280,12 @@ class testDeleteMethod : public ::testing::Test {
             m_opts->m_root = "/tmp/";
             m_opts->m_index = "";
             m_opts->m_autoindex = false;
-            m_route = http::Route(m_opts->m_target, m_opts->m_root);
+            m_route = smt::make_shared(
+                new http::Route(m_opts->m_target, m_opts->m_root));
         }
 
         smt::shared_ptr<config::Opts> m_opts;
-        http::Route                   m_route;
+        smt::shared_ptr<http::Route>  m_route;
 };
 
 TEST_F(testDeleteMethod, testIsDirectory) {

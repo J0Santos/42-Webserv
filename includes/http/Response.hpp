@@ -1,7 +1,7 @@
 #ifndef HTTP_RESPONSE_HPP
 #define HTTP_RESPONSE_HPP
 
-#include "http/ErrorCode.hpp"
+#include "utils/ErrorCode.hpp"
 
 #include <map>
 #include <string>

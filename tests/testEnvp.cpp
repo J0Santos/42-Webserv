@@ -12,7 +12,8 @@ TEST(testEnvp, testBasic) {
                           "Accept-Encoding: gzip, deflate, br\r\n"
                           "Accept-Language: en-US,en;q=0.9\r\n"
                           "Connection: keep-alive\r\n\r\n"));
-    http::Route route("/cgi/", "./websites/cgi-bin/");
+    smt::shared_ptr<http::Route> route(
+        new http::Route("/cgi/", "./websites/cgi-bin/"));
     req->setRoute(route);
 
     cgi::Envp envp(req);
@@ -39,7 +40,8 @@ TEST(testEnvp, testMoreComplete) {
                           "Accept-Encoding: gzip, deflate, br\r\n"
                           "Accept-Language: en-US,en;q=0.9\r\n"
                           "Connection: keep-alive\r\n\r\n"));
-    http::Route route("/cgi/", "./websites/cgi-bin/");
+    smt::shared_ptr<http::Route> route(
+        new http::Route("/cgi/", "./websites/cgi-bin/"));
     req->setRoute(route);
 
     cgi::Envp envp(req);
