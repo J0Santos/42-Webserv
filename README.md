@@ -10,9 +10,9 @@
 
 # Authors
 
-[!mlanca-c](https://img.shields.io/badge/mlanca-c-9cf?style=flat&logo=github)
-[!J0Santos](https://img.shields.io/badge/J0Santos-9cf?style=flat&logo=github)
-[!Dutesier](https://img.shields.io/badge/Dutesier-9cf?style=flat&logo=github)
+- [mlanca-c](https://github.com/mlanca-c)
+- [J0Santos](https://github.com/J0Santos)
+- [Dutesier](https://github.com/Dutesier)
 
 # Cloning
 
