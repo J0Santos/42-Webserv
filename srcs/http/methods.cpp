@@ -43,6 +43,12 @@ smt::shared_ptr<http::Response>
 
     if (!opts->m_cgi_extension.empty() &&
         opts->m_cgi_extension == ft::file(file).getExtension()) {
+        // checking if file was changed
+        if (file != request->routeRequest()) {
+            smt::shared_ptr<http::Route> route(new http::Route("/", "/"));
+            request->setRoute(route);
+            request->setPath(file);
+        }
         return (generateCgiResponse(request, opts));
     }
 
@@ -168,7 +174,6 @@ smt::shared_ptr<http::Response>
     cgi::CgiHandler                 handler(request);
     std::string                     respStr = handler.run();
     try {
-
         resp = smt::make_shared(new http::Response(respStr));
     }
     catch (http::Response::MalformedResponseException const&) {

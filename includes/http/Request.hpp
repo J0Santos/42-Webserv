@@ -35,6 +35,8 @@ class Request {
         std::string          getQuery(void) const;
         ft::directory const& getRoot(void) const;
 
+        void setPath(std::string path);
+
         void        setRoute(smt::shared_ptr<Route> route);
         std::string routeRequest(void) const;
 

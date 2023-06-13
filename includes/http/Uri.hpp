@@ -20,6 +20,8 @@ class Uri {
         ft::file    getPath(void) const;
         std::string getQuery(void) const;
         std::string const toString(void) const;
+        
+        void setPath(std::string path);
 
     private:
 

@@ -10,6 +10,7 @@ namespace cgi {
 
 CgiHandler::CgiHandler(smt::shared_ptr<http::Request> const request) {
     m_cgiDir = ft::file(request->routeRequest()).getDirectory();
+    LOG_F("cgiDirectory: " << m_cgiDir);
     m_argv = Argv(ft::file(request->routeRequest()).getFilename());
     m_envp = Envp(request);
     m_body = request->getBody();
@@ -65,6 +66,7 @@ std::string CgiHandler::runAsChildProcess(void) const {
     // convert argv and envp to char**
     char** argv = m_argv;
     char** envp = m_envp;
+    LOG_F(argv[0]);
 
     pid_t pid = fork();
     if (pid < 0) {

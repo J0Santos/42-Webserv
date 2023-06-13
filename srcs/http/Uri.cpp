@@ -54,6 +54,8 @@ ft::file Uri::getPath(void) const { return (m_path); }
 
 std::string Uri::getQuery(void) const { return (m_query); }
 
+void Uri::setPath(std::string path) { m_path = path; }
+
 std::string const Uri::toString(void) const { return (m_uri); }
 
 } // namespace http

@@ -129,6 +129,8 @@ std::string Request::routeRequest(void) const {
     return (m_route->route(getPath()));
 }
 
+void Request::setPath(std::string path) { m_uri->setPath(path); }
+
 std::string const& Request::toString(void) const { return (m_reqStr); }
 
 std::string const Request::debug(void) const {

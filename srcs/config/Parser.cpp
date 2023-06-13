@@ -180,7 +180,9 @@ void Parser::parse(ft::file const& filename) {
             default: parser.error();
         }
     }
-    if (level != 0) { parser.error(); }
+    if (level != 0) { 
+        LOG_W("Failed to find end of block");
+        parser.error(); }
     // initializing options
     Options::getInstance(parser.getOptions());
 }

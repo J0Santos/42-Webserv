@@ -8,7 +8,7 @@ void webserv(std::string const& filename) {
     signal(SIGINT, stop);
 
     // Setting log level to info
-    LOG_LVL(LogLevel::Info);
+    // LOG_LVL(LogLevel::Info);
 
     // reading config file an handling errors
     LOG_I("Reading config file: " << filename << "...");
