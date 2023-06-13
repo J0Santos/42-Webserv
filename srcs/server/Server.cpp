@@ -111,13 +111,6 @@ void Server::startSocket(int port, std::string const& host) {
     int yes = 1;
     sock->setsockopt(SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 
-    // TODO: make a few exec rounds without this and then remove it
-    // struct timeval timeout;
-    // timeout.tv_sec = 10;
-    // timeout.tv_usec = 0;
-    // sock->setsockopt(SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct
-    // timeval));
-
     // binding and listening socket
     sock->bind();
     sock->listen();

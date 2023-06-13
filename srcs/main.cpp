@@ -1,7 +1,5 @@
 #include "webserv.hpp"
 
-// TODO: test with valgrind
-// TODO: make sure all cgi scripts have python 3 to them
 int main(int argc, char const* argv[]) {
     (void)argc;
     (void)argv;
