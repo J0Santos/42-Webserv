@@ -27,10 +27,11 @@ def save_file(upload_file, body):
 
 
 file = sys.stdin.read()
+# print(file)
 # Get the file from the form data
 form = cgi.FieldStorage()
 upload_file = form.getvalue('file', None)
-upload_dir = form.getvalue('upload_dir', None)
+upload_dir = '/tmp'
 if (upload_file is None or upload_dir is None):
     generate404()
 
