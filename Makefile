@@ -272,7 +272,7 @@ ${TEST_NAME}: test
 
 test_run: ${FORCE}
 test_run: ${TEST_NAME}
-	${AT} ./${TEST_NAME} ${BLOCK}
+	${AT} ./${TEST_NAME} --gtest_color=yes ${BLOCK}
 
 test_re: test_clean test_run
 
